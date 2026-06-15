@@ -42,6 +42,13 @@
 # Visual Studio cache directory
 .vs/
 
+# VS Code workspace settings
+.vscode/
+
+# JetBrains Rider / IntelliJ workspace settings
+.idea/
+*.sln.iml
+
 # Gradle cache directory
 .gradle/
 
@@ -105,3 +112,12 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Local Kinematic Character Controller samples/tutorials.
+# The project only needs Assets/Thirdparty/KinematicCharacterController/Core.
+/[Aa]ssets/Thirdparty/KinematicCharacterController/ExampleCharacter/
+/[Aa]ssets/Thirdparty/KinematicCharacterController/ExampleCharacter.meta
+/[Aa]ssets/Thirdparty/KinematicCharacterController/Examples/
+/[Aa]ssets/Thirdparty/KinematicCharacterController/Examples.meta
+/[Aa]ssets/Thirdparty/KinematicCharacterController/Walkthrough/
+/[Aa]ssets/Thirdparty/KinematicCharacterController/Walkthrough.meta
