@@ -219,10 +219,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 153811360960836323}
+  - {fileID: 6878892640632599353}
   - {fileID: 6307900140901552902}
   - {fileID: 4867030528940727278}
-  - {fileID: 6878892640632599353}
-  - {fileID: 153811360960836323}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &8260488084285784578
@@ -303,14 +303,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   autoBhop: 0
-  gravity: 25
+  gravity: 31
   gravityMultiplier: 1
   groundAccel: 140
   maxSpeed: 8
   airAccel: 50
   airSpeed: 1
   friction: 12
-  jumpHeight: 8
+  jumpHeight: 10
   jumpBufferTime: 0.05
 --- !u!114 &4855516021531199088
 MonoBehaviour:
@@ -394,7 +394,7 @@ Camera:
     height: 1
   near clip plane: 0.01
   far clip plane: 1000
-  field of view: 65
+  field of view: 75
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -477,7 +477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TPPlayerCamera
   viewSource: {fileID: 7717037125315646937}
-  fov: 90
+  fov: 75
 --- !u!114 &7717037125315646937
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -490,11 +490,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4623e41616935450f9c613289117b10c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTpCameraViewSource
+  trackingOffset: {x: 0, y: 1.4, z: 0}
   target: {fileID: 8042118604927072296}
   input: {fileID: 4855516021531199088}
   framing: {x: 0, y: -0.2}
-  distance: 4
+  distance: 5
   mouseSensitivity: 0.4
+  trackJumps: 0
+  maxGroundFollowDistance: 2
+  verticalSmoothTime: 0.15
 --- !u!1 &7250802315067251102
 GameObject:
   m_ObjectHideFlags: 0

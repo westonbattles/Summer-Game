@@ -19,7 +19,10 @@ public class TPPlayerCamera : MonoBehaviour
     {
         mainCamera = GetComponent<Camera>();
         mainCamera.fieldOfView = fov;
-        
+    }
+
+    void Start()
+    {
         // camera params
         ApplyViewSource();
     }
