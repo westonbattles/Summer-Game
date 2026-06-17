@@ -24,7 +24,6 @@ public class TPPlayerCamera : MonoBehaviour
         ApplyViewSource();
     }
 
-    // Update is called once per frame
     void LateUpdate()
     {
         ApplyViewSource();

@@ -21,14 +21,14 @@ public class Player : MonoBehaviour, ICharacterController
 
     KinematicCharacterMotor _motor;
     PlayerInputReader _input;
-    TPPlayerViewSource _thirdPersonViewSource;
+    TPCameraViewSource _viewSource;
     float _jumpBufferCounter;
 
     void Awake()
     {
         _motor = GetComponent<KinematicCharacterMotor>();
         _input = GetComponent<PlayerInputReader>();
-        _thirdPersonViewSource = GetComponentInChildren<TPPlayerViewSource>();
+        _viewSource = GetComponentInChildren<TPCameraViewSource>();
         _input.Configure(autoBhop);
 
         if (autoBhop)
@@ -93,8 +93,8 @@ public class Player : MonoBehaviour, ICharacterController
 
     Quaternion GetLookRotation()
     {
-        return _thirdPersonViewSource != null
-            ? _thirdPersonViewSource.LookRotation
+        return _viewSource != null
+            ? _viewSource.LookRotation
             : transform.rotation;
     }
 

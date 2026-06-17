@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class TPPlayerViewSource : TPCameraViewSource
@@ -13,8 +12,25 @@ public class TPPlayerViewSource : TPCameraViewSource
     float pitch;
     float yaw;
     
-    public Quaternion LookRotation => Quaternion.Euler(pitch, yaw, 0f);
+    public override Quaternion LookRotation => Quaternion.Euler(pitch, yaw, 0f);
 
+    void Awake()
+    {
+        if (target == null)
+        {
+            Player player = GetComponentInParent<Player>();
+            if (player != null)
+            {
+                target = player.transform;
+            }
+        }
+
+        if (input == null)
+        {
+            input = GetComponentInParent<PlayerInputReader>();
+        }
+    }
+    
     void Update()
     {
         Vector2 look = input.Look;
@@ -26,6 +42,7 @@ public class TPPlayerViewSource : TPCameraViewSource
         );
             
         yaw += look.x * mouseSensitivity;
+        yaw = Mathf.Repeat(yaw + 180f, 360f) - 180f;
     }
 
     public override CameraParams GetParams()
