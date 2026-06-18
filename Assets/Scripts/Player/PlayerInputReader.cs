@@ -19,6 +19,7 @@ public class PlayerInputReader : MonoBehaviour
         _moveAction = FindInputAction("Move");
         _lookAction = FindInputAction("Look");
         _jumpAction = FindInputAction("Jump");
+        SetCursorLocked(true);
     }
 
     void Update()
@@ -41,5 +42,11 @@ public class PlayerInputReader : MonoBehaviour
     InputAction FindInputAction(string actionName)
     {
         return InputSystem.actions != null ? InputSystem.actions.FindAction(actionName, false) : null;
+    }
+
+    public void SetCursorLocked(bool locked)
+    {
+        Cursor.visible = !locked;
+        Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
     }
 }
