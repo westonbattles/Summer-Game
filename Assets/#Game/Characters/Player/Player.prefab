@@ -199,6 +199,7 @@ GameObject:
   - component: {fileID: 4206233303833237564}
   - component: {fileID: 1593231636947593448}
   - component: {fileID: 4855516021531199088}
+  - component: {fileID: 5137472634430860159}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -325,6 +326,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInputReader
   autoBhop: 0
+--- !u!114 &5137472634430860159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6463087256270042916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f2928cd2a694692a54e5c254cb42bec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLook
+  mouseSensitivity: 0.4
 --- !u!1 &6517233512885325830
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,8 +490,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a84fad23a667e484d8724f393eb32b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TPPlayerCamera
-  viewSource: {fileID: 0}
+  viewMode: 0
+  viewSource: {fileID: 7717037125315646937}
   fov: 75
+  obstructionPadding: 0.45
+  obstructionSmoothTime: 0.12
+  minSmoothingChange: 0.12
+  obstructionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &7717037125315646937
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -490,14 +511,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063a45446eaeb4ff589b3265f1bc796d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTpCameraViewSource
-  trackingOffset: {x: 0, y: 0, z: 0}
-  target: {fileID: 0}
-  framing: {x: 0, y: 0}
-  distance: 0
-  mouseSensitivity: 0.4
+  trackingOffset: {x: 0, y: 1.4, z: 0}
+  target: {fileID: 8042118604927072296}
+  defaultFraming: {x: 0, y: -0.43}
+  distance: 4.3
   dontTrackJumps: 1
-  maxGroundFollowDistance: 10
+  maxGroundFollowDistance: 0.3
   verticalSmoothTime: 0.15
+  VOE_start: 5.1
+  VOE_end: 85
+  straightDownFraming: -0.08
+  straightDownDistance: 5
 --- !u!1 &7250802315067251102
 GameObject:
   m_ObjectHideFlags: 0

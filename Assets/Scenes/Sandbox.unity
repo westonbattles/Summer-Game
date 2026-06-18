@@ -3545,6 +3545,10 @@ PrefabInstance:
       propertyPath: viewSource
       value: 
       objectReference: {fileID: 1574116922}
+    - target: {fileID: 2609528112320447340, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: obstructionPadding
+      value: 0.45
+      objectReference: {fileID: 0}
     - target: {fileID: 6463087256270042916, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: m_Name
       value: Player
