@@ -19,7 +19,8 @@ public struct CameraBlend {
 
 public static class TPCameraExtensions
 {
-    public static void SetParams(this Camera camera, in CameraParams cameraParams)
+
+    public static void CalculateCameraPlacement(this Camera camera, in CameraParams cameraParams, out Vector3 position, out Quaternion rotation)
     {
         // (UNITY DEFAULTS TO VERTICAL FOV!!!)
         // tan(fov/2) is the tan (opposite/adj) of the triangle created by half our vertical fov
@@ -38,15 +39,26 @@ public static class TPCameraExtensions
         );
 
         // rotation is a quaternion simply represeting the rotation of our camera. multiplying it by any forward facing vector (aka (0,0,1)) rotates that vector to be facing the direction our camera is facing
-        Quaternion rotation = Quaternion.Euler(cameraParams.Pitch, cameraParams.Yaw, 0);
+        rotation = Quaternion.Euler(cameraParams.Pitch, cameraParams.Yaw, 0);
         
         // remember, localOffset (assuming no framing!) is a forward facing vector with magnitude cameraParams.Distance. with framing, it gets moved left/right/up/down a bit and the magnitude is a bit larger, but it doesn't matter. the thing to note here is that this vector is oriented 'forward'
         // because the vector is 'oriented forward', when we multiply it with our rotation quaternion (our camera's rotation), this vector will now point in the same direction as our camera (with any framing offsets applied as well)
         // so when we subtract this from trackingposition, we're essentially moving straight backwards (based on our orientation) with a distance of cameraParams.distance
         // this means our camera will be positioned behind the trackingposition cameraParams.distance away (relative to the player, meaning as a result the camera will be looking at the player)
-        Vector3 position = cameraParams.TrackingPosition - rotation * localOffset; 
+        position = cameraParams.TrackingPosition - rotation * localOffset; 
+    }
+    
+    public static void SetParams(this Camera camera, in CameraParams cameraParams)
+    {
+        camera.CalculateCameraPlacement(cameraParams, out Vector3 position, out Quaternion rotation);
         camera.transform.SetPositionAndRotation(position, rotation);
     }
+    
+    public static void SetParams(this Camera camera, in Vector3 position, in Quaternion rotation)
+    {
+        camera.transform.SetPositionAndRotation(position, rotation);
+    }
+    
 
     public static void GetParams(
         this Camera camera,

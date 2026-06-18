@@ -4,18 +4,18 @@ public class TPPlayerViewSource : TPViewSource
 {
     
     [SerializeField] Transform target;
-    [SerializeField] Vector2 defaultFraming;
-    [SerializeField] float distance = 4f;
+    [SerializeField] Vector2 defaultFraming = new Vector2(0f, -0.43f);
+    [SerializeField] float distance = 4.3f;
 
     [Header("Jump Tracking")]
     [Tooltip("If the Camera targeted y position should be given by the player or by the ground under the player")]
     [SerializeField] bool dontTrackJumps = true;
-    [SerializeField] float maxGroundFollowDistance = 10f;
+    [SerializeField] float maxGroundFollowDistance = 0.3f;
     [SerializeField] float verticalSmoothTime = 0.15f;
 
     [Header("Vertical Orbit Easing")] 
-    [SerializeField] [Range(0f,85f)] float VOE_start = 20f;
-    [SerializeField] [Range(0f,85f)] float VOE_finish = 75f;
+    [SerializeField] [Range(0f,85f)] float VOE_start = 5.1f;
+    [SerializeField] [Range(0f,85f)] float VOE_end = 85f;
     [SerializeField] [Range(-1f,1f)] float straightDownFraming = -0.08f;
     [SerializeField] [Range(0f,50f)] float straightDownDistance = 5f;
     
@@ -93,9 +93,8 @@ public class TPPlayerViewSource : TPViewSource
     {
         Vector2 framing = defaultFraming;
         
-        // want: y framing blends between default framing y and 0 based on pitch i guess
-        // blend between look.Pitch: 0-85
-        float factor = Mathf.InverseLerp(VOE_start, VOE_finish, look.Pitch);
+        // blends framing from default framing to straightdown framing based on where our pitch lands between 0f,85f (according to VOE_start and VOE_finish)
+        float factor = Mathf.InverseLerp(VOE_start, VOE_end, look.Pitch);
         factor = Mathf.SmoothStep(0f, 1f, factor); // easing function
         framing.y = Mathf.Lerp(framing.y, straightDownFraming, factor);
         
@@ -108,7 +107,7 @@ public class TPPlayerViewSource : TPViewSource
         
         // want: y framing blends between default framing y and 0 based on pitch i guess
         // blend between look.Pitch: 0-85
-        float factor = Mathf.InverseLerp(VOE_start, VOE_finish, look.Pitch);
+        float factor = Mathf.InverseLerp(VOE_start, VOE_end, look.Pitch);
         factor = Mathf.SmoothStep(0f, 1f, factor); // easing function
         adjustedDistance = Mathf.Lerp(adjustedDistance, straightDownDistance, factor);
         
