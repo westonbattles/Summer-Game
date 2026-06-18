@@ -23,7 +23,7 @@ public class CameraRig : MonoBehaviour
     [Header("Camera Obstruction Parameters")]
     [SerializeField] float obstructionPadding = 0.2f;
     [SerializeField] float obstructionSmoothTime = 0.12f;
-    [SerializeField] [Tooltip("the min delta value for camera snap smoothing to apply (to avoid applying on smooth surface changes")] float minSmoothingChange = 0.12f;
+    [SerializeField] [Tooltip("distance threshold for applying smoothing (to avoid applying on smooth surface changes")] float minSmoothingChange = 0.005f;
     [SerializeField] LayerMask obstructionLayers = ~0;
     
     Camera mainCamera;
@@ -96,7 +96,13 @@ public class CameraRig : MonoBehaviour
         }
 
         float delta = maxDistance - currentObstructionDistance;
-        if (delta > minSmoothingChange)
+        if (maxDistance < currentObstructionDistance || Mathf.Abs(delta) < minSmoothingChange)
+        {
+            // wall got closer, snap
+            currentObstructionDistance = maxDistance;
+            obstructionDistanceVelocity = 0f;
+        }
+        else
         {
             // wall got further, smooth
             currentObstructionDistance = Mathf.SmoothDamp(
@@ -106,15 +112,10 @@ public class CameraRig : MonoBehaviour
                 obstructionSmoothTime
             );
         }
-        else
-        {
-            // snap
-            currentObstructionDistance = maxDistance;
-            obstructionDistanceVelocity = 0f;
-        }
+
         
         // UPDATE THE POSITION, TODO: easing function? shi probably
-        position = cameraParams.TrackingPosition + targetToCameraNormalized * currentObstructionDistance;;
+        position = cameraParams.TrackingPosition + targetToCameraNormalized * currentObstructionDistance;
         
         mainCamera.SetParams(position, rotation);
     }
