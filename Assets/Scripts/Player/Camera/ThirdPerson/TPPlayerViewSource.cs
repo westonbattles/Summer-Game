@@ -4,8 +4,8 @@ public class TPPlayerViewSource : TPViewSource
 {
     
     [SerializeField] Transform target;
-    [SerializeField] Vector2 framing;
-    [SerializeField] float distance;
+    [SerializeField] Vector2 defaultFraming;
+    [SerializeField] float distance = 4f;
 
     [Header("Jump Tracking")]
     [Tooltip("If the Camera targeted y position should be given by the player or by the ground under the player")]
@@ -13,6 +13,13 @@ public class TPPlayerViewSource : TPViewSource
     [SerializeField] float maxGroundFollowDistance = 10f;
     [SerializeField] float verticalSmoothTime = 0.15f;
 
+    [Header("Vertical Orbit Easing")] 
+    [SerializeField] [Range(0f,85f)] float VOE_start = 20f;
+    [SerializeField] [Range(0f,85f)] float VOE_finish = 75f;
+    [SerializeField] [Range(-1f,1f)] float straightDownFraming = -0.08f;
+    [SerializeField] [Range(0f,50f)] float straightDownDistance = 5f;
+    
+    
     PlayerLook look;
     public override Quaternion LookRotation => look != null ? look.LookRotation : Quaternion.identity;
     
@@ -52,7 +59,7 @@ public class TPPlayerViewSource : TPViewSource
         smoothTrackingY = target.position.y;
     }
 
-    Vector3 GetTrackingPosition()
+    Vector3 CalculateTrackingPosition()
     {
         Vector3 trackingPosition = target.position;
         
@@ -81,15 +88,40 @@ public class TPPlayerViewSource : TPViewSource
         // TrackingOffset is member variable derived by TPViewSource that lets us offset the target position if we want.
         return trackingPosition + TrackingOffset;
     }
+
+    Vector2 CalculateFraming()
+    {
+        Vector2 framing = defaultFraming;
+        
+        // want: y framing blends between default framing y and 0 based on pitch i guess
+        // blend between look.Pitch: 0-85
+        float factor = Mathf.InverseLerp(VOE_start, VOE_finish, look.Pitch);
+        factor = Mathf.SmoothStep(0f, 1f, factor); // easing function
+        framing.y = Mathf.Lerp(framing.y, straightDownFraming, factor);
+        
+        return framing;
+    }
     
+    float CalculateDistance()
+    {
+        float adjustedDistance = distance;
+        
+        // want: y framing blends between default framing y and 0 based on pitch i guess
+        // blend between look.Pitch: 0-85
+        float factor = Mathf.InverseLerp(VOE_start, VOE_finish, look.Pitch);
+        factor = Mathf.SmoothStep(0f, 1f, factor); // easing function
+        adjustedDistance = Mathf.Lerp(adjustedDistance, straightDownDistance, factor);
+        
+        return adjustedDistance;
+    }
     
     public override CameraParams GetParams()
     {
         return new CameraParams
         {
-            TrackingPosition = GetTrackingPosition(),
-            Framing = framing,
-            Distance = distance,
+            TrackingPosition = CalculateTrackingPosition(),
+            Framing = CalculateFraming(),
+            Distance = CalculateDistance(),
             Pitch = look.Pitch,
             Yaw = look.Yaw,
         };
