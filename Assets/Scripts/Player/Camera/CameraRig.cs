@@ -12,6 +12,7 @@ enum ViewMode
 [RequireComponent(typeof(Camera))]
 public class CameraRig : MonoBehaviour
 {
+    
     [SerializeField] ViewMode viewMode;
     
     [SerializeField] TPViewSource viewSource;

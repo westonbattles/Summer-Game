@@ -495,7 +495,7 @@ MonoBehaviour:
   fov: 75
   obstructionPadding: 0.45
   obstructionSmoothTime: 0.12
-  minSmoothingChange: 0.12
+  minSmoothingChange: 0.005
   obstructionLayers:
     serializedVersion: 2
     m_Bits: 4294967295
