@@ -17,7 +17,7 @@ public struct CameraBlend {
     public float Distance;
 }
 
-public static class CameraExtensions
+public static class TPCameraExtensions
 {
     public static void SetParams(this Camera camera, in CameraParams cameraParams)
     {

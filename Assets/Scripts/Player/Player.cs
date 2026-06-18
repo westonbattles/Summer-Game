@@ -3,6 +3,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(KinematicCharacterMotor))]
 [RequireComponent(typeof(PlayerInputReader))]
+[RequireComponent(typeof(PlayerLook))]
 public class Player : MonoBehaviour, ICharacterController
 {
     [Header("Input")]
@@ -21,14 +22,14 @@ public class Player : MonoBehaviour, ICharacterController
 
     KinematicCharacterMotor _motor;
     PlayerInputReader _input;
-    TPCameraViewSource _viewSource;
+    PlayerLook _look;
     float _jumpBufferCounter;
 
     void Awake()
     {
         _motor = GetComponent<KinematicCharacterMotor>();
         _input = GetComponent<PlayerInputReader>();
-        _viewSource = GetComponentInChildren<TPCameraViewSource>();
+        _look = GetComponentInChildren<PlayerLook>();
         _input.Configure(autoBhop);
 
         if (autoBhop)
@@ -93,8 +94,8 @@ public class Player : MonoBehaviour, ICharacterController
 
     Quaternion GetLookRotation()
     {
-        return _viewSource != null
-            ? _viewSource.LookRotation
+        return _look != null
+            ? _look.LookRotation
             : transform.rotation;
     }
 

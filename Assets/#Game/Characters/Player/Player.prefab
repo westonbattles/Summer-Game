@@ -476,7 +476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a84fad23a667e484d8724f393eb32b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TPPlayerCamera
-  viewSource: {fileID: 7717037125315646937}
+  viewSource: {fileID: 0}
   fov: 75
 --- !u!114 &7717037125315646937
 MonoBehaviour:
@@ -487,17 +487,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 6517233512885325830}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4623e41616935450f9c613289117b10c, type: 3}
+  m_Script: {fileID: 11500000, guid: 063a45446eaeb4ff589b3265f1bc796d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTpCameraViewSource
-  trackingOffset: {x: 0, y: 1.4, z: 0}
-  target: {fileID: 8042118604927072296}
-  input: {fileID: 4855516021531199088}
-  framing: {x: 0, y: -0.2}
-  distance: 5
+  trackingOffset: {x: 0, y: 0, z: 0}
+  target: {fileID: 0}
+  framing: {x: 0, y: 0}
+  distance: 0
   mouseSensitivity: 0.4
-  trackJumps: 0
-  maxGroundFollowDistance: 2
+  dontTrackJumps: 1
+  maxGroundFollowDistance: 10
   verticalSmoothTime: 0.15
 --- !u!1 &7250802315067251102
 GameObject:

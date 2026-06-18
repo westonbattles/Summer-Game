@@ -2989,6 +2989,17 @@ Transform:
   - {fileID: 886627374}
   m_Father: {fileID: 755519842}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1574116922 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7717037125315646937, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+  m_PrefabInstance: {fileID: 6804361139888241997}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 063a45446eaeb4ff589b3265f1bc796d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerTpCameraViewSource
 --- !u!43 &1869633433
 Mesh:
   m_ObjectHideFlags: 0
@@ -3270,16 +3281,32 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2609528112320447340, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: fov
-      value: 75
-      objectReference: {fileID: 0}
+      propertyPath: viewSource
+      value: 
+      objectReference: {fileID: 1574116922}
     - target: {fileID: 6463087256270042916, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 7717037125315646937, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7717037125315646937, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: distance
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7717037125315646937, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: framing.y
+      value: -0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7717037125315646937, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: trackingOffset.y
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7717037125315646937, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: maxGroundFollowDistance
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8042118604927072296, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3320,10 +3347,6 @@ PrefabInstance:
     - target: {fileID: 8042118604927072296, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8661258950122048256, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: field of view
-      value: 75
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

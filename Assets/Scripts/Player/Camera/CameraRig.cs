@@ -1,19 +1,20 @@
 using UnityEngine;
 
-// Third Person Player Camera
 
-// owns camera state
-// asks a framing/composition object to fill CameraParams
-// applies CameraParams with CameraExtensions
+enum ViewMode
+{
+    ThirdPerson,
+    Dialogue,
+    FirstPerson
+}
 
 [RequireComponent(typeof(Camera))]
-public class TPPlayerCamera : MonoBehaviour
+public class CameraRig : MonoBehaviour
 {
-    [SerializeField] TPCameraViewSource viewSource;
+    [SerializeField] TPViewSource viewSource;
     [SerializeField] float fov = 90f;
     
     Camera mainCamera;
-    
 
     void Awake()
     {
@@ -21,15 +22,14 @@ public class TPPlayerCamera : MonoBehaviour
         mainCamera.fieldOfView = fov;
     }
 
-    void Start()
-    {
-        // camera params
-        ApplyViewSource();
-    }
-
     void LateUpdate()
     {
         ApplyViewSource();
+    }
+
+    void setViewSource(TPViewSource newViewSource)
+    {
+        viewSource = newViewSource;
     }
     
     void ApplyViewSource()

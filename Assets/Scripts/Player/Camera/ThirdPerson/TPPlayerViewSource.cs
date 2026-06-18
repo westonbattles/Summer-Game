@@ -1,57 +1,55 @@
 using UnityEngine;
 
-public class TPPlayerViewSource : TPCameraViewSource
+public class TPPlayerViewSource : TPViewSource
 {
     
     [SerializeField] Transform target;
-    [SerializeField] PlayerInputReader input;
     [SerializeField] Vector2 framing;
     [SerializeField] float distance;
-    [SerializeField] float mouseSensitivity = 0.4f;
 
     [Header("Jump Tracking")]
-    [SerializeField] bool trackJumps = false;
+    [Tooltip("If the Camera targeted y position should be given by the player or by the ground under the player")]
+    [SerializeField] bool dontTrackJumps = true;
     [SerializeField] float maxGroundFollowDistance = 10f;
     [SerializeField] float verticalSmoothTime = 0.15f;
-    
-    float pitch;
-    float yaw;
-    
-    float smoothedTrackingY;
-    float trackingYVelocity;
-    bool hasSmoothedTrackingY;
-    
-    public override Quaternion LookRotation => Quaternion.Euler(pitch, yaw, 0f);
 
+    PlayerLook look;
+    public override Quaternion LookRotation => look != null ? look.LookRotation : Quaternion.identity;
+    
+    float smoothTrackingX;
+    float smoothTrackingY;
+    float smoothTrackingZ;
+    float trackingVelocityX;
+    float trackingVelocityY;
+    float trackingVelocityZ;
+    
+
+    // ensures target and input reference
     void Awake()
     {
+        // ensure player look component
+        look = GetComponentInParent<PlayerLook>();
+        if (look == null)
+        {
+            Debug.LogError($"{nameof(TPPlayerViewSource)} needs a parent PlayerLook.", this);
+        }
+
+        // ensure target
         if (target == null)
         {
+            // default target to player transform if no target given
             Player player = GetComponentInParent<Player>();
-            if (player != null)
+            if (player == null)
             {
-                target = player.transform;
+                Debug.LogError($"{nameof(TPPlayerViewSource)} needs a target or a parent Player object.", this);
+                return;
             }
+
+            target = player.transform;
         }
 
-        if (input == null)
-        {
-            input = GetComponentInParent<PlayerInputReader>();
-        }
-    }
-    
-    void Update()
-    {
-        Vector2 look = input.Look;
-
-        pitch = Mathf.Clamp(
-            pitch - look.y * mouseSensitivity,
-            -85f,
-            85f
-        );
-            
-        yaw += look.x * mouseSensitivity;
-        yaw = Mathf.Repeat(yaw + 180f, 360f) - 180f;
+        // smoothing y value starts equal to y value
+        smoothTrackingY = target.position.y;
     }
 
     Vector3 GetTrackingPosition()
@@ -61,30 +59,29 @@ public class TPPlayerViewSource : TPCameraViewSource
         // TODO: apply low-pass filter or critically damped spring?
         // ...
         
-        if (trackJumps) return ApplyTrackingOffset(trackingPosition);
-
-        // dy = distance to ground within maxGroundFollowDistance, or maxGroundFollowDistance if no ground was found
-        Vector3 rayOrigin = target.position + new Vector3(0f, 0.1f, 0f);
-        float desiredY = Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, maxGroundFollowDistance)
-            ? hit.point.y
-            : target.position.y - maxGroundFollowDistance;
-        
-        if (!hasSmoothedTrackingY)
+        // if camera
+        if (dontTrackJumps)
         {
-            smoothedTrackingY = desiredY;
-            hasSmoothedTrackingY = true;
+            Vector3 rayOrigin = target.position;
+            Vector3 Offset = new Vector3(0f, 0.1f, 0f);
+            float desiredY = Physics.Raycast(rayOrigin + Offset, Vector3.down, out RaycastHit hit, maxGroundFollowDistance)
+                ? hit.point.y
+                : target.position.y - maxGroundFollowDistance;
+
+            smoothTrackingY = Mathf.SmoothDamp(
+                smoothTrackingY,
+                desiredY,
+                ref trackingVelocityY,
+                verticalSmoothTime
+            );
+
+            trackingPosition.y = smoothTrackingY;
         }
-
-        smoothedTrackingY = Mathf.SmoothDamp(
-            smoothedTrackingY,
-            desiredY,
-            ref trackingYVelocity,
-            verticalSmoothTime
-        );
-
-        trackingPosition.y = smoothedTrackingY;
-        return ApplyTrackingOffset(trackingPosition);
+        
+        // TrackingOffset is member variable derived by TPViewSource that lets us offset the target position if we want.
+        return trackingPosition + TrackingOffset;
     }
+    
     
     public override CameraParams GetParams()
     {
@@ -93,8 +90,8 @@ public class TPPlayerViewSource : TPCameraViewSource
             TrackingPosition = GetTrackingPosition(),
             Framing = framing,
             Distance = distance,
-            Pitch = pitch,
-            Yaw = yaw,
+            Pitch = look.Pitch,
+            Yaw = look.Yaw,
         };
     }
 }
