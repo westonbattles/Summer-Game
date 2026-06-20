@@ -9,5 +9,8 @@ EditorBuildSettings:
     path: Assets/Scenes/Sandbox.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:
+    com.unity.adaptivePerformance.basic.provider_settings: {fileID: 11400000, guid: 234a74047233fc94d9a819950bccf264, type: 2}
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 367d8f64d5b43f3449b1dc4d0b51f562, type: 2}
+    com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 541aa6abd2ad63d4988c81e98186b52e, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
