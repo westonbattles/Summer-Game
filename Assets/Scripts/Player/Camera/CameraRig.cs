@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -22,10 +23,12 @@ public class CameraRig : MonoBehaviour
     [SerializeField] float fov = 90f;
     
     [Header("Camera Obstruction Parameters")]
-    [SerializeField] float obstructionPadding = 0.2f;
+    //[SerializeField] float obstructionPadding = 0.2f;
+    [SerializeField] float obstructionPadding = 0.25f;
     [SerializeField] float obstructionSmoothTime = 0.12f;
     [SerializeField] [Tooltip("distance threshold for applying smoothing (to avoid applying on smooth surface changes")] float minSmoothingChange = 0.005f;
     [SerializeField] LayerMask obstructionLayers = ~0;
+    [SerializeField] float obstructionSphereCastRadius = 0.2f;
     
     Camera mainCamera;
 
@@ -91,7 +94,7 @@ public class CameraRig : MonoBehaviour
         float maxDistance = targetToCameraDistance;
         
         // avoid obstacles that intersect camera
-        if (Physics.Raycast(cameraParams.TrackingPosition, targetToCameraNormalized, out RaycastHit hit, targetToCameraDistance, obstructionLayers, QueryTriggerInteraction.Ignore))
+        if (Physics.SphereCast(cameraParams.TrackingPosition, obstructionSphereCastRadius, targetToCameraNormalized, out RaycastHit hit, targetToCameraDistance, obstructionLayers, QueryTriggerInteraction.Ignore))
         {
             maxDistance = Mathf.Max(0f, hit.distance - obstructionPadding);
         }
