@@ -29,16 +29,32 @@ public class CameraRig : MonoBehaviour
     [SerializeField] [Tooltip("distance threshold for applying smoothing (to avoid applying on smooth surface changes")] float minSmoothingChange = 0.005f;
     [SerializeField] LayerMask obstructionLayers = ~0;
     [SerializeField] float obstructionSphereCastRadius = 0.2f;
+
+    [Header("Player Fade Paramteres")]
+    [SerializeField] [Range(0,1)] float minFade = 0.2f;
+    [SerializeField] [Range(0,10)] float fadeHiddenDistance = 0.5f;
+    [SerializeField] [Range(0,10)] float fadeVisibleDistance = 2.0f;
+    [SerializeField] float fadeSmoothTime = 0.08f;
     
     Camera mainCamera;
+    RendererFader playerFader;
+    Collider playerFadeCollider;
 
     float currentObstructionDistance = Mathf.Infinity;
     float obstructionDistanceVelocity;
+    
+    float currentPlayerFade = 1f;
+    float playerFadeVelocity;
 
     void Awake()
     {
         mainCamera = GetComponent<Camera>();
         mainCamera.fieldOfView = fov;
+        
+        if (viewMode == ViewMode.ThirdPerson)
+        {
+            EnsurePlayerFader();
+        }
     }
 
     void LateUpdate()
@@ -116,11 +132,40 @@ public class CameraRig : MonoBehaviour
                 obstructionSmoothTime
             );
         }
-
         
         // UPDATE THE POSITION, TODO: easing function? shi probably
         position = cameraParams.TrackingPosition + targetToCameraNormalized * currentObstructionDistance;
         
+        
+        // fade player if we're too close
+        if (viewMode is ViewMode.ThirdPerson)
+        {
+            EnsurePlayerFader();
+            
+            Vector3 closestPoint = playerFadeCollider != null
+                ? playerFadeCollider.ClosestPoint(position)
+                : cameraParams.TrackingPosition;
+            
+            float distance = Vector3.Distance(position, closestPoint); // dist from camera to player hitbox or (tracking target if hitbox is null) 
+            
+            // smooth damp the fade
+            float targetFade = Mathf.InverseLerp(fadeHiddenDistance, fadeVisibleDistance, distance);
+            currentPlayerFade = Mathf.SmoothDamp(currentPlayerFade, targetFade, ref playerFadeVelocity, fadeSmoothTime);
+            //playerFader?.SetFade(Mathf.Max(minFade,currentPlayerFade)); // dont go below min fade
+            playerFader?.SetFade(Mathf.Max(minFade,currentPlayerFade)); // dont go below min fade
+        }
+        
         mainCamera.SetParams(position, rotation);
+    }
+    
+    void EnsurePlayerFader()
+    {
+        if (playerFader != null) return;
+
+        Player player = viewSource.GetComponentInParent<Player>();
+        if (player == null) return;
+
+        playerFader = new RendererFader(player.gameObject);
+        playerFadeCollider = player.GetComponent<Collider>();
     }
 }
