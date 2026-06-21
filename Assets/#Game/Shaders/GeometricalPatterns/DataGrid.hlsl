@@ -72,7 +72,7 @@ void DataGrid_float(
     float dotDist = length(frac(gv + 0.5) - 0.5);
     float dots = 1.0 - smoothstep(0.0, LineWidth * 1.6, dotDist);
 
-    // --- glow hotspots: smooth low-freq field that drifts over time ---
+    // --- glow hotspots: smooth low-freq field that drifts over time --``-
     float hot = DG_vnoise(gv * 0.18 - Time * 0.12);
     hot = pow(saturate(hot), 3.5);                // keeps the bright zones sparse
 
