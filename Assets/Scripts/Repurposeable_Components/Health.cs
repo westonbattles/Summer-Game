@@ -40,6 +40,19 @@ public class Health : MonoBehaviour, IDamageable
     }
 
     /// <summary>
+    /// Heal increases HP by the given amount, up to MaxHP. It fires OnHealthChanged. It ignores healing if already dead or if amount is 0 or negative.
+    /// </summary>
+    /// <param name="amount"></param>
+    public void Heal(float amount)
+    {
+        if (isDead || amount <= 0f)
+            return;
+
+        CurrentHP = Mathf.Min(CurrentHP + amount, MaxHP);
+        OnHealthChanged?.Invoke(CurrentHP, MaxHP);
+    }
+
+    /// <summary>
     /// SetMaxHP sets the max HP and refills. Affixes call this at spawn (e.g. elite x2.5 HP). It's called b4 combat starts, so a full refill is intended.
     /// </summary>
     /// <param name="newMax"></param>
