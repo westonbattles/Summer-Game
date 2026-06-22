@@ -24,8 +24,8 @@ public class MeleeAttack : AttackBehavior
 
         for (int i = 0; i < count; i++)
         {
-            if (hitBuffer[i].TryGetComponent<IDamageable>(out var dmg))
-                dmg.TakeDamage(new DamageInfo(damage, gameObject));
+            if (hitBuffer[i].TryGetComponent<IDamageable>(out var target))
+                target.TakeDamage(new DamageInfo(damage, gameObject));
         }
     }
 }
