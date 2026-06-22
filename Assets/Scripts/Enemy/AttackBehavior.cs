@@ -89,4 +89,18 @@ public abstract class AttackBehavior : MonoBehaviour
     /// Must be public so the Animator can invoke it by name. Subclass lands the hit.
     /// </summary>
     public abstract void OnAttackHit();
+
+    protected virtual void OnDrawGizmosSelected()
+    {
+        // Engagement range how close the target must be before the attack triggers.
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, proximityToAttack);
+
+        // Line to the current target (only meaningful in Play mode once injected).
+        if (target != null)
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawLine(transform.position, target.position);
+        }
+    }
 }
