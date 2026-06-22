@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class Health : MonoBehaviour, IDamageable
+public class Health : MonoBehaviour, IDamageable, IPoolable
 {
     [SerializeField] private float baseMaxHP = 100f;
 
@@ -21,6 +21,18 @@ public class Health : MonoBehaviour, IDamageable
     {
         MaxHP = baseMaxHP;
         CurrentHP = MaxHP;
+    }
+
+    public void OnSpawn()
+    {
+        isDead = false;
+        CurrentHP = MaxHP;      // MaxHP may have been bumped by an affix; refill to it
+        OnHealthChanged?.Invoke(CurrentHP, MaxHP);
+    }
+
+    public void OnDespawn()
+    {
+        // nothing to reset on despawn, but we need this to satisfy IPoolable
     }
 
     /// <summary>
