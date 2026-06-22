@@ -1,31 +1,39 @@
 using UnityEngine;
 
 /// <summary>
-/// Shared logic for all enemy attacks. Owns target tracking, range gating, and
-/// cooldown. Subclasses implement only PerformAttack() — the actual hit.
-/// Target is injected by the spawner via SetTarget (works with pooling).
+/// Shared logic for all enemy attacks. Owns target tracking, the engagement gate,
+/// and cooldown. The attack is split in two: StartAttack() triggers the swing/cast
+/// (called from Update when ready), and OnAttackHit() lands the damage (called by an
+/// Animation Event on the contact frame). Subclasses implement OnAttackHit().
+/// Target is injected by the spawner via SetTarget (pooling-friendly).
 /// </summary>
+[RequireComponent(typeof(Animator))]
 public abstract class AttackBehavior : MonoBehaviour
 {
     [Tooltip("How close the target needs to be to attack")]
     [SerializeField] protected float damage = 10f;
-    [Tooltip("Attacks per second")]
-    [SerializeField] protected float attackFrequency = 1f;
-    [Tooltip("How far can the actual attack reach. Do not confuse it with proximity to attack.")]
-    [SerializeField] protected float range = 2f;    // might be for raycast or overlap, depending on whats more performant. Makes HUGE difference long run
-    // Physics.OverlapSphereNonAlloc is the best bet for melee attacks, and raycasts for ranged attacks. We can even mix them in the same class if we want to do something like a shotgun blast.
-    [Tooltip("How close the target needs to be to start attacking")]
+    [Tooltip("Seconds between attacks")]
+    [SerializeField] protected float attackCooldown = 1f;
+    [Tooltip("How close the target needs to be to start attacking. Tl;dr engagement distance.")]
     [SerializeField] protected float proximityToAttack = 1.5f;
 
     protected Transform target;
+    protected Animator animator;
+
     protected float cooldownTimer;
+    private static readonly int AttackTrigger = Animator.StringToHash("Attack");
 
     /// <summary>Spawner calls this. Pass null to clear (e.g. on return to pool).</summary>
     public void SetTarget(Transform newTarget) => target = newTarget;
 
+    protected virtual void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
+
     protected virtual void OnEnable()
     {
-        cooldownTimer = 0f; // resets on cooldown
+        cooldownTimer = 0f; // resets on cooldown & respawn
     }
 
     protected virtual void Update()
@@ -38,10 +46,22 @@ public abstract class AttackBehavior : MonoBehaviour
         float distance = Vector3.Distance(transform.position, target.position);
         if (distance > proximityToAttack) return;
 
-        PerformAttack();
-        cooldownTimer = attackFrequency;   // this means seconds between attacks. Do not confuse with attacks per second.
+        StartAttack();
     }
 
-    /// <summary>The actual hit. Melee = overlap + TakeDamage; Ranged = spawn projectile.</summary>
-    protected abstract void PerformAttack();
+    /// <summary>
+    /// Decision moment: fire the animation and start the cooldown. The actual hit
+    /// comes later, when the animation's contact frame fires OnAttackHit().
+    /// </summary>
+    protected virtual void StartAttack()
+    {
+        animator.SetTrigger(AttackTrigger);
+        cooldownTimer = attackCooldown;
+    }
+
+    /// <summary>
+    /// Called by an Animation Event on the swing/cast's contact frame.
+    /// Must be public so the Animator can invoke it by name. Subclass lands the hit.
+    /// </summary>
+    public abstract void OnAttackHit();
 }
