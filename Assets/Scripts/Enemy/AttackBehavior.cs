@@ -7,7 +7,7 @@ using UnityEngine;
 /// Animation Event on the contact frame). Subclasses implement OnAttackHit().
 /// Target is injected by the spawner via SetTarget (pooling-friendly).
 /// </summary>
-[RequireComponent(typeof(Animator))]
+//[RequireComponent(typeof(Animator))]
 public abstract class AttackBehavior : MonoBehaviour
 {
     [Header("Debug / no-animation testing")]
@@ -28,11 +28,14 @@ public abstract class AttackBehavior : MonoBehaviour
     private static readonly int AttackTrigger = Animator.StringToHash("Attack");
 
     /// <summary>Spawner calls this. Pass null to clear (e.g. on return to pool).</summary>
-    public void SetTarget(Transform newTarget) => target = newTarget;
+    public void SetTarget(Transform newTarget) { 
+        Debug.Log($"SetTarget called with: {(newTarget == null ? "NULL" : newTarget.name)}", this);
+        target = newTarget; 
+    }
 
     protected virtual void Awake()
     {
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     protected virtual void OnEnable()
@@ -42,9 +45,14 @@ public abstract class AttackBehavior : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (target == null) return;
 
-        cooldownTimer -= Time.deltaTime;
+        if (target == null)
+        {
+            Debug.LogError("Target is null.");
+            return;
+        }
+
+            cooldownTimer -= Time.deltaTime;
         if (cooldownTimer > 0f) return;
 
         float distance = Vector3.Distance(transform.position, target.position);
@@ -70,12 +78,10 @@ public abstract class AttackBehavior : MonoBehaviour
 
         if (useAnimationEvents)
         {
-            animator.SetTrigger(AttackTrigger);
+            animator.SetBool("Attack", true);
         }
-        else
-        {
-            Invoke(nameof(OnAttackHit), debugWindupSeconds);
-        }
+
+        Invoke(nameof(OnAttackHit), debugWindupSeconds);
     }
 
     /// <summary>

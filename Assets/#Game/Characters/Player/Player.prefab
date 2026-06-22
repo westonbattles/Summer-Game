@@ -200,8 +200,6 @@ GameObject:
   - component: {fileID: 1593231636947593448}
   - component: {fileID: 4855516021531199088}
   - component: {fileID: 5137472634430860159}
-  - component: {fileID: 5472867954873147883}
-  - component: {fileID: 5018958837598082785}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -341,31 +339,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLook
   mouseSensitivity: 0.4
---- !u!114 &5472867954873147883
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6463087256270042916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 025ee709e62301942b65e0a3f975fc24, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Health
-  baseMaxHP: 100
---- !u!114 &5018958837598082785
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6463087256270042916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2077f25229caccf4695f28c2ef12e382, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HealthTester
 --- !u!1 &6517233512885325830
 GameObject:
   m_ObjectHideFlags: 0
@@ -628,6 +601,9 @@ GameObject:
   - component: {fileID: 2273063705403022870}
   - component: {fileID: 6119034046236272020}
   - component: {fileID: 5042983332938195416}
+  - component: {fileID: 4286250888966674348}
+  - component: {fileID: 4320589330041492667}
+  - component: {fileID: 5258712838110965554}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -707,3 +683,51 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4286250888966674348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122134414016963670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 025ee709e62301942b65e0a3f975fc24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  baseMaxHP: 100
+--- !u!114 &4320589330041492667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122134414016963670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8538b6490a4bd7941b4258c511237402, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TestTarget
+--- !u!136 &5258712838110965554
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122134414016963670}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
