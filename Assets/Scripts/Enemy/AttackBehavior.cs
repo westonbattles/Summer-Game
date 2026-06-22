@@ -10,6 +10,10 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public abstract class AttackBehavior : MonoBehaviour
 {
+    [Header("Debug / no-animation testing")]
+    [SerializeField] private bool useAnimationEvents = true;
+    [SerializeField] private float debugWindupSeconds = 0.3f;
+
     [Tooltip("How close the target needs to be to attack")]
     [SerializeField] protected float damage = 10f;
     [Tooltip("Seconds between attacks")]
@@ -53,10 +57,25 @@ public abstract class AttackBehavior : MonoBehaviour
     /// Decision moment: fire the animation and start the cooldown. The actual hit
     /// comes later, when the animation's contact frame fires OnAttackHit().
     /// </summary>
+    //protected virtual void StartAttack()
+    //{
+    //    animator.SetTrigger(AttackTrigger);
+    //    cooldownTimer = attackCooldown;
+    //}
+
+    // debug: allow subclasses to override StartAttack() to add debug windup if not using animation events
     protected virtual void StartAttack()
     {
-        animator.SetTrigger(AttackTrigger);
         cooldownTimer = attackCooldown;
+
+        if (useAnimationEvents)
+        {
+            animator.SetTrigger(AttackTrigger);
+        }
+        else
+        {
+            Invoke(nameof(OnAttackHit), debugWindupSeconds);
+        }
     }
 
     /// <summary>
@@ -64,4 +83,18 @@ public abstract class AttackBehavior : MonoBehaviour
     /// Must be public so the Animator can invoke it by name. Subclass lands the hit.
     /// </summary>
     public abstract void OnAttackHit();
+
+    protected virtual void OnDrawGizmosSelected()
+    {
+        // Engagement range — how close the target must be before the attack triggers.
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, proximityToAttack);
+
+        // Line to the current target (only meaningful in Play mode once injected).
+        if (target != null)
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawLine(transform.position, target.position);
+        }
+    }
 }

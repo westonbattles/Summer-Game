@@ -200,6 +200,8 @@ GameObject:
   - component: {fileID: 1593231636947593448}
   - component: {fileID: 4855516021531199088}
   - component: {fileID: 5137472634430860159}
+  - component: {fileID: 5472867954873147883}
+  - component: {fileID: 5018958837598082785}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -339,6 +341,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLook
   mouseSensitivity: 0.4
+--- !u!114 &5472867954873147883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6463087256270042916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 025ee709e62301942b65e0a3f975fc24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  baseMaxHP: 100
+--- !u!114 &5018958837598082785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6463087256270042916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2077f25229caccf4695f28c2ef12e382, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthTester
 --- !u!1 &6517233512885325830
 GameObject:
   m_ObjectHideFlags: 0

@@ -28,4 +28,13 @@ public class MeleeAttack : AttackBehavior
                 target.TakeDamage(new DamageInfo(damage, gameObject));
         }
     }
+
+    protected override void OnDrawGizmosSelected()
+    {
+        base.OnDrawGizmosSelected();   // draw the yellow proximity circle too
+
+        // Swing reach — the actual OverlapSphere that lands the hit.
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, swingReach);
+    }
 }
