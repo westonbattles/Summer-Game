@@ -37,23 +37,31 @@ public class CameraRig : MonoBehaviour
     [SerializeField] float fadeSmoothTime = 0.08f;
     
     Camera mainCamera;
+    Player owningPlayer; // so we can detach camera at runtime for smoother camera
     RendererFader playerFader;
     Collider playerFadeCollider;
 
     float currentObstructionDistance = Mathf.Infinity;
     float obstructionDistanceVelocity;
-    
-    float currentPlayerFade = 1f;
-    float playerFadeVelocity;
 
     void Awake()
     {
         mainCamera = GetComponent<Camera>();
         mainCamera.fieldOfView = fov;
+
+        owningPlayer = viewSource != null ? viewSource.GetComponentInParent<Player>() : null;
         
         if (viewMode == ViewMode.ThirdPerson)
         {
             EnsurePlayerFader();
+        }
+    }
+
+    void Start()
+    {
+        if (viewMode == ViewMode.ThirdPerson) // might be able to change for other viewmodes
+        {
+            transform.SetParent(null, true); // detach camera from player so we can move it independantly
         }
     }
 
@@ -71,11 +79,11 @@ public class CameraRig : MonoBehaviour
             case ViewMode.Dialogue:
                 throw new NotImplementedException("Dialogue camera not implemented");
                 // ApplyThirdPersonCameraParams(dialgoueViewSource);
-                break;
+                //break;
             
             case ViewMode.FirstPerson:
                 throw new NotImplementedException("First person camera not implemented");
-                break;
+                //break;
         }
     }
 
@@ -150,9 +158,9 @@ public class CameraRig : MonoBehaviour
             
             // smooth damp the fade
             float targetFade = Mathf.InverseLerp(fadeHiddenDistance, fadeVisibleDistance, distance);
-            currentPlayerFade = Mathf.SmoothDamp(currentPlayerFade, targetFade, ref playerFadeVelocity, fadeSmoothTime);
-            //playerFader?.SetFade(Mathf.Max(minFade,currentPlayerFade)); // dont go below min fade
-            playerFader?.SetFade(Mathf.Max(minFade,currentPlayerFade)); // dont go below min fade
+            float fade = Mathf.Max(minFade, targetFade); // don't go below min fade
+            //fade = Mathf.Max(minFade, Mathf.Round(fade * 17f) / 17f); weird smoothing bs - ignore for now
+            playerFader?.SetFade(fade);
         }
         
         mainCamera.SetParams(position, rotation);
@@ -161,11 +169,9 @@ public class CameraRig : MonoBehaviour
     void EnsurePlayerFader()
     {
         if (playerFader != null) return;
-
-        Player player = viewSource.GetComponentInParent<Player>();
-        if (player == null) return;
-
-        playerFader = new RendererFader(player.gameObject);
-        playerFadeCollider = player.GetComponent<Collider>();
+        if (owningPlayer == null) return;
+        
+        playerFader = new RendererFader(owningPlayer.gameObject);
+        playerFadeCollider = owningPlayer.GetComponent<Collider>();
     }
 }
