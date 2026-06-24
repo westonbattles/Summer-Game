@@ -181,8 +181,8 @@ public class CameraRig : MonoBehaviour
     // shitty drawing that describes this code https://imgur.com/a/95vidFf
     float SolveCrosshairObstructionMaxDistance(CameraParams cameraParams, Quaternion rotation, Vector3 targetToCameraNormalized, float maxDistance)
     {
-        const int innacurateSteps = 4;  // raycast steps along line that aren't supposed to be too accurate - just so we know where our wall changes so we can start looking at more refined steps
-        const int refinedSteps = 3;     // said refined steps
+        const int innacurateSteps = 6;  // raycast steps along line that aren't supposed to be too accurate - just so we know where our wall changes so we can start looking at more refined steps
+        const int refinedSteps = 5;     // said refined steps
         const float distanceOffset = 0.25f; // how far away in front of the player the wall (or anything collidable) needs to be for it to be a valid target
         const float behindPlayerTolerance = 0.01f;
         const float parallelEpsilon = 0.0001f;
