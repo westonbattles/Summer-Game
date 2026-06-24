@@ -201,7 +201,7 @@ public class CameraRig : MonoBehaviour
             float flatAimSqrMagnitude = flatAimDirection.sqrMagnitude;
             if (flatAimSqrMagnitude <= parallelEpsilon)
             {
-                return Mathf.Max(0f, Vector3.Dot(trackingPosition - rayOrigin, aimDirection));      // wtf
+                return Mathf.Max(0f, Vector3.Dot(trackingPosition - rayOrigin, aimDirection));      // if player up and camera view direction are nearly parralel, we can just return the dot which is how far along aimdirection the trackingposition is from ray origin
             }
 
             float distanceAlongAimRay = -Vector3.Dot(flatOrigin, flatAimDirection) / flatAimSqrMagnitude;
