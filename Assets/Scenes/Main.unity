@@ -1973,6 +1973,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1542361588}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< Updated upstream
 --- !u!1001 &378074383
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2045,6 +2046,8 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1445238629}
   m_SourcePrefab: {fileID: 100100000, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+=======
+>>>>>>> Stashed changes
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -2183,6 +2186,10 @@ PrefabInstance:
     - target: {fileID: 760290393894106730, guid: b9951ea7c4ff2ae45adf6af0c285eb11, type: 3}
       propertyPath: m_Name
       value: BlenderEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 760290393894106730, guid: b9951ea7c4ff2ae45adf6af0c285eb11, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3030814576924687593, guid: b9951ea7c4ff2ae45adf6af0c285eb11, type: 3}
       propertyPath: player
@@ -3853,24 +3860,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1445238620 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
-  m_PrefabInstance: {fileID: 378074383}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1445238629
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1445238620}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b25c075b9a73ccf4d8f08e1adabf547d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TestEnemyDriver
-  target: {fileID: 2143342694}
 --- !u!1 &1450111852
 GameObject:
   m_ObjectHideFlags: 0
@@ -9305,6 +9294,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< Updated upstream
 --- !u!1 &2143342688
 GameObject:
   m_ObjectHideFlags: 0
@@ -9505,6 +9495,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 457c16cb19e72324e8da55c64a75d2f6, type: 3}
+=======
+>>>>>>> Stashed changes
 --- !u!1001 &6804361139888241997
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9592,10 +9584,7 @@ SceneRoots:
   - {fileID: 755519842}
   - {fileID: 1450111856}
   - {fileID: 2123813237}
-  - {fileID: 2305359818828785910}
   - {fileID: 1584456106}
-  - {fileID: 378074383}
-  - {fileID: 2143342694}
   - {fileID: 803058265}
   - {fileID: 798030427}
   - {fileID: 1500698567}
