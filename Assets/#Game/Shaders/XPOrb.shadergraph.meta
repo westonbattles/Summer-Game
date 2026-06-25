@@ -11,8 +11,9 @@ ScriptedImporter:
   useAsTemplate: 1
   exposeTemplateAsShader: 1
   template:
-    name: 
-    category: 
-    description: 
+    name: XPOrb
+    category: XP
+    description: XP orb shader is a sprite lit shader designed for billboards or
+      2d sprites.
     icon: {instanceID: 0}
     thumbnail: {instanceID: 0}
