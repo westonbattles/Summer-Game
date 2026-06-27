@@ -41,10 +41,10 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
     /// <param name="info"></param>
     public void TakeDamage(DamageInfo info)
     {
-        Debug.Log($"{name} TakeDamage: {info.Amount}", this);
-
         if (isDead || info.Amount <= 0f)
             return;
+
+        Debug.Log($"{name} TakeDamage: {info.Amount}", this);
 
         CurrentHP = Mathf.Max(CurrentHP - info.Amount, 0f);
         OnHealthChanged?.Invoke(CurrentHP, MaxHP);
