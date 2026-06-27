@@ -29,9 +29,9 @@ public class PlayerInputReader : MonoBehaviour
 
     public void ReadInput()
     {
-        Move = _moveAction?.ReadValue<Vector2>() ?? Vector2.zero;
-        Look = _lookAction?.ReadValue<Vector2>() ?? Vector2.zero;
-        JumpPressed = _jumpAction != null && (autoBhop ? _jumpAction.IsPressed() : _jumpAction.WasPressedThisFrame());
+        Move = _moveAction?.ReadValue<Vector2>() ?? Vector2.zero; // defaults to zero if the action returns null
+        Look = _lookAction?.ReadValue<Vector2>() ?? Vector2.zero; // defaults to zero if the action returns null
+        JumpPressed = _jumpAction != null && (autoBhop ? _jumpAction.IsPressed() : _jumpAction.WasPressedThisFrame()); // defaults to false if the action returns null
     }
 
     public void Configure(bool useAutoBhop)

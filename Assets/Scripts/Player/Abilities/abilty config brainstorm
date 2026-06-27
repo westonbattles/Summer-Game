@@ -1,0 +1,11 @@
+   Ability           Resource                               Activation and runtime behavior                                                                                                                        
+
+
+   Revolver          6 rounds (mag size?), reload duration  Pew pew gun shoot
+   Psychic Pulse     Cooldown                               Spawn a projectile , i think ability should own its collision behavior
+   Forward Dash      Charges                                Several charges recharge over time
+   Third Eye         Cooldown                               Timed beam with repeated damage ticks
+   Brass Knuckles    Unlimited / short cooldown?            Combo state + combo reset timing im assuming?
+   Spin              Cooldown                               Area attack
+   Ground Pound      Cooldown                               Multi-phase: activate, detect impact, AoE
+   Thinking Pipe     Cooldown                               (Talk to orion about this) Smoke-zone object that handles DOT and player buff?

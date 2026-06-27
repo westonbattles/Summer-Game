@@ -35,6 +35,8 @@ public class CameraRig : MonoBehaviour
     [SerializeField] [Range(0,10)] float fadeVisibleDistance = 2.0f;
     [SerializeField] float fadeSmoothTime = 0.08f;
     
+    public Vector3 aimDirection { get; private set; } // gonna be a vector from player to the object spot that the crosshair is looking at
+    
     Camera mainCamera;
     Player owningPlayer; // so we can detach camera at runtime for smoother camera
     RendererFader playerFader;
@@ -45,6 +47,9 @@ public class CameraRig : MonoBehaviour
 
     void Awake()
     {
+
+        aimDirection = Vector3.forward; // TEMP TODO: REMOVE
+        
         mainCamera = GetComponent<Camera>();
         mainCamera.fieldOfView = fov;
 
