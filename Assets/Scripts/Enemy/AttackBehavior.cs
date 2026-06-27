@@ -29,7 +29,7 @@ public abstract class AttackBehavior : MonoBehaviour
 
     /// <summary>Spawner calls this. Pass null to clear (e.g. on return to pool).</summary>
     public void SetTarget(Transform newTarget) { 
-        //Debug.Log($"SetTarget called with: {(newTarget == null ? "NULL" : newTarget.name)}", this);
+        Debug.Log($"SetTarget called with: {(newTarget == null ? "NULL" : newTarget.name)}", this);
         target = newTarget; 
     }
 

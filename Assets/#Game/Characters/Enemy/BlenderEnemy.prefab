@@ -8,22 +8,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 817663937308119340, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
-      propertyPath: swingReach
-      value: 2.94
-      objectReference: {fileID: 0}
-    - target: {fileID: 817663937308119340, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
-      propertyPath: attackCooldown
-      value: 0.43
-      objectReference: {fileID: 0}
-    - target: {fileID: 817663937308119340, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
-      propertyPath: proximityToAttack
-      value: 3.14
-      objectReference: {fileID: 0}
-    - target: {fileID: 817663937308119340, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
-      propertyPath: debugWindupSeconds
-      value: 0.09
-      objectReference: {fileID: 0}
     - target: {fileID: 888112467468903464, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

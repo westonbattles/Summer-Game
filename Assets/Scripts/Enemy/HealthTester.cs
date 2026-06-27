@@ -19,13 +19,13 @@ public class HealthTester : MonoBehaviour
     private void OnEnable()
     {
         // Subscribe so we can see the events actually fire.
-        //health.OnHealthChanged += LogHealthChanged;
+        health.OnHealthChanged += LogHealthChanged;
         health.OnDeath += LogDeath;
     }
 
     private void OnDisable()
     {
-        //health.OnHealthChanged -= LogHealthChanged;
+        health.OnHealthChanged -= LogHealthChanged;
         health.OnDeath -= LogDeath;
     }
 
