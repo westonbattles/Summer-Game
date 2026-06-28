@@ -94,8 +94,9 @@ public class Player : MonoBehaviour, ICharacterController
         // handle swap
         if (_input.SwapPressed) _characterSwitcher.Swap();
 
+        bool hasMoveInput = _input.Move.SqrMagnitude() > 0.01; // floating point imprecision
         Vector3 planarVelocity = Vector3.ProjectOnPlane(_motor.Velocity, _motor.CharacterUp);
-        _playerAnimator.HandleMovementAnimation(planarVelocity.magnitude, _motor.GroundingStatus.IsStableOnGround);
+        _playerAnimator.HandleMovementAnimation(planarVelocity.magnitude, _motor.GroundingStatus.IsStableOnGround, hasMoveInput);
         
 
     }
@@ -165,6 +166,7 @@ public class Player : MonoBehaviour, ICharacterController
         if (_jumpBufferCounter > 0f)
         {
             ApplyJump(ref currentVelocity, ref horizontalVelocity, target, deltaTime);
+            _playerAnimator.PlayJumpAnimation();
         }
         else
         {

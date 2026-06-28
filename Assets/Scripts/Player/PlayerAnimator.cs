@@ -6,6 +6,7 @@ public class PlayerAnimator
     static readonly int Speed = Animator.StringToHash("Speed");
     static readonly int Moving = Animator.StringToHash("isMoving");
     static readonly int Grounded = Animator.StringToHash("isGrounded");
+    static readonly int Jump = Animator.StringToHash("JumpTrigger");
     static readonly int PrimaryAbility = Animator.StringToHash("PrimaryAbility");
     static readonly int SecondaryAbility = Animator.StringToHash("SecondaryAbility");
     static readonly int MovementAbility = Animator.StringToHash("MovementAbility");
@@ -19,13 +20,14 @@ public class PlayerAnimator
         _characterSwitcher = characterSwitcher;
     }
 
-    public void HandleMovementAnimation(float movementSpeed, bool isGrounded)
+    public void HandleMovementAnimation(float movementSpeed, bool isGrounded, bool hasMoveInput)
     {
-        CurrentAnimator.SetBool(Moving, movementSpeed > 1.75f); // floating point percision handling
-        
-        // todo: more stuff
+        CurrentAnimator.SetFloat(Speed, movementSpeed);
+        CurrentAnimator.SetBool(Moving, hasMoveInput || movementSpeed > 1f);
+        CurrentAnimator.SetBool(Grounded, isGrounded);
     }
 
+    public void PlayJumpAnimation() { CurrentAnimator.SetTrigger(Jump); }
     public void PlayPrimaryAbility() { CurrentAnimator.SetTrigger(PrimaryAbility); }
     public void PlaySecondaryAbility() { CurrentAnimator.SetTrigger(SecondaryAbility); }
     public void PlayMovementAbility() { CurrentAnimator.SetTrigger(MovementAbility); }
