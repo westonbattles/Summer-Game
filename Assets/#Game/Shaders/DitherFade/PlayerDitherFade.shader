@@ -1,4 +1,4 @@
-Shader "Summer Game/Player/Dither Fade Outline"
+Shader "Summer Game/Player/Dither Fade"
 {
     Properties
     {
@@ -7,17 +7,13 @@ Shader "Summer Game/Player/Dither Fade Outline"
 
         [Header(Player Fade)]
         _Fade("Fade", Range(0, 1)) = 1
-        _DitherCellSize("Dither Cell Size (Pixels)", Range(1, 32)) = 6
+        _DitherCellSize("Dither Cell Size (Pixels)", Range(1, 32)) = 7
 
         [Header(Lighting)]
         _Metallic("Metallic", Range(0, 1)) = 0
-        _Smoothness("Smoothness", Range(0, 1)) = 0.45
+        _Smoothness("Smoothness", Range(0, 1)) = 0.5
         _Occlusion("Occlusion", Range(0, 1)) = 1
         [HDR] _EmissionColor("Emission Color", Color) = (0, 0, 0, 0)
-
-        [Header(Outline)]
-        [HDR] _OutlineColor("Outline Color", Color) = (0.02, 0.03, 0.04, 1)
-        _OutlineWidth("Outline Width", Range(0, 0.25)) = 0.035
 
         [HideInInspector] _QueueOffset("Queue Offset", Float) = 0
     }
@@ -34,103 +30,6 @@ Shader "Summer Game/Player/Dither Fade Outline"
         }
 
         LOD 300
-
-        Pass
-        {
-            Name "Outline"
-            Tags { "LightMode" = "SRPDefaultUnlit" }
-
-            Cull Front
-            ZWrite On
-            ZTest LEqual
-
-            HLSLPROGRAM
-            #pragma target 3.0
-            #pragma vertex OutlineVertex
-            #pragma fragment OutlineFragment
-            #pragma multi_compile_instancing
-            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Fog.hlsl"
-
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-
-            TEXTURE2D(_BaseMap);
-            SAMPLER(sampler_BaseMap);
-
-            CBUFFER_START(UnityPerMaterial)
-                float4 _BaseMap_ST;
-                half4 _BaseColor;
-                half _Fade;
-                float _DitherCellSize;
-                half _Metallic;
-                half _Smoothness;
-                half _Occlusion;
-                half4 _EmissionColor;
-                half4 _OutlineColor;
-                float _OutlineWidth;
-            CBUFFER_END
-
-            struct Attributes
-            {
-                float4 positionOS : POSITION;
-                float3 normalOS : NORMAL;
-                float2 uv : TEXCOORD0;
-                UNITY_VERTEX_INPUT_INSTANCE_ID
-            };
-
-            struct Varyings
-            {
-                float4 positionCS : SV_POSITION;
-                float2 uv : TEXCOORD0;
-                half fogFactor : TEXCOORD1;
-                UNITY_VERTEX_INPUT_INSTANCE_ID
-                UNITY_VERTEX_OUTPUT_STEREO
-            };
-
-            float ScreenDotDitherThreshold(float4 positionCS)
-            {
-                float cellSize = max(_DitherCellSize, 1.0);
-                float2 cell = frac(positionCS.xy / cellSize) - 0.5;
-                return saturate(length(cell) * 1.41421356237);
-            }
-
-            void ClipDither(float fade, float4 positionCS)
-            {
-                float fade01 = saturate(fade);
-                clip((fade01 > 0.0 ? fade01 : -1.0) - ScreenDotDitherThreshold(positionCS));
-            }
-
-            Varyings OutlineVertex(Attributes input)
-            {
-                Varyings output = (Varyings)0;
-                UNITY_SETUP_INSTANCE_ID(input);
-                UNITY_TRANSFER_INSTANCE_ID(input, output);
-                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
-
-                float3 positionOS = input.positionOS.xyz + normalize(input.normalOS) * _OutlineWidth;
-                VertexPositionInputs positionInput = GetVertexPositionInputs(positionOS);
-
-                output.positionCS = positionInput.positionCS;
-                output.uv = TRANSFORM_TEX(input.uv, _BaseMap);
-                output.fogFactor = ComputeFogFactor(output.positionCS.z);
-                return output;
-            }
-
-            half4 OutlineFragment(Varyings input) : SV_Target
-            {
-                UNITY_SETUP_INSTANCE_ID(input);
-                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
-
-                half textureAlpha = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv).a * _BaseColor.a;
-                clip(textureAlpha - 0.001h);
-
-                ClipDither(_Fade, input.positionCS);
-
-                half4 color = _OutlineColor;
-                color.rgb = MixFog(color.rgb, input.fogFactor);
-                return color;
-            }
-            ENDHLSL
-        }
 
         Pass
         {
@@ -172,8 +71,6 @@ Shader "Summer Game/Player/Dither Fade Outline"
                 half _Smoothness;
                 half _Occlusion;
                 half4 _EmissionColor;
-                half4 _OutlineColor;
-                float _OutlineWidth;
             CBUFFER_END
 
             struct Attributes
@@ -301,8 +198,6 @@ Shader "Summer Game/Player/Dither Fade Outline"
                 half _Smoothness;
                 half _Occlusion;
                 half4 _EmissionColor;
-                half4 _OutlineColor;
-                float _OutlineWidth;
             CBUFFER_END
 
             struct Attributes
@@ -406,8 +301,6 @@ Shader "Summer Game/Player/Dither Fade Outline"
                 half _Smoothness;
                 half _Occlusion;
                 half4 _EmissionColor;
-                half4 _OutlineColor;
-                float _OutlineWidth;
             CBUFFER_END
 
             float3 _LightDirection;
@@ -506,8 +399,6 @@ Shader "Summer Game/Player/Dither Fade Outline"
                 half _Smoothness;
                 half _Occlusion;
                 half4 _EmissionColor;
-                half4 _OutlineColor;
-                float _OutlineWidth;
             CBUFFER_END
 
             struct Attributes
