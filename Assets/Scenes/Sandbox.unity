@@ -1973,11 +1973,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1542361588}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!20 &333508251 stripped
-Camera:
-  m_CorrespondingSourceObject: {fileID: 8661258950122048256, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-  m_PrefabInstance: {fileID: 6804361139888241997}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -3530,26 +3525,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: eyeLoadout
-      value: 
-      objectReference: {fileID: 11400000, guid: 33c053e3f5b55455d8cfe4c609fb7768, type: 2}
-    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: handLoadout
-      value: 
-      objectReference: {fileID: 11400000, guid: a4915b5678ee542d995b24e9087c2968, type: 2}
-    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: startingLoadout
-      value: 
-      objectReference: {fileID: 11400000, guid: 33c053e3f5b55455d8cfe4c609fb7768, type: 2}
     - target: {fileID: 6463087256270042916, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 7464586106785895091, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: aimCamera
-      value: 
-      objectReference: {fileID: 333508251}
     - target: {fileID: 8042118604927072296, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

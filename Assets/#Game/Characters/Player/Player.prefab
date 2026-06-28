@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 1593231636947593448}
   - component: {fileID: 4855516021531199088}
   - component: {fileID: 5137472634430860159}
+  - component: {fileID: 1342654777336327084}
+  - component: {fileID: 7464586106785895091}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -125,6 +127,9 @@ MonoBehaviour:
   friction: 12
   jumpHeight: 10
   jumpBufferTime: 0.05
+  eyeLoadout: {fileID: 11400000, guid: 33c053e3f5b55455d8cfe4c609fb7768, type: 2}
+  handLoadout: {fileID: 11400000, guid: a4915b5678ee542d995b24e9087c2968, type: 2}
+  startingLoadout: {fileID: 11400000, guid: 33c053e3f5b55455d8cfe4c609fb7768, type: 2}
 --- !u!114 &4855516021531199088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,6 +156,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLook
   mouseSensitivity: 0.4
+--- !u!114 &1342654777336327084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6463087256270042916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad2fbc1dc55250d4abc68510a2290a4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AbilityController
+--- !u!114 &7464586106785895091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6463087256270042916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 133b2af409bd4b34a8d0df63f4f902a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAim
+  aimCamera: {fileID: 8661258950122048256}
 --- !u!1 &6517233512885325830
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,7 +416,6 @@ GameObject:
   - component: {fileID: 4320589330041492667}
   - component: {fileID: 5258712838110965554}
   m_Layer: 0
-  m_Layer: 6
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
