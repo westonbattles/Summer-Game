@@ -113,4 +113,9 @@ public class Revolver : AbilityBehaviour
         revolver.ReloadTimeRemaining = 0f; // can remove, just makes things cleaner
         revolver.IsReloading = false;
     }
+
+    // revolver doesn't need a cancel. other abilities might
+    /*public override void Cancel(AbilityState state)
+    {
+    }*/
 }

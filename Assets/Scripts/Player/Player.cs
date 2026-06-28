@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(KinematicCharacterMotor))]
 [RequireComponent(typeof(AbilityController))]
 [RequireComponent(typeof(PlayerInputReader))]
+[RequireComponent(typeof(PlayerCharacterSwitcher))]
 [RequireComponent(typeof(PlayerAim))]
 [RequireComponent(typeof(PlayerLook))]
 public class Player : MonoBehaviour, ICharacterController
@@ -26,6 +27,9 @@ public class Player : MonoBehaviour, ICharacterController
     [SerializeField] AbilityLoadout eyeLoadout;
     [SerializeField] AbilityLoadout handLoadout;
     [SerializeField] AbilityLoadout startingLoadout;
+
+    public AbilityLoadout EyeLoadout => eyeLoadout;
+    public AbilityLoadout HandLoadout => handLoadout;
     
     KinematicCharacterMotor _motor;
     PlayerInputReader _input;
@@ -33,6 +37,8 @@ public class Player : MonoBehaviour, ICharacterController
     float _jumpBufferCounter;
     
     AbilityController _abilityController;
+    PlayerCharacterSwitcher _characterSwitcher;
+    PlayerAnimator _playerAnimator;
 
     void Awake()
     {
@@ -42,6 +48,9 @@ public class Player : MonoBehaviour, ICharacterController
         _input.Configure(autoBhop);
 
         _abilityController = GetComponent<AbilityController>();
+        _characterSwitcher = GetComponent<PlayerCharacterSwitcher>();
+        
+        _playerAnimator = new PlayerAnimator(_characterSwitcher);
 
         if (autoBhop)
         {
@@ -83,17 +92,12 @@ public class Player : MonoBehaviour, ICharacterController
         }
         
         // handle swap
-        if (_input.SwapPressed)
-        {
-            // swap loadout
-            AbilityLoadout next = _abilityController.CurrentLoadout == eyeLoadout ? handLoadout : eyeLoadout;
-            if (next == handLoadout) Debug.Log("Swapped to The Hand");
-            else if (next == eyeLoadout) Debug.Log("Swapped to The Eye");
-            _abilityController.SetLoadout(next);
-            
-            // swap everything else we need, mesh, textures, etc
-        }
+        if (_input.SwapPressed) _characterSwitcher.Swap();
+
+        Vector3 planarVelocity = Vector3.ProjectOnPlane(_motor.Velocity, _motor.CharacterUp);
+        _playerAnimator.HandleMovementAnimation(planarVelocity.magnitude, _motor.GroundingStatus.IsStableOnGround);
         
+
     }
 
     void UpdateJumpBuffer()
