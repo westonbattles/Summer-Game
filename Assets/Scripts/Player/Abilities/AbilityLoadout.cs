@@ -2,8 +2,8 @@ using UnityEngine;
 
 // another asset, immutable at runtime!!
 // the two loadouts we make with it will be thus used to create mirrored runtime instances that we can mutilate (mut!!!) as needed yayyyy pog champ!!! woo.... oh my god i am so tired ive been working this out all day fml AHHHHHH FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK FUCK  ok lock in time
-[CreateAssetMenu(fileName = "Abilties/Loadout", menuName = "New Ability Loadout")]
-public class AbilityLoadout : MonoBehaviour
+[CreateAssetMenu(fileName = "New Ability Loadout", menuName = "Abilities/Loadout")]
+public class AbilityLoadout : ScriptableObject
 {
     [SerializeField] Ability primary;
     [SerializeField] Ability secondary;

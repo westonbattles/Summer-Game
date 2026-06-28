@@ -1,7 +1,7 @@
 using UnityEngine;
 // this is the data asset. It's shared and note immutable at runtime!!!
 // these abilities will be thus used to create mirrored runtime instances that will have custom functionality attached
-[CreateAssetMenu(fileName = "New Ability", menuName = "Abilities/New Ability")]
+[CreateAssetMenu(fileName = "New Ability", menuName = "Abilities/Ability")]
 public class Ability : ScriptableObject
 {
     [Header("Info/Display")]

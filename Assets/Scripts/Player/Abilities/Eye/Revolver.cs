@@ -9,7 +9,7 @@ public class Revolver : AbilityBehaviour
     [Header("Firing")] 
     [SerializeField, Min(0)] float baseDamage = 12f;
     [SerializeField, Min(0)] float baseRange = 100f;
-    [SerializeField, Min(0)] float baseSecondsBetweenShots  = 0.15f;
+    [SerializeField, Min(0)] float baseSecondsBetweenShots  = 0.15f; // shot cooldown
     [SerializeField] LayerMask hitLayers = ~0;
 
     class RevolverState : AbilityState
@@ -73,6 +73,7 @@ public class Revolver : AbilityBehaviour
 
         Debug.Log("Ability: Shot Revolver!");
         revolver.Ammunition -= 1;
+        revolver.ShotCooldownRemaining = baseSecondsBetweenShots; // update cooldown
         
         return true;
     }
