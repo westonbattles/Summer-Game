@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class Revolver : AbilityBehaviour
 {
     [Header("Magazine")] 
@@ -8,7 +10,7 @@ public class Revolver : AbilityBehaviour
 
     [Header("Firing")] 
     [SerializeField, Min(0)] float baseDamage = 12f;
-    [SerializeField, Min(0)] float baseRange = 100f;
+    [SerializeField, Min(0)] float baseMaxRange = 100f;
     [SerializeField, Min(0)] float baseSecondsBetweenShots  = 0.15f; // shot cooldown
     [SerializeField] LayerMask hitLayers = ~0;
 
@@ -32,7 +34,7 @@ public class Revolver : AbilityBehaviour
 
     public override AbilityState CreateState()
     {
-        PlayerAim playerAim = Object.FindFirstObjectByType<PlayerAim>(); // ewwwwwwwww, its prob fine but should we throw an instance on the player class?
+        PlayerAim playerAim = UnityEngine.Object.FindFirstObjectByType<PlayerAim>(); // ewwwwwwwww, its prob fine but should we throw an instance on the player class?
         if (playerAim == null)
         {
             Debug.LogError("Revolver couldn't find PlayerAim");
@@ -70,9 +72,20 @@ public class Revolver : AbilityBehaviour
         if (revolver.IsReloading) return false;
         if (revolver.ShotCooldownRemaining > 0f) return false; // shot still on cooldown
         
-
-        Debug.Log("Ability: Shot Revolver!");
+        // TODO - use playerAim to actually shoot bullets
+        Vector3 targetPoint = revolver.PlayerAim.GetTargetPoint(baseMaxRange, hitLayers);
+        Vector3 shotOrigin = revolver.Shooter.transform.position + new Vector3(0f, 1.74f, 0f); // TODO: change origin to be position of gun muzzle in the actual world
+        Vector3 aimDirection = revolver.PlayerAim.GetShotDirection(shotOrigin, targetPoint); // normalized vector pointing in direction of where shot should be fired
+        Debug.DrawLine(
+            shotOrigin,
+            targetPoint,
+            Color.green,
+            2f,
+            false);
+        
         revolver.Ammunition -= 1;
+        Debug.Log($"Ability: Shot Revolver! ({revolver.Ammunition}/{magazineSize})");
+        
         revolver.ShotCooldownRemaining = baseSecondsBetweenShots; // update cooldown
         
         return true;

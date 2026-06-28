@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Ability Loadout", menuName = "Abilities/Loadout")]
 public class AbilityLoadout : ScriptableObject
 {
+    [Header("Starting Loadout")]
     [SerializeField] Ability primary;
     [SerializeField] Ability secondary;
     [SerializeField] Ability movement;

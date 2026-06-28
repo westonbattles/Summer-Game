@@ -2,7 +2,9 @@ using KinematicCharacterController;
 using UnityEngine;
 
 [RequireComponent(typeof(KinematicCharacterMotor))]
+[RequireComponent(typeof(AbilityController))]
 [RequireComponent(typeof(PlayerInputReader))]
+[RequireComponent(typeof(PlayerAim))]
 [RequireComponent(typeof(PlayerLook))]
 public class Player : MonoBehaviour, ICharacterController
 {
@@ -20,10 +22,17 @@ public class Player : MonoBehaviour, ICharacterController
     [SerializeField] float jumpHeight = 12f;
     [SerializeField] float jumpBufferTime = 0.2f;
 
+    [Header("Loadouts")]
+    [SerializeField] AbilityLoadout eyeLoadout;
+    [SerializeField] AbilityLoadout handLoadout;
+    [SerializeField] AbilityLoadout startingLoadout;
+    
     KinematicCharacterMotor _motor;
     PlayerInputReader _input;
     PlayerLook _look;
     float _jumpBufferCounter;
+    
+    AbilityController _abilityController;
 
     void Awake()
     {
@@ -32,10 +41,14 @@ public class Player : MonoBehaviour, ICharacterController
         _look = GetComponentInChildren<PlayerLook>();
         _input.Configure(autoBhop);
 
+        _abilityController = GetComponent<AbilityController>();
+
         if (autoBhop)
         {
             jumpBufferTime = 0.01f;
         }
+        
+        _abilityController.SetLoadout(startingLoadout);
     }
 
     void Start()
@@ -46,6 +59,41 @@ public class Player : MonoBehaviour, ICharacterController
     void Update()
     {
         UpdateJumpBuffer();
+        
+        // handle ability input
+        if (_input.PrimaryAbilityPressed)
+        {
+            if (_abilityController.GetCurrentAbility(AbilitySlot.Primary) == null) Debug.Log("Can't execute Primary ability: ability has not been set");
+            else _abilityController.ExecuteAbility(AbilitySlot.Primary);
+        }
+        if (_input.SecondaryAbilityPressed)
+        {
+            if (_abilityController.GetCurrentAbility(AbilitySlot.Secondary) == null) Debug.Log("Can't execute Secondary ability: ability has not been set");
+            else _abilityController.ExecuteAbility(AbilitySlot.Secondary);
+        }
+        if (_input.MovementAbilityPressed)
+        {
+            if (_abilityController.GetCurrentAbility(AbilitySlot.Movement) == null) Debug.Log("Can't execute Movement ability: ability has not been set");
+            else _abilityController.ExecuteAbility(AbilitySlot.Movement);
+        }
+        if (_input.SpecialAbilityPressed)
+        {
+            if (_abilityController.GetCurrentAbility(AbilitySlot.Special) == null) Debug.Log("Can't execute Special ability: ability has not been set");
+            else _abilityController.ExecuteAbility(AbilitySlot.Special);
+        }
+        
+        // handle swap
+        if (_input.SwapPressed)
+        {
+            // swap loadout
+            AbilityLoadout next = _abilityController.CurrentLoadout == eyeLoadout ? handLoadout : eyeLoadout;
+            if (next == handLoadout) Debug.Log("Swapped to The Hand");
+            else if (next == eyeLoadout) Debug.Log("Swapped to The Eye");
+            _abilityController.SetLoadout(next);
+            
+            // swap everything else we need, mesh, textures, etc
+        }
+        
     }
 
     void UpdateJumpBuffer()
@@ -59,7 +107,7 @@ public class Player : MonoBehaviour, ICharacterController
             _jumpBufferCounter -= Time.deltaTime;
         }
     }
-
+    
     public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
     {
         Vector3 forward = Vector3.ProjectOnPlane(GetLookRotation() * Vector3.forward, _motor.CharacterUp);

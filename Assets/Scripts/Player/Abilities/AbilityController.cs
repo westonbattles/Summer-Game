@@ -8,16 +8,11 @@ public class AbilityController : MonoBehaviour
 
     public const int Slots = 4;
     
-    [SerializeField] AbilityLoadout startingLoadout;
-    Dictionary<AbilityLoadout, AbilityLoadoutInstance> _loadoutInstances = new(); // map that 
+    Dictionary<AbilityLoadout, AbilityLoadoutInstance> _loadoutInstances = new(); // map that keeps all loadout references that are mirroed to our loadout assets 
     
     public AbilityLoadout CurrentLoadout { get; private set; }
     AbilityLoadoutInstance _currentLoadoutInstance;
 
-    void Awake()
-    {
-        SetLoadout(startingLoadout);
-    }
 
     void Update()
     {
@@ -30,7 +25,7 @@ public class AbilityController : MonoBehaviour
         }
     }
 
-    void SetLoadout(AbilityLoadout loadout)
+    public void SetLoadout(AbilityLoadout loadout)
     {
 
         if (loadout == CurrentLoadout) return;
@@ -50,6 +45,13 @@ public class AbilityController : MonoBehaviour
     public Ability GetCurrentAbility(AbilitySlot slot)
     {
         return _currentLoadoutInstance?.GetAbility(slot);
+    }
+
+    public void ReplaceAbility(AbilityLoadout loadout, AbilitySlot slot, Ability replacement)
+    {
+        if (loadout == null) return;
+        AbilityLoadoutInstance loadoutInstance = _loadoutInstances[loadout];
+        loadoutInstance.ReplaceAbility(replacement, slot);
     }
     
     AbilityLoadoutInstance GetOrCreateLoadoutInstance(AbilityLoadout loadout)
