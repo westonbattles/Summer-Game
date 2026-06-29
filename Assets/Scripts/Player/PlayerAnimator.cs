@@ -22,14 +22,45 @@ public class PlayerAnimator
         _characterSwitcher = characterSwitcher;
     }
 
-    public void HandleMovementAnimation(Vector2 moveInput, float velocity, bool isGrounded)
+    public void HandleMovementAnimation(Vector2 moveInput, Vector2 localVelocity, bool isGrounded)
     {
-        
         moveInput = Vector2.ClampMagnitude(moveInput, 1f);
-        bool hasMoveInput = moveInput.sqrMagnitude > 0.01; // floating point imprecision
+        bool hasMoveInput = moveInput.sqrMagnitude > 0.01f; // floating point imprecision
+        float velocity = localVelocity.magnitude;
 
-        CurrentAnimator.SetFloat(MoveX, moveInput.x);
-        CurrentAnimator.SetFloat(MoveY, moveInput.y);
+        Vector2 blendDirection = Vector2.zero;
+        if (hasMoveInput)
+        {
+            blendDirection = localVelocity.sqrMagnitude > 0.01f
+                ? localVelocity.normalized
+                : moveInput.normalized;
+        }
+
+        Vector2 currentBlendDirection = new Vector2(
+            CurrentAnimator.GetFloat(MoveX),
+            CurrentAnimator.GetFloat(MoveY));
+
+        bool startingMovement =
+            currentBlendDirection.sqrMagnitude <= 0.01f &&
+            blendDirection.sqrMagnitude > 0.01f;
+
+        // start moving fast, slower smooth changes between movement directions.
+        const float idleBlendTime = 0.01f;
+        const float movementBlendTime = 0.12f;
+        float blendTime = startingMovement ? idleBlendTime : movementBlendTime;
+        
+        CurrentAnimator.SetFloat(
+            MoveX,
+            blendDirection.x,
+            blendTime,
+            Time.deltaTime);
+        CurrentAnimator.SetFloat(
+            MoveY,
+            blendDirection.y,
+            blendTime,
+            Time.deltaTime);
+        
+        
         CurrentAnimator.SetFloat(Velocity, velocity);
         
         CurrentAnimator.SetBool(Moving, hasMoveInput || velocity > 1f);

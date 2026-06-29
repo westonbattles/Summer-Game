@@ -95,7 +95,13 @@ public class Player : MonoBehaviour, ICharacterController
         if (_input.SwapPressed) _characterSwitcher.Swap();
 
         Vector3 planarVelocity = Vector3.ProjectOnPlane(_motor.Velocity, _motor.CharacterUp);
-        _playerAnimator.HandleMovementAnimation(_input.Move, planarVelocity.magnitude, _motor.GroundingStatus.IsStableOnGround);
+        Vector3 localVelocity3 = transform.InverseTransformDirection(planarVelocity);
+        Vector2 localVelocity = new Vector2(localVelocity3.x, localVelocity3.z);
+        
+        _playerAnimator.HandleMovementAnimation(
+            _input.Move,
+            localVelocity,
+            _motor.GroundingStatus.IsStableOnGround);
         
 
     }
