@@ -3,7 +3,9 @@ using UnityEngine;
 
 public class PlayerAnimator
 {
-    static readonly int Speed = Animator.StringToHash("Speed");
+    static readonly int MoveX = Animator.StringToHash("MoveX");
+    static readonly int MoveY = Animator.StringToHash("MoveY");
+    static readonly int Velocity = Animator.StringToHash("Velocity");
     static readonly int Moving = Animator.StringToHash("isMoving");
     static readonly int Grounded = Animator.StringToHash("isGrounded");
     static readonly int Jump = Animator.StringToHash("JumpTrigger");
@@ -20,10 +22,17 @@ public class PlayerAnimator
         _characterSwitcher = characterSwitcher;
     }
 
-    public void HandleMovementAnimation(float movementSpeed, bool isGrounded, bool hasMoveInput)
+    public void HandleMovementAnimation(Vector2 moveInput, float velocity, bool isGrounded)
     {
-        CurrentAnimator.SetFloat(Speed, movementSpeed);
-        CurrentAnimator.SetBool(Moving, hasMoveInput || movementSpeed > 1f);
+        
+        moveInput = Vector2.ClampMagnitude(moveInput, 1f);
+        bool hasMoveInput = moveInput.sqrMagnitude > 0.01; // floating point imprecision
+
+        CurrentAnimator.SetFloat(MoveX, moveInput.x);
+        CurrentAnimator.SetFloat(MoveY, moveInput.y);
+        CurrentAnimator.SetFloat(Velocity, velocity);
+        
+        CurrentAnimator.SetBool(Moving, hasMoveInput || velocity > 1f);
         CurrentAnimator.SetBool(Grounded, isGrounded);
     }
 

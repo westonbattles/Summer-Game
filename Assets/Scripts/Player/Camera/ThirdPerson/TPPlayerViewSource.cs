@@ -11,6 +11,7 @@ public class TPPlayerViewSource : TPViewSource
     [Tooltip("If the Camera targeted y position should be given by the player or by the ground under the player")]
     [SerializeField] bool dontTrackJumps = true;
     [SerializeField] float maxGroundFollowDistance = 0.3f;
+    [SerializeField] float maxFallCameraLag = 2f;
     [SerializeField] float verticalSmoothTime = 0.15f;
 
     [Header("Vertical Orbit Easing")] 
@@ -81,6 +82,13 @@ public class TPPlayerViewSource : TPViewSource
                 ref trackingVelocityY,
                 verticalSmoothTime
             );
+
+            float highestAllowedY = target.position.y + maxFallCameraLag;
+            if (smoothTrackingY > highestAllowedY)
+            {
+                smoothTrackingY = highestAllowedY;
+                trackingVelocityY = 0; // stop the smoothing
+            }
 
             trackingPosition.y = smoothTrackingY;
         }
