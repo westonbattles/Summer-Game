@@ -14,8 +14,14 @@ public class Revolver : AbilityBehaviour
     [SerializeField, Min(0)] float baseSecondsBetweenShots  = 0.15f; // shot cooldown
     [SerializeField] LayerMask hitLayers = ~0;
 
+    //[Header("Projectile")]
+    //[SerializeField] Projectile projectilePrefab;
+    //[SerializeField] float projectileSpeed = 80f;
+    //[SerializeField] Transform muzzle;
+
     class RevolverState : AbilityState
     {
+        public RevolverRecoilController RecoilController;
         public PlayerAim PlayerAim;
         public GameObject Shooter;
 
@@ -24,9 +30,10 @@ public class Revolver : AbilityBehaviour
         public float ShotCooldownRemaining; // how much time left on the shot cooldown
         public float ReloadTimeRemaining;   // how much time left on the reload
 
-        public RevolverState(PlayerAim playerAim, int startingAmmunition)
+        public RevolverState(PlayerAim playerAim, RevolverRecoilController recoilController, int startingAmmunition)
         {
             PlayerAim = playerAim;
+            RecoilController = recoilController;
             Shooter = playerAim.gameObject;
             Ammunition = startingAmmunition;
         }
@@ -40,8 +47,8 @@ public class Revolver : AbilityBehaviour
             Debug.LogError("Revolver couldn't find PlayerAim");
             return null;
         }
-        
-        RevolverState state = new RevolverState(playerAim, magazineSize);
+        RevolverRecoilController recoilController = playerAim.GetComponentInChildren<RevolverRecoilController>(includeInactive: true);
+        RevolverState state = new RevolverState(playerAim, recoilController, magazineSize);
         return state;
     }
 
@@ -82,7 +89,26 @@ public class Revolver : AbilityBehaviour
             Color.green,
             2f,
             false);
-        
+
+        revolver.RecoilController?.Kick(aimDirection);
+
+        // for the projectile
+        //Vector3 spawnPos = shotOrigin;
+        //Quaternion rotation = Quaternion.LookRotation(aimDirection);
+        //Projectile projectile = UnityEngine.Object.Instantiate(
+        //        projectilePrefab,
+        //        shotOrigin,
+        //        Quaternion.LookRotation(aimDirection)
+        //);
+
+        //projectile.Launch(
+        //    aimDirection,
+        //    projectileSpeed,
+        //    new DamageInfo(baseDamage),
+        //    p => UnityEngine.Object.Destroy(p.gameObject)  // consider object pooling later please.
+        //);
+
+
         revolver.Ammunition -= 1;
         Debug.Log($"Ability: Shot Revolver! ({revolver.Ammunition}/{magazineSize})");
         

@@ -7,12 +7,19 @@ using UnityEngine;
 /// It does NOT know about the pool directly � the spawner injects a release callback.
 /// </summary>
 [RequireComponent(typeof(Collider))]
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody))]       // make sure its kinematic
 public class Projectile : MonoBehaviour
 {
+    [Header("Core Settings")]
     [Tooltip("The lifetime max duration of a projectile.")]
     [SerializeField] private float lifetime = 5f;   // it will despawn if it hits nothing
     [SerializeField] private LayerMask hittableLayers;
+
+    [Header("Visuals")]
+    [Tooltip("The visual child object containing the LineRenderer or Trail")]
+    [SerializeField] private GameObject visualBody;
+    [Tooltip("Spawned when hitting a valid target")]
+    [SerializeField] private GameObject impactVFXPrefab;
 
     private DamageInfo damageInfo;
     private float speed;
@@ -32,6 +39,10 @@ public class Projectile : MonoBehaviour
         isSpent = false;
 
         transform.forward = direction;
+
+        // object pooling will disable the visual body when the projectile is released, so we need to re-enable it here
+        if (visualBody != null)
+            visualBody.SetActive(true);
     }
 
     private void Update()
@@ -55,6 +66,12 @@ public class Projectile : MonoBehaviour
         if (other.TryGetComponent<IDamageable>(out var target))
             target.TakeDamage(damageInfo);
 
+        // spawn the hit projectiles. Instantiate isn't great but it's fine for our V-slice
+        if (impactVFXPrefab == null)
+            Debug.LogWarning("Projectile has no impactVFXPrefab assigned.");
+        else
+            Instantiate(impactVFXPrefab, transform.position, Quaternion.identity);
+
         Despawn();
     }
 
@@ -65,6 +82,8 @@ public class Projectile : MonoBehaviour
     {
         if (isSpent) return;
         isSpent = true;
+        if (visualBody != null)
+            visualBody.SetActive(false); // hide the visual body before returning to pool
         release?.Invoke(this);
     }
 }
