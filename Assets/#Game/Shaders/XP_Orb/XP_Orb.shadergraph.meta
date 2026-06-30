@@ -11,8 +11,8 @@ ScriptedImporter:
   useAsTemplate: 1
   exposeTemplateAsShader: 0
   template:
-    name: 
-    category: 
-    description: 
+    name: Default XP Orb
+    category: XP Orb
+    description: XP Orb is for collection and is a billboard
     icon: {instanceID: 0}
     thumbnail: {instanceID: 0}
