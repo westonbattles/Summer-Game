@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Pool-agnostic projectile. Carries a DamageInfo, flies forward, and on trigger
 /// contact deals damage once then releases itself back to whatever pool spawned it.
-/// It does NOT know about the pool directly — the spawner injects a release callback.
+/// It does NOT know about the pool directly ï¿½ the spawner injects a release callback.
 /// </summary>
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(Rigidbody))]
