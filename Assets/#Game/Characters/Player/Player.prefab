@@ -77,16 +77,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67a6dc14ccf73401f854a85510745459, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  leftHandAimPivot: {fileID: 0}
-  leftHandTarget: {fileID: 0}
+  leftHandAimPivot: {fileID: 7558322482207048750}
+  leftHandTarget: {fileID: 4647173825116263021}
+  leftElbowHint: {fileID: 0}
+  aimRotationOffset: {x: 0, y: 0, z: 0}
+  aimRotationSharpness: 90
+  aimHoldDuration: 0.12
+  aimReturnDuration: 0.15
   positionKick: 0.12
   kickImpulse: 16
   maxRecoil: 1
   maxRecoilVelocity: 24
+  wristKickRotation: {x: 40.1, y: 40, z: 0}
   springStrength: 225
   damping: 24
-  recoilDistance: 0.06
-  recoilAngle: 12
+  recoilDistance: 3
+  recoilLiftDistance: 0.2
+  recoilPitchAngle: 35
+  elbowDownDistance: 0.15
+  elbowOutDistance: 0.08
 --- !u!1 &1314900528563978947
 GameObject:
   m_ObjectHideFlags: 0
