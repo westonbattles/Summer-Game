@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3c2d2292ed916b14b8bc73f7a5073b4b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 170027
+  packageName: Confetti FX 2
+  packageVersion: 1.0.1
+  assetPath: Assets/Confetti FX 2/Materials/Basics/conf_basic.mat
+  uploadId: 692059

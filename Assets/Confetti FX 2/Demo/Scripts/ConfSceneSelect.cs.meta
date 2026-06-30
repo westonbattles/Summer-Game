@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 364ebf4b01a1d5d458a24eb005f20995
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 170027
+  packageName: Confetti FX 2
+  packageVersion: 1.0.1
+  assetPath: Assets/Confetti FX 2/Demo/Scripts/ConfSceneSelect.cs
+  uploadId: 692059

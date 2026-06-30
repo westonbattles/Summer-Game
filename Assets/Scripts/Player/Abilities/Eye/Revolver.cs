@@ -14,6 +14,11 @@ public class Revolver : AbilityBehaviour
     [SerializeField, Min(0)] float baseSecondsBetweenShots  = 0.15f; // shot cooldown
     [SerializeField] LayerMask hitLayers = ~0;
 
+    //[Header("Projectile")]
+    //[SerializeField] Projectile projectilePrefab;
+    //[SerializeField] float projectileSpeed = 80f;
+    //[SerializeField] Transform muzzle;
+
     class RevolverState : AbilityState
     {
         public PlayerAim PlayerAim;
@@ -82,7 +87,24 @@ public class Revolver : AbilityBehaviour
             Color.green,
             2f,
             false);
-        
+
+        // for the projectile
+        //Vector3 spawnPos = shotOrigin;
+        //Quaternion rotation = Quaternion.LookRotation(aimDirection);
+        //Projectile projectile = UnityEngine.Object.Instantiate(
+        //        projectilePrefab,
+        //        shotOrigin,
+        //        Quaternion.LookRotation(aimDirection)
+        //);
+
+        //projectile.Launch(
+        //    aimDirection,
+        //    projectileSpeed,
+        //    new DamageInfo(baseDamage),
+        //    p => UnityEngine.Object.Destroy(p.gameObject)  // consider object pooling later please.
+        //);
+
+
         revolver.Ammunition -= 1;
         Debug.Log($"Ability: Shot Revolver! ({revolver.Ammunition}/{magazineSize})");
         

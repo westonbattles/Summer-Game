@@ -198,6 +198,37 @@ MonoBehaviour:
   eyeModel: {fileID: 7036096850195796178}
   handAnimator: {fileID: 495669280607004535}
   eyeAnimator: {fileID: 7728646305316583233}
+--- !u!1 &6505037897921243107
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 432937950503099539}
+  m_Layer: 7
+  m_Name: Muzzle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &432937950503099539
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6505037897921243107}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.304, y: 0.793, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7988266622808486790}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6517233512885325830
 GameObject:
   m_ObjectHideFlags: 0
@@ -381,6 +412,7 @@ MonoBehaviour:
   distance: 4.3
   dontTrackJumps: 1
   maxGroundFollowDistance: 0.3
+  maxFallCameraLag: 2
   verticalSmoothTime: 0.15
   VOE_start: 5.1
   VOE_end: 85
@@ -1251,7 +1283,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8955316372418814459, guid: aa57e0fa510b64785b3f7d3233c585e7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 432937950503099539}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: aa57e0fa510b64785b3f7d3233c585e7, type: 3}
       insertIndex: -1
@@ -1287,5 +1322,10 @@ Animator:
 --- !u!4 &7705355922081188456 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: aa57e0fa510b64785b3f7d3233c585e7, type: 3}
+  m_PrefabInstance: {fileID: 7882518841939946883}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7988266622808486790 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8955316372418814459, guid: aa57e0fa510b64785b3f7d3233c585e7, type: 3}
   m_PrefabInstance: {fileID: 7882518841939946883}
   m_PrefabAsset: {fileID: 0}
