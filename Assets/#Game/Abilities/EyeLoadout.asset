@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: EyeLoadout
   m_EditorClassIdentifier: Assembly-CSharp::AbilityLoadout
   primary: {fileID: 11400000, guid: 91c29628541084a6fa5ffa64eb164c35, type: 2}
-  secondary: {fileID: 0}
+  secondary: {fileID: 11400000, guid: 13390b5a2d9884dfb8e36ffbff8a45d5, type: 2}
   movement: {fileID: 0}
   special: {fileID: 0}

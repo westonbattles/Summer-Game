@@ -16,18 +16,9 @@ MonoBehaviour:
   description: 
   icon: {fileID: 0}
   behaviour:
-    rid: 6477902053701058938
+    rid: -2
   references:
     version: 2
     RefIds:
-    - rid: 6477902053701058938
-      type: {class: Revolver, ns: , asm: Assembly-CSharp}
-      data:
-        magazineSize: 6
-        reloadDuration: 0.2
-        baseDamage: 12
-        baseMaxRange: 100
-        baseSecondsBetweenShots: 0.15
-        hitLayers:
-          serializedVersion: 2
-          m_Bits: 4294967295
+    - rid: -2
+      type: {class: , ns: , asm: }

@@ -1,3 +1,4 @@
+using System;
 using KinematicCharacterController;
 using UnityEngine;
 
@@ -28,6 +29,12 @@ public class Player : MonoBehaviour, ICharacterController
     [SerializeField] AbilityLoadout handLoadout;
     [SerializeField] AbilityLoadout startingLoadout;
 
+    public static Player Instance { get; private set; }
+    public PlayerAim Aim { get; private set; }
+    public PlayerLook Look { get; private set; }
+    public AbilityController AbilityController { get; private set; }
+    public PlayerCharacterSwitcher CharacterSwitcher { get; private set; }
+
     public AbilityLoadout EyeLoadout => eyeLoadout;
     public AbilityLoadout HandLoadout => handLoadout;
     
@@ -39,9 +46,21 @@ public class Player : MonoBehaviour, ICharacterController
     AbilityController _abilityController;
     PlayerCharacterSwitcher _characterSwitcher;
     PlayerAnimator _playerAnimator;
+    
+    // dash variables
+    Vector3 _dashVelocity;
+    bool _shouldDash;
+    bool _isDashing;
+    public bool IsDashing => _isDashing;
 
     void Awake()
     {
+        Instance = this;
+        Aim = GetComponent<PlayerAim>();
+        Look = GetComponent<PlayerLook>();
+        AbilityController = GetComponent<AbilityController>();
+        CharacterSwitcher = GetComponent<PlayerCharacterSwitcher>();
+        
         _motor = GetComponent<KinematicCharacterMotor>();
         _input = GetComponent<PlayerInputReader>();
         _look = GetComponentInChildren<PlayerLook>();
@@ -67,6 +86,8 @@ public class Player : MonoBehaviour, ICharacterController
 
     void Update()
     {
+        
+        
         UpdateJumpBuffer();
         
         // handle ability input
@@ -129,6 +150,14 @@ public class Player : MonoBehaviour, ICharacterController
 
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
     {
+        // perform dash
+        if (_shouldDash)
+        {
+            currentVelocity = _dashVelocity;
+            _shouldDash = false;
+            return;
+        }
+        
         Vector3 inputDirection = GetPlanarMoveDirection();
 
         if (_motor.GroundingStatus.IsStableOnGround)
@@ -228,9 +257,27 @@ public class Player : MonoBehaviour, ICharacterController
 
         return horizontalVelocity + acceleration * deltaTime * target; // floats before vector
     }
+    
+    /// Performs dash in a given direction with given speed
+    public void Dash(Vector3 directionNormalized, float speed)
+    {
+        _dashVelocity = directionNormalized * speed;
+        _shouldDash = true;
+        _isDashing = true;
+        //PlayRandomSound(launchSounds, launchPitchMin, launchPitchMax);
+        
+        _motor.ForceUnground(.25f); // lets you dash along objects without insta stopping you   
+    }
 
     public void BeforeCharacterUpdate(float deltaTime) { }
-    public void PostGroundingUpdate(float deltaTime) { }
+
+    public void PostGroundingUpdate(float deltaTime)
+    {
+        if (!_motor.LastGroundingStatus.IsStableOnGround && _motor.GroundingStatus.IsStableOnGround)
+        {
+            _isDashing = false;
+        }
+    }
     public void AfterCharacterUpdate(float deltaTime) { }
     public bool IsColliderValidForCollisions(Collider coll) => true;
     public void OnDiscreteCollisionDetected(Collider hitCollider) { }
