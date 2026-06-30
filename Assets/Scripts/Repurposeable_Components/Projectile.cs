@@ -8,12 +8,13 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(Rigidbody))]       // make sure its kinematic
-public class Projectile : MonoBehaviour
+public class Projectile : MonoBehaviour, IPoolable
 {
     [Header("Core Settings")]
     [Tooltip("The lifetime max duration of a projectile.")]
-    [SerializeField] private float lifetime = 5f;   // it will despawn if it hits nothing
+    [SerializeField] private float lifetime = 5f;
     [SerializeField] private LayerMask hittableLayers;
+    [SerializeField] private int poolCapacity = 16;     // of base 2
 
     [Header("Visuals")]
     [Tooltip("The visual child object containing the LineRenderer or Trail")]
@@ -21,28 +22,43 @@ public class Projectile : MonoBehaviour
     [Tooltip("Spawned when hitting a valid target")]
     [SerializeField] private GameObject impactVFXPrefab;
 
+    public int PoolCapacity => poolCapacity;
+
     private DamageInfo damageInfo;
     private float speed;
     private Action<Projectile> release;     // injected: "Put yourself back" FORCEEE!!!
     private float lifeTimer;
     private bool isSpent;                   // has it already hit something and dealt damage? I dunno *shrug*
 
-    /// <summary>
-    /// Called by the spawner right after the pool hands out this projectile.
-    /// </summary>
-    public void Launch(Vector3 direction, float speed, DamageInfo info, Action<Projectile> releaseCallback)
+    /// <summary>Called once by the pool manager right after Instantiate. Wires the release path for this instance's lifetime.</summary>
+    public void Initialize(Action<Projectile> releaseCallback)
+    {
+        release = releaseCallback;
+    }
+
+    /// <summary>Sets this shot's flight parameters. Pool lifecycle is already handled.</summary>
+    public void Launch(Vector3 direction, float speed, DamageInfo info)
     {
         this.speed = speed;
         damageInfo = info;
-        release = releaseCallback;
-        lifeTimer = lifetime;
-        isSpent = false;
-
         transform.forward = direction;
+    }
 
-        // object pooling will disable the visual body when the projectile is released, so we need to re-enable it here
+    /// <summary>Called by the pool's actionOnGet, before the projectile is fired.</summary>
+    public void OnSpawn()
+    {
+        isSpent = false;
+        lifeTimer = lifetime;
         if (visualBody != null)
             visualBody.SetActive(true);
+    }
+
+    /// <summary>Called by the pool's actionOnRelease.</summary>
+    public void OnDespawn()
+    {
+        if (visualBody != null)
+            visualBody.SetActive(false);
+        damageInfo = default;
     }
 
     private void Update()
@@ -57,11 +73,7 @@ public class Projectile : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (isSpent) return;
-
-        // Layer filter: ignore anything not on a hittable layer.
-        // not sure if walls should be handled separately? maybe we want different SFX or something. for now, just ignore them.
-        if ((hittableLayers.value & (1 << other.gameObject.layer)) == 0)
-            return;
+        if ((hittableLayers.value & (1 << other.gameObject.layer)) == 0) return;
 
         if (other.TryGetComponent<IDamageable>(out var target))
             target.TakeDamage(damageInfo);
@@ -82,8 +94,6 @@ public class Projectile : MonoBehaviour
     {
         if (isSpent) return;
         isSpent = true;
-        if (visualBody != null)
-            visualBody.SetActive(false); // hide the visual body before returning to pool
         release?.Invoke(this);
     }
 }
