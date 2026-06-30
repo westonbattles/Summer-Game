@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4571069305790079245}
   - component: {fileID: 6899568669637726964}
   m_Layer: 0
-  m_Name: XP_Orbs
+  m_Name: XP Orb Green
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
