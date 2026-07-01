@@ -58,4 +58,9 @@ public sealed class AbilityInstance
         _behaviour.Cancel(_state);
     }
 
+    // display reads for UI
+    public Sprite Icon => Ability.icon;
+    public float CooldownFraction => _behaviour.GetCooldownFraction(_state);
+    public int CurrentCharges => _behaviour.GetCurrentCharges(_state);
+    public int MaxCharges => _behaviour.GetMaxCharges(_state);
 }

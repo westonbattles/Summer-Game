@@ -134,6 +134,22 @@ public class Revolver : AbilityBehaviour
         revolver.IsReloading = false;
     }
 
+    public override int GetCurrentCharges(AbilityState state) => 
+        state is RevolverState r ? r.Ammunition : 0;
+
+    public override int GetMaxCharges(AbilityState state) => magazineSize;
+
+    public override float GetCooldownFraction(AbilityState state)
+    {
+        if (state is not RevolverState r) return 0f;
+        if (r.IsReloading && reloadDuration > 0f)
+            return Mathf.Clamp01(r.ReloadTimeRemaining / reloadDuration);
+        if (baseSecondsBetweenShots > 0f)
+            return Mathf.Clamp01(r.ShotCooldownRemaining / baseSecondsBetweenShots);
+        return 0f;
+    }
+
+
     // revolver doesn't need a cancel. other abilities might
     /*public override void Cancel(AbilityState state)
     {
