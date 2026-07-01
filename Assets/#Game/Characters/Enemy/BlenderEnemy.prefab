@@ -61,6 +61,8 @@ PrefabInstance:
     - {fileID: 58326397325589126, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
     - {fileID: 259425922093845636, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
     - {fileID: 5484198891856497733, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+    - {fileID: 6617042525696661146, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+    - {fileID: 817663937308119340, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
     m_RemovedGameObjects:
     - {fileID: 8456588543439128524, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
     m_AddedGameObjects:
@@ -73,13 +75,16 @@ PrefabInstance:
       addedObject: {fileID: 8031986632689078155}
     - targetCorrespondingSourceObject: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8542078646386352035}
-    - targetCorrespondingSourceObject: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 8949411120474807092}
     - targetCorrespondingSourceObject: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3030814576924687593}
+    - targetCorrespondingSourceObject: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4259839572381496315}
+    - targetCorrespondingSourceObject: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3786274940079891050}
   m_SourcePrefab: {fileID: 100100000, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
 --- !u!1 &760290393894106730 stripped
 GameObject:
@@ -109,19 +114,6 @@ CapsuleCollider:
   m_Height: 3
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &8542078646386352035
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 760290393894106730}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b25c075b9a73ccf4d8f08e1adabf547d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TestEnemyDriver
-  target: {fileID: 0}
 --- !u!195 &8949411120474807092
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -159,6 +151,39 @@ MonoBehaviour:
   player: {fileID: 0}
   stopDistance: 1
   resumeDistance: 2
+--- !u!114 &4259839572381496315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 760290393894106730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bbe0abe1b341a2439b3e7d6e7cf4c9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMeleeAttack
+  damage: 10
+  cooldown: 1
+  range: 3.9
+  windup: 0.3
+  hitRadius: 2.43
+  hitOrigin: {fileID: 0}
+  hittableLayers:
+    serializedVersion: 2
+    m_Bits: 128
+--- !u!114 &3786274940079891050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 760290393894106730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba12b5eac00fe57478a4f04fef8c0276, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackController
 --- !u!4 &8772466276889618876 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 888112467468903464, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}

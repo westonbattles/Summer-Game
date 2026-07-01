@@ -115,7 +115,7 @@ Material:
     - _GlowStrength: 8.15
     - _Metallic: 0
     - _NoiseInfluence: 1
-    - _NoiseSpeed: 15
+    - _NoiseSpeed: 11
     - _NoiseTiling: 1.64
     - _OcclusionStrength: 1
     - _Parallax: 0.005
