@@ -17,7 +17,7 @@ public class ProjectilePoolManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Destroy(gameObject); // dont make a second instance if one alr exists
             return;
         }
         Instance = this;

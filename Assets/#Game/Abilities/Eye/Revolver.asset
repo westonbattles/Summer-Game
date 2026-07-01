@@ -26,11 +26,10 @@ MonoBehaviour:
         magazineSize: 6
         reloadDuration: 1
         baseDamage: 12
+        baseBulletSpeed: 40
         baseMaxRange: 100
         baseSecondsBetweenShots: 0.6
         hitLayers:
           serializedVersion: 2
           m_Bits: 65
-        projectilePrefab: {fileID: 753450350473686990, guid: f369834dbe06813459a9c4713f520faa, type: 3}
-        projectileSpeed: 80
-        muzzle: {fileID: 8042118604927072296, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+        bulletPrefab: {fileID: 7939258498193964447, guid: 6eb16490f712145d9a8cac0eb6937718, type: 3}

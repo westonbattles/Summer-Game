@@ -8,12 +8,18 @@ public class Revolver : AbilityBehaviour
     [SerializeField, Min(1)] int magazineSize = 6;
     [SerializeField, Min(0f)] float reloadDuration = 0.2f;
 
-    [Header("Firing")] 
+    [Header("Firing")]
     [SerializeField, Min(0)] float baseDamage = 12f;
+    [SerializeField, Min(0)] float baseBulletSpeed = 70f;
     [SerializeField, Min(0)] float baseMaxRange = 100f;
     [SerializeField, Min(0)] float baseSecondsBetweenShots  = 0.15f; // shot cooldown
     [SerializeField] LayerMask hitLayers = ~0;
 
+    [Header("Prefab")]
+    [SerializeField] Projectile bulletPrefab;
+    //[Tooltip("Transform for the tip of the gun's muzzle to use as the origin for our revolver shots")]
+    //[SerializeField] Transform muzzle;
+    
     //[Header("Projectile")]
     //[SerializeField] Projectile projectilePrefab;
     //[SerializeField] float projectileSpeed = 80f;
@@ -41,7 +47,7 @@ public class Revolver : AbilityBehaviour
 
     public override AbilityState CreateState()
     {
-        PlayerAim playerAim = UnityEngine.Object.FindFirstObjectByType<PlayerAim>(); // ewwwwwwwww, its prob fine but should we throw an instance on the player class?
+        PlayerAim playerAim = Player.Instance.Aim;
         if (playerAim == null)
         {
             Debug.LogError("Revolver couldn't find PlayerAim");
@@ -81,34 +87,22 @@ public class Revolver : AbilityBehaviour
         
         // TODO - use playerAim to actually shoot bullets
         Vector3 targetPoint = revolver.PlayerAim.GetTargetPoint(baseMaxRange, hitLayers);
-        Vector3 shotOrigin = revolver.Shooter.transform.position + new Vector3(0f, 1.74f, 0f); // TODO: change origin to be position of gun muzzle in the actual world
+        Vector3 shotOrigin = revolver.RecoilController.Muzzle.position;
         Vector3 aimDirection = revolver.PlayerAim.GetShotDirection(shotOrigin, targetPoint); // normalized vector pointing in direction of where shot should be fired
-        Debug.DrawLine(
-            shotOrigin,
-            targetPoint,
-            Color.green,
-            2f,
-            false);
 
+        // visual recoil
         revolver.RecoilController?.Kick(aimDirection);
 
-        // for the projectile
-        //Vector3 spawnPos = shotOrigin;
-        //Quaternion rotation = Quaternion.LookRotation(aimDirection);
-        //Projectile projectile = UnityEngine.Object.Instantiate(
-        //        projectilePrefab,
-        //        shotOrigin,
-        //        Quaternion.LookRotation(aimDirection)
-        //);
+        // shoot projectile
+        bulletPrefab.transform.localScale = Vector3.one * 10; // visual debugging scale LMAOOO
+        Projectile projectile = ProjectilePoolManager.Instance.Get(bulletPrefab);
 
-        //projectile.Launch(
-        //    aimDirection,
-        //    projectileSpeed,
-        //    new DamageInfo(baseDamage),
-        //    p => UnityEngine.Object.Destroy(p.gameObject)  // consider object pooling later please.
-        //);
+        bool isCrit = false; // Todo: implement crit chance
 
+        DamageInfo damageInfo = new DamageInfo(baseDamage, Player.Instance.gameObject, isCrit);
+        projectile.Launch(shotOrigin, aimDirection, baseBulletSpeed, damageInfo);
 
+        
         revolver.Ammunition -= 1;
         Debug.Log($"Ability: Shot Revolver! ({revolver.Ammunition}/{magazineSize})");
         

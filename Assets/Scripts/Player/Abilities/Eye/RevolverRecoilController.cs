@@ -6,6 +6,10 @@ public class RevolverRecoilController : MonoBehaviour
     bool isConfigured;
     
     PlayerAim _playerAim;
+    
+    [SerializeField] Transform muzzle;
+    public Transform Muzzle => muzzle;
+    
     [SerializeField] Transform leftHandAimPivot;
     [SerializeField] Transform leftHandTarget;
     [SerializeField] Transform leftElbowHint;
@@ -40,10 +44,10 @@ public class RevolverRecoilController : MonoBehaviour
     [Tooltip("How far the revolver pitches upward before the spring returns it.")]
     [SerializeField, Range(0f, 90f)] float recoilPitchAngle = 35f;
 
-    [Header("Elbow Shape")]
-    [Tooltip("Keeps the elbow below the shoulder during the kick.")]
+    [Header("Elbow")]
+    [Tooltip("keeps the elbow below the shoulder during the kick.")]
     [SerializeField, Min(0f)] float elbowDownDistance = 0.15f;
-    [Tooltip("Keeps the left elbow outside the body during the kick.")]
+    [Tooltip("keeps the left elbow outside the body during the kick.")]
     [SerializeField, Min(0f)] float elbowOutDistance = 0.08f;
 
     Vector3 restingPosition;

@@ -17,8 +17,6 @@ public class Projectile : MonoBehaviour, IPoolable
     [SerializeField] private int poolCapacity = 16;     // of base 2
 
     [Header("Visuals")]
-    [Tooltip("The visual child object containing the LineRenderer or Trail")]
-    [SerializeField] private GameObject visualBody;
     [Tooltip("Spawned when hitting a valid target")]
     [SerializeField] private GameObject impactVFXPrefab;
 
@@ -30,12 +28,30 @@ public class Projectile : MonoBehaviour, IPoolable
     private float lifeTimer;
     private bool isSpent;                   // has it already hit something and dealt damage? I dunno *shrug*
 
+    void Awake()
+    {
+        Rigidbody body = GetComponent<Rigidbody>();
+        body.isKinematic = true;
+        body.useGravity = false; // redundant 
+
+        GetComponent<Collider>().isTrigger = true;
+    }
+
     /// <summary>Called once by the pool manager right after Instantiate. Wires the release path for this instance's lifetime.</summary>
     public void Initialize(Action<Projectile> releaseCallback)
     {
         release = releaseCallback;
     }
 
+    /// <summary>Sets this shot's flight parameters. Pool lifecycle is already handled.</summary>
+    public void Launch(Vector3 origin, Vector3 direction, float speed, DamageInfo info)
+    {
+        transform.position = origin;
+        this.speed = speed;
+        damageInfo = info;
+        transform.forward = direction;
+    }
+    
     /// <summary>Sets this shot's flight parameters. Pool lifecycle is already handled.</summary>
     public void Launch(Vector3 direction, float speed, DamageInfo info)
     {
@@ -49,15 +65,11 @@ public class Projectile : MonoBehaviour, IPoolable
     {
         isSpent = false;
         lifeTimer = lifetime;
-        if (visualBody != null)
-            visualBody.SetActive(true);
     }
 
     /// <summary>Called by the pool's actionOnRelease.</summary>
     public void OnDespawn()
     {
-        if (visualBody != null)
-            visualBody.SetActive(false);
         damageInfo = default;
     }
 
@@ -73,7 +85,7 @@ public class Projectile : MonoBehaviour, IPoolable
     private void OnTriggerEnter(Collider other)
     {
         if (isSpent) return;
-        if ((hittableLayers.value & (1 << other.gameObject.layer)) == 0) return;
+        if ((hittableLayers.value & (1 << other.gameObject.layer)) == 0) return; // only use collisions with correct layers
 
         if (other.TryGetComponent<IDamageable>(out var target))
             target.TakeDamage(damageInfo);

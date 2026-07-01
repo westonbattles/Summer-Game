@@ -2257,6 +2257,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &858282458 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5011142599298063276, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+  m_PrefabInstance: {fileID: 6804361139888241997}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &886627373
 GameObject:
   m_ObjectHideFlags: 0
@@ -2853,11 +2858,50 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
---- !u!4 &1041555826 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4647173825116263021, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-  m_PrefabInstance: {fileID: 6804361139888241997}
+--- !u!1 &1252971032
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1252971034}
+  - component: {fileID: 1252971033}
+  m_Layer: 0
+  m_Name: ProjectilePoolManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1252971033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252971032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2960d22d77b1646429794514f3c8a0fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectilePoolManager
+--- !u!4 &1252971034
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252971032}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1341376066
 Mesh:
   m_ObjectHideFlags: 0
@@ -3443,11 +3487,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 755519842}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &2036573726 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7558322482207048750, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-  m_PrefabInstance: {fileID: 6804361139888241997}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2123813234
 GameObject:
   m_ObjectHideFlags: 0
@@ -3536,33 +3575,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 114103371501496801, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: leftHandTarget
+      propertyPath: muzzle
       value: 
-      objectReference: {fileID: 1041555826}
-    - target: {fileID: 114103371501496801, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: recoilDistance
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 114103371501496801, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: leftHandAimPivot
-      value: 
-      objectReference: {fileID: 2036573726}
-    - target: {fileID: 114103371501496801, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: wristKickRotation.x
-      value: 40.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114103371501496801, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: wristKickRotation.y
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 114103371501496801, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: aimRotationSharpness
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: autoBhop
-      value: 1
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 858282458}
     - target: {fileID: 6463087256270042916, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: m_Name
       value: Player
@@ -3622,3 +3637,4 @@ SceneRoots:
   - {fileID: 755519842}
   - {fileID: 1450111856}
   - {fileID: 2123813237}
+  - {fileID: 1252971034}
