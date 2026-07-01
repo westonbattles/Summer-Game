@@ -148,4 +148,4 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 65
   poolCapacity: 16
-  impactVFXPrefab: {fileID: 0}
+  impactVFXPrefab: {fileID: 569113324181461956, guid: e20e476cca8eb5b499a2ce31d8d6d467, type: 3}
