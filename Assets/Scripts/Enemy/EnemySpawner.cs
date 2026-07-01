@@ -49,7 +49,7 @@ public class EnemySpawner : MonoBehaviour
             poolable.OnSpawn();
 
         // 3. Inject the target into every attack component.
-        foreach (var attack in enemy.GetComponentsInChildren<AttackBehavior>())
+        foreach (var attack in enemy.GetComponentsInChildren<IEnemyAttack>())
             attack.SetTarget(player);
 
         return enemy;
@@ -64,7 +64,7 @@ public class EnemySpawner : MonoBehaviour
         foreach (var poolable in enemy.GetComponentsInChildren<IPoolable>())
             poolable.OnDespawn();
 
-        foreach (var attack in enemy.GetComponentsInChildren<AttackBehavior>())
+        foreach (var attack in enemy.GetComponentsInChildren<IEnemyAttack>())
             attack.SetTarget(null);   // safety first! Don't want attacks firing at a dead player's corpse.
 
         pool.Release(enemy);

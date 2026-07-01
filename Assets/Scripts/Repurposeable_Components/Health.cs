@@ -83,6 +83,7 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
     /// <param name="killingBlow">Whoever did the killing blow.</param>
     private void Die(DamageInfo killingBlow)
     {
+        Debug.Log($"{name} Died: killed by {killingBlow.Source?.name ?? "unknown"}", this);
         if (isDead)
             return;
         isDead = true;
