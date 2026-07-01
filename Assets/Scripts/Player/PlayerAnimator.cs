@@ -6,6 +6,7 @@ public class PlayerAnimator
     static readonly int MoveX = Animator.StringToHash("MoveX");
     static readonly int MoveY = Animator.StringToHash("MoveY");
     static readonly int Velocity = Animator.StringToHash("Velocity");
+    static readonly int HasInput = Animator.StringToHash("HasInput");
     static readonly int Moving = Animator.StringToHash("isMoving");
     static readonly int Grounded = Animator.StringToHash("isGrounded");
     static readonly int Jump = Animator.StringToHash("JumpTrigger");
@@ -62,7 +63,7 @@ public class PlayerAnimator
         
         
         CurrentAnimator.SetFloat(Velocity, velocity);
-        
+        CurrentAnimator.SetBool(HasInput, hasMoveInput);
         CurrentAnimator.SetBool(Moving, hasMoveInput || velocity > 1f);
         CurrentAnimator.SetBool(Grounded, isGrounded);
     }
