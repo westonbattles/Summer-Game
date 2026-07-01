@@ -55,33 +55,5 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 457c16cb19e72324e8da55c64a75d2f6, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 817663937308119340}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 457c16cb19e72324e8da55c64a75d2f6, type: 3}
---- !u!1 &9178373531757329406 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2814683460217299330, guid: 457c16cb19e72324e8da55c64a75d2f6, type: 3}
-  m_PrefabInstance: {fileID: 6372560112130022012}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &817663937308119340
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9178373531757329406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cef75f6db53d0d8428949e1e41e5a3e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MeleeAttack
-  damage: 10
-  attackCooldown: 1
-  proximityToAttack: 1.5
-  swingReach: 2
-  hittableLayers:
-    serializedVersion: 2
-    m_Bits: 128
-  maxHits: 8

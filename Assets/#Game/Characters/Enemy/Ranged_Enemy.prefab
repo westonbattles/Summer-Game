@@ -89,35 +89,8 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6069959759757393492, guid: 457c16cb19e72324e8da55c64a75d2f6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3616635511303411221}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 457c16cb19e72324e8da55c64a75d2f6, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: -1760995342826594586}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 457c16cb19e72324e8da55c64a75d2f6, type: 3}
---- !u!1 &927916139300062336 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2814683460217299330, guid: 457c16cb19e72324e8da55c64a75d2f6, type: 3}
-  m_PrefabInstance: {fileID: 3165851859906618626}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &-1760995342826594586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 927916139300062336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dc155c3cc528ec4d9a74dc8349722dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RangedAttack
-  damage: 10
-  attackCooldown: 1
-  proximityToAttack: 1.5
-  projectilePrefab: {fileID: 0}
-  firePoint: {fileID: 3616635511303411221}
-  projectileSpeed: 12
-  defaultPoolSize: 16
 --- !u!4 &9210856586182875990 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6069959759757393492, guid: 457c16cb19e72324e8da55c64a75d2f6, type: 3}

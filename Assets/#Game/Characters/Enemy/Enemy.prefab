@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 6626566540294346488}
   - component: {fileID: 1473847496666502713}
   - component: {fileID: 2459382550447613388}
-  - component: {fileID: 268972116300844262}
   - component: {fileID: 6866691012167821880}
   m_Layer: 6
   m_Name: Enemy
@@ -153,18 +152,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   baseMaxHP: 100
---- !u!114 &268972116300844262
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2814683460217299330}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2077f25229caccf4695f28c2ef12e382, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HealthTester
 --- !u!114 &6866691012167821880
 MonoBehaviour:
   m_ObjectHideFlags: 0
