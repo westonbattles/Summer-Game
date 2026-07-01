@@ -1,6 +1,10 @@
 using System;
+using System.Numerics;
 using KinematicCharacterController;
 using UnityEngine;
+using Quaternion = UnityEngine.Quaternion;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 [RequireComponent(typeof(KinematicCharacterMotor))]
 [RequireComponent(typeof(AbilityController))]
@@ -256,6 +260,17 @@ public class Player : MonoBehaviour, ICharacterController
         }
 
         return horizontalVelocity + acceleration * deltaTime * target; // floats before vector
+    }
+
+    /// Dashes in move input direction only, no up/down
+    public void DashAlongPlane(float speed)
+    {
+        Vector2 moveInput = _input.Move == Vector2.zero ? Vector2.up : _input.Move;
+        
+        float yaw = _look.Yaw;
+        Vector3 dashDirection = Quaternion.AngleAxis(yaw, Vector3.up) * new Vector3(moveInput.x, 0.2f, moveInput.y).normalized; // rotate move input to match look rotation - https://stackoverflow.com/questions/74894102/unity-rotating-a-vector3-along-an-axis
+                                                                                                                                // y=0.2 is for testing purposes - but kinda feels good? might leave it tbh
+        Dash(dashDirection, speed);
     }
     
     /// Performs dash in a given direction with given speed

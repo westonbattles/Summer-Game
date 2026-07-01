@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Dash
   m_EditorClassIdentifier: Assembly-CSharp::Ability
   displayName: Dash
-  description: Forward impulse
+  description: Flat Directional Impulse
   icon: {fileID: 0}
   behaviour:
     rid: 6477902080174719171

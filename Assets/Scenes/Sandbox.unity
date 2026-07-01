@@ -3559,6 +3559,10 @@ PrefabInstance:
       propertyPath: aimRotationSharpness
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: autoBhop
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6463087256270042916, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: m_Name
       value: Player
