@@ -94,7 +94,7 @@ public class Revolver : AbilityBehaviour
         revolver.RecoilController?.Kick(aimDirection);
 
         // shoot projectile
-        bulletPrefab.transform.localScale = Vector3.one * 10; // visual debugging scale LMAOOO
+        //bulletPrefab.transform.localScale = Vector3.one * 10; // visual debugging scale LMAOOO
         Projectile projectile = ProjectilePoolManager.Instance.Get(bulletPrefab);
 
         bool isCrit = false; // Todo: implement crit chance
