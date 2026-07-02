@@ -2257,11 +2257,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &858282458 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5011142599298063276, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-  m_PrefabInstance: {fileID: 6804361139888241997}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &886627373
 GameObject:
   m_ObjectHideFlags: 0
@@ -3574,10 +3569,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 114103371501496801, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: muzzle
-      value: 
-      objectReference: {fileID: 858282458}
     - target: {fileID: 6463087256270042916, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: m_Name
       value: Player

@@ -18,7 +18,7 @@ public class Projectile : MonoBehaviour, IPoolable
 
     [Header("Visuals")]
     [Tooltip("Spawned when hitting a valid target")]
-    [SerializeField] private GameObject impactVFXPrefab;
+    [SerializeField] private PooledVfx impactVFXPrefab;
 
     public int PoolCapacity => poolCapacity;
 
@@ -94,7 +94,8 @@ public class Projectile : MonoBehaviour, IPoolable
         if (impactVFXPrefab == null)
             Debug.LogWarning("Projectile has no impactVFXPrefab assigned.");
         else
-            Instantiate(impactVFXPrefab, transform.position, Quaternion.identity);
+            //Instantiate(impactVFXPrefab, transform.position, Quaternion.identity);
+            VFXPoolManager.Instance.Play(impactVFXPrefab, transform.position, Quaternion.identity);
 
         Despawn();
     }
