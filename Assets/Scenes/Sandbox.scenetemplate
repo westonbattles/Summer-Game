@@ -64,7 +64,7 @@ MonoBehaviour:
     new scenes for testing.
   preview: {fileID: -8483222854378982156}
   dependencies:
-  - dependency: {fileID: 569113324181461956, guid: e20e476cca8eb5b499a2ce31d8d6d467, type: 3}
+  - dependency: {fileID: 569113324181461956, guid: 7fd722368492f4353a0936574197af35, type: 3}
     instantiationMode: 0
   - dependency: {fileID: 919132149155446097, guid: aa57e0fa510b64785b3f7d3233c585e7, type: 3}
     instantiationMode: 0
@@ -74,6 +74,8 @@ MonoBehaviour:
     instantiationMode: 0
   - dependency: {fileID: -5475051401550479605, guid: ecd8fe7a9dd0c844987e0e6f5dbca66b, type: 3}
     instantiationMode: 1
+  - dependency: {fileID: 4604608678760809334, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+    instantiationMode: 0
   - dependency: {fileID: 2800000, guid: 432b3086cebdc438d9d33de3669fb063, type: 2}
     instantiationMode: 1
   - dependency: {fileID: 9100000, guid: f24030da7a6f8420a94ff24e8f37e6af, type: 2}

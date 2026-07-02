@@ -6,7 +6,7 @@ using UnityEngine.Pool;
 public class VFXPoolManager : MonoBehaviour
 {
     public static VFXPoolManager Instance { get; private set; }
-
+    
     [Header("Budget")]
     [SerializeField, Min(1)] int globalMaxActive = 128;
 
@@ -119,7 +119,7 @@ public class VFXPoolManager : MonoBehaviour
         pool = new ObjectPool<PooledVfx>(
             () =>
             {
-                PooledVfx instance = Instantiate(prefab);
+                PooledVfx instance = Instantiate(prefab, transform);
                 instance.Initialize(pool.Release); // gets invoked by our vfx object, pool release null checking is handled in pooledvfx
                 instance.ResetForPool(transform);  // vfx transforms get initialized to the pool manager transform
                 return instance;
