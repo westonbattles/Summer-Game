@@ -6,8 +6,8 @@ using UnityEngine;
 /// contact deals damage once then releases itself back to whatever pool spawned it.
 /// It does NOT know about the pool directly � the spawner injects a release callback.
 /// </summary>
-[RequireComponent(typeof(Collider))]
-[RequireComponent(typeof(Rigidbody))]       // make sure its kinematic
+//[RequireComponent(typeof(Collider))]
+//[RequireComponent(typeof(Rigidbody))]       // make sure its kinematic
 public class Projectile : MonoBehaviour, IPoolable
 {
     [Header("Core Settings")]
@@ -18,6 +18,9 @@ public class Projectile : MonoBehaviour, IPoolable
 
     [Tooltip("Radius used for collision detection fixing")]
     [SerializeField, Min(0.001f)] private float sphereCastRadius;
+
+    [Tooltip("DO NOT ENABLE THIS UNLESS YOU REALLY NEED TO USE A COLLIDER FOR SOME REASON. LIKE FOR SOME ABSURED PROJECTILE SHAPE. SPHERECAST METHOD IS SO MUCH BETTER AND MORE EFFECIENT AND MOST PROJECTILES WORK PERFECTLY WITH A SPHERECAST IF THEYRE SMALL")]
+    [SerializeField] private bool usePhysicsCollision = false;
     
     [Header("Visuals")]
     [Tooltip("Spawned when hitting a valid target")]
@@ -34,16 +37,69 @@ public class Projectile : MonoBehaviour, IPoolable
     void Awake()
     {
         Rigidbody body = GetComponent<Rigidbody>();
+        Collider projectileCollider = GetComponent<Collider>();
+
+        if (!usePhysicsCollision)
+        {
+            if (body != null)
+            {
+                body.isKinematic = true;
+                body.useGravity = false; // redundant 
+                body.detectCollisions = false;
+            }
+
+            if (projectileCollider != null)
+                projectileCollider.enabled = false;
+
+            return;
+        }
+
+        if (body == null || projectileCollider == null)
+        {
+            Debug.LogError("Projectile physics collision fallback requires a Rigidbody and Collider.", this);
+            usePhysicsCollision = false;
+            return;
+        }
+
         body.isKinematic = true;
         body.useGravity = false; // redundant 
+        body.detectCollisions = true;
 
-        GetComponent<Collider>().isTrigger = true;
+        projectileCollider.enabled = true;
+        projectileCollider.isTrigger = true;
     }
 
     /// <summary>Called once by the pool manager right after Instantiate. Wires the release path for this instance's lifetime.</summary>
     public void Initialize(Action<Projectile> releaseCallback)
     {
         release = releaseCallback;
+    }
+    
+    static readonly Collider[] overlapBuffer = new Collider[8];
+    
+    /// make sure projectiles can't spawn inside walls
+    void CheckSpawnOverlap()
+    {
+        int hitCount = Physics.OverlapSphereNonAlloc(
+            transform.position,
+            sphereCastRadius,
+            overlapBuffer,
+            hittableLayers,
+            QueryTriggerInteraction.Collide);
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider hitCollider = overlapBuffer[i];
+
+            if (hitCollider == null)
+                continue;
+
+            Vector3 hitPoint =
+                hitCollider.ClosestPoint(transform.position);
+
+            HandleHit(hitCollider, hitPoint);
+            return;
+        }
     }
 
     /// <summary>Sets this shot's flight parameters. Pool lifecycle is already handled.</summary>
@@ -53,6 +109,8 @@ public class Projectile : MonoBehaviour, IPoolable
         this.speed = speed;
         damageInfo = info;
         transform.forward = direction;
+        
+        CheckSpawnOverlap();
     }
     
     /// <summary>Sets this shot's flight parameters. Pool lifecycle is already handled.</summary>
@@ -81,18 +139,16 @@ public class Projectile : MonoBehaviour, IPoolable
         Vector3 direction = transform.forward;
         Vector3 startPosition = transform.position;
         float deltaDistance = speed * Time.deltaTime; // s=d/t
-        
-        // sphere cast for collision detection
-        bool castSuccessful = Physics.SphereCast(
-            startPosition,
-            sphereCastRadius,
-            direction,
-            out RaycastHit hitInfo,
-            deltaDistance, 
-            hittableLayers, 
-            QueryTriggerInteraction.Collide);
-        
-        if (deltaDistance > 0f && castSuccessful)
+
+
+        if (deltaDistance > 0f && Physics.SphereCast(
+                startPosition,
+                sphereCastRadius,
+                direction,
+                out RaycastHit hitInfo,
+                deltaDistance,
+                hittableLayers,
+                QueryTriggerInteraction.Collide))
         {
             // move the projectile to the collision location
             transform.position = startPosition + direction * hitInfo.distance; // we cant use hit.point since itll put the bullet center at the collision point
@@ -107,10 +163,13 @@ public class Projectile : MonoBehaviour, IPoolable
         if (lifeTimer <= 0f)
             Despawn();
     }
-
+    
     private void OnTriggerEnter(Collider other)
     {
-        HandleHit(other, transform.position);
+        if (!usePhysicsCollision) return;
+
+        Vector3 impactPoint = other.ClosestPoint(transform.position);
+        HandleHit(other, impactPoint);
     }
 
     private void HandleHit(Collider other, Vector3 impactPoint)
@@ -127,7 +186,7 @@ public class Projectile : MonoBehaviour, IPoolable
             Debug.LogWarning("Projectile has no impactVFXPrefab assigned.");
         else
             //Instantiate(impactVFXPrefab, transform.position, Quaternion.identity);
-            VFXPoolManager.Instance.Play(impactVFXPrefab, transform.position, Quaternion.identity);
+            VFXPoolManager.Instance.Play(impactVFXPrefab, impactPoint, Quaternion.identity);
 
         Despawn();
     }

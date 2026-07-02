@@ -90,22 +90,37 @@ public class Revolver : AbilityBehaviour
         Vector3 shotOrigin = revolver.RecoilController.Muzzle.position;
         Vector3 aimDirection = revolver.PlayerAim.GetShotDirection(shotOrigin, targetPoint); // normalized vector pointing in direction of where shot should be fired
 
-        // visual recoil
-        revolver.RecoilController?.Kick(aimDirection);
-
         // shoot projectile
         Projectile projectile = ProjectilePoolManager.Instance.Get(bulletPrefab);
 
         bool isCrit = false; // Todo: implement crit chance
 
         DamageInfo damageInfo = new DamageInfo(baseDamage, Player.Instance.gameObject, isCrit);
-        projectile.Launch(shotOrigin, aimDirection, baseBulletSpeed, damageInfo);
-
         
+        // if obstruction exists between player and muzzle, place bullet at the obstruction there (should auto-impact)
+        Vector3 playerOrigin = Player.Instance.transform.position;
+        playerOrigin.y = shotOrigin.y; // same height as muzzle
+        Vector3 playerToMuzzle = shotOrigin - playerOrigin;
+        float obstructionDistance = playerToMuzzle.magnitude;
+
+        if (obstructionDistance > 0.001f)
+        {
+            Vector3 direction = playerToMuzzle / obstructionDistance; // manually calculate normal with our magnitude
+            if (Physics.Raycast(playerOrigin, direction, out RaycastHit hitInfo, obstructionDistance, hitLayers, QueryTriggerInteraction.Ignore))
+            {
+                shotOrigin = hitInfo.point + direction * 0.001f; // move a bit into the obstruction so we can detect overlap later in projectile code
+            }
+        }
+        
+        
+        projectile.Launch(shotOrigin, aimDirection, baseBulletSpeed, damageInfo);
         revolver.Ammunition -= 1;
-        Debug.Log($"Ability: Shot Revolver! ({revolver.Ammunition}/{magazineSize})");
+        //Debug.Log($"Ability: Shot Revolver! ({revolver.Ammunition}/{magazineSize})");
         
         revolver.ShotCooldownRemaining = baseSecondsBetweenShots; // update cooldown
+        
+        // visual recoil
+        revolver.RecoilController?.Kick(aimDirection);
         
         return true;
     }
