@@ -16,6 +16,9 @@ public class Projectile : MonoBehaviour, IPoolable
     [SerializeField] private LayerMask hittableLayers;
     [SerializeField] private int poolCapacity = 16;     // of base 2
 
+    [Tooltip("Radius used for collision detection fixing")]
+    [SerializeField, Min(0.001f)] private float sphereCastRadius;
+    
     [Header("Visuals")]
     [Tooltip("Spawned when hitting a valid target")]
     [SerializeField] private PooledVfx impactVFXPrefab;
@@ -75,8 +78,31 @@ public class Projectile : MonoBehaviour, IPoolable
 
     private void Update()
     {
-        transform.position += transform.forward * (speed * Time.deltaTime);
-
+        Vector3 direction = transform.forward;
+        Vector3 startPosition = transform.position;
+        float deltaDistance = speed * Time.deltaTime; // s=d/t
+        
+        // sphere cast for collision detection
+        bool castSuccessful = Physics.SphereCast(
+            startPosition,
+            sphereCastRadius,
+            direction,
+            out RaycastHit hitInfo,
+            deltaDistance, 
+            hittableLayers, 
+            QueryTriggerInteraction.Collide);
+        
+        if (deltaDistance > 0f && castSuccessful)
+        {
+            // move the projectile to the collision location
+            transform.position = startPosition + direction * hitInfo.distance; // we cant use hit.point since itll put the bullet center at the collision point
+            HandleHit(hitInfo.collider, hitInfo.point); // plays vfx at impact point; -> could change to center of bullet if we want, but particles coming backward with this will look a lot better
+            return;
+        }
+        
+        //transform.position += transform.forward * (speed * Time.deltaTime);
+        transform.position = startPosition + direction * deltaDistance; // literally the same thing just alr cached these values so might as well use them
+        
         lifeTimer -= Time.deltaTime;
         if (lifeTimer <= 0f)
             Despawn();
@@ -84,11 +110,17 @@ public class Projectile : MonoBehaviour, IPoolable
 
     private void OnTriggerEnter(Collider other)
     {
+        HandleHit(other, transform.position);
+    }
+
+    private void HandleHit(Collider other, Vector3 impactPoint)
+    {
         if (isSpent) return;
         if ((hittableLayers.value & (1 << other.gameObject.layer)) == 0) return; // only use collisions with correct layers
 
-        if (other.TryGetComponent<IDamageable>(out var target))
-            target.TakeDamage(damageInfo);
+        // allows for colliders in children of idamageable target to be damaged
+        IDamageable target = other.GetComponentInParent<IDamageable>();
+        target?.TakeDamage(damageInfo);
 
         // spawn the hit projectiles. Instantiate isn't great but it's fine for our V-slice
         if (impactVFXPrefab == null)

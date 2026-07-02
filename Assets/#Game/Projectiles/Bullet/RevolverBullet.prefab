@@ -148,4 +148,5 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 65
   poolCapacity: 16
+  sphereCastRadius: 0.108
   impactVFXPrefab: {fileID: -4200568939282018780, guid: 7fd722368492f4353a0936574197af35, type: 3}
