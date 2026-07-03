@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Ability
   displayName: Revolver
   description: A cool revolver (FIXME)
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 0b6f2e3847d708344adf61b797b1fe2b, type: 3}
   behaviour:
     rid: 6477902024073281706
   references:

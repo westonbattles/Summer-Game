@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Ability
   displayName: Dash
   description: Flat Directional Impulse
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 4a18a0953601a804f9864d14d2ceb311, type: 3}
   behaviour:
     rid: 6477902080174719171
   references:
