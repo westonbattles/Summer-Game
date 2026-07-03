@@ -82,10 +82,9 @@ public class Revolver : AbilityBehaviour
     {
         RevolverState revolver = state as RevolverState;
         if (revolver == null) return false;
-        if (revolver.IsReloading) return false;
         if (revolver.ShotCooldownRemaining > 0f) return false; // shot still on cooldown
+        if (revolver.IsReloading) return false;
         
-        // TODO - use playerAim to actually shoot bullets
         Vector3 targetPoint = revolver.PlayerAim.GetTargetPoint(baseMaxRange, hitLayers);
         Vector3 shotOrigin = revolver.RecoilController.Muzzle.position;
         Vector3 aimDirection = revolver.PlayerAim.GetShotDirection(shotOrigin, targetPoint); // normalized vector pointing in direction of where shot should be fired
