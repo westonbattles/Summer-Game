@@ -1,23 +1,23 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-enum SwingStage
-{
-    NotSwinging,
-    First,
-    Second,
-    Third
-}
 
 [Serializable]
 public class BrassKnuckles : AbilityBehaviour
 {
     [Header("Properties")] 
     [SerializeField] public float baseDamage = 10f;
-    [SerializeField] public float cooldownTime = 2.3f;
+    [Tooltip("Percentage that damage scales with each subsequent combo state")]
+    [SerializeField] public float baseComboIncrease = 0.25f;
+    [SerializeField] public int baseComboStages = 3;
+    [SerializeField] public float baseCooldownTime = 0.65f;
+    [SerializeField] public float baseComboResetTime = 2.5f;
+    
+    // Modifiers
+    public int MaxCombo => baseComboStages + Player.Instance.Modifiers.BrassKnucklesExtraComboNumber;
     
     // todo: list of animations for each state?
-    
     
     // https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Physics.OverlapBoxNonAlloc.html properties
 
@@ -27,9 +27,10 @@ public class BrassKnuckles : AbilityBehaviour
         public Player Player;
         public PlayerAim PlayerAim;
 
-        public SwingStage SwingState = SwingStage.NotSwinging;
-        public bool IsSwinging => SwingState == SwingStage.NotSwinging;
+        public int ComboState = 0;
+        // public bool ComboActive => ComboState != ComboStage.First;
         public float CooldownRemaining;         // how much time left on the ability cooldown
+        public float ComboResetTimeRemaining;   // how much time left on the combo reset timer
 
         public BrassKnucklesState(Player player)
         {
@@ -61,20 +62,28 @@ public class BrassKnuckles : AbilityBehaviour
         // make sure we actually can/should execute
         BrassKnucklesState brassKnuckles = state as BrassKnucklesState;
         if (brassKnuckles == null) return false;
-        if (brassKnuckles.IsSwinging) return false;
         if (brassKnuckles.CooldownRemaining > 0f) return false;
   
+        Debug.Log($"Combo State: {brassKnuckles.ComboState}");
 
         
-
-        brassKnuckles.CooldownRemaining = cooldownTime; // start cooldown countdown
+        // succesful execution
+        
+        // boxcast
+        
+        // update combo state
+        if (brassKnuckles.ComboState < MaxCombo) brassKnuckles.ComboState += 1;
+        
+        brassKnuckles.CooldownRemaining = baseCooldownTime; // start cooldown countdown
         return true;
     }
 
     public override float GetCooldownFraction(AbilityState state)
     {
         BrassKnucklesState brassKnuckles = state as BrassKnucklesState;
-        // todo
+        if (brassKnuckles == null) return 0f;
+        
+        return brassKnuckles.CooldownRemaining / baseCooldownTime;
     }
     // no cancel since carrying momentum after character swap is kinda cool
     /*public override void Cancel(AbilityState state)

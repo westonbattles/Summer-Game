@@ -34,6 +34,7 @@ public class Player : MonoBehaviour, ICharacterController
     [SerializeField] AbilityLoadout startingLoadout;
 
     public static Player Instance { get; private set; }
+    public PlayerModifiers Modifiers { get; private set; } = new(); // items will change stuff from here
     public PlayerAim Aim { get; private set; }
     public PlayerLook Look { get; private set; }
     public AbilityController AbilityController { get; private set; }
