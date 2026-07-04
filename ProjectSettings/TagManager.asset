@@ -3,7 +3,6 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  serializedVersion: 3
   tags: []
   layers:
   - Default
@@ -14,7 +13,7 @@ TagManager:
   - UI
   - Enemy
   - Player
-  - 
+  - Hittable
   - 
   - 
   - 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttack
@@ -11,12 +12,18 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttack
     [SerializeField] private Transform hitOrigin;
     [SerializeField] private LayerMask hittableLayers;
 
+    [Header("Knockback")]
+    [SerializeField] private bool applyKnockback = true;
+    [SerializeField] private float knockbackStrength = 5f;
+
     private Transform target;
     private Animator animator;
 
     private float cooldownRemaining;
     private float windupRemaining;
     private bool isWindingUp;
+
+    private readonly HashSet<Transform> hitRoots = new();
 
     private void Awake()
     {
@@ -70,16 +77,27 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttack
         cooldownRemaining = cooldown;
 
         Collider[] hits = Physics.OverlapSphere(hitOrigin.position, hitRadius, hittableLayers);
-        Debug.Log($"{name}: LandHit found {hits.Length} colliders");
+        hitRoots.Clear();
 
         foreach (var hit in hits)
         {
+            if (!hitRoots.Add(hit.transform.root))  // prevents duplicate hits
+            {
+                continue;
+            }
+
             //Debug.Log($"{name}: hit collider {hit.name}, has IDamageable: {hit.TryGetComponent<IDamageable>(out _)}");
             // useful debug if you want to see what the enemy hit.
             IDamageable damageable = hit.GetComponentInParent<IDamageable>();
             if (damageable != null)
             {
                 damageable.TakeDamage(new DamageInfo(damage, gameObject));
+            }
+
+            if (applyKnockback)
+            {
+                IKnockbackable knockbackable = hit.GetComponentInParent<IKnockbackable>();
+                knockbackable?.ApplyKnockback(transform.position, knockbackStrength);
             }
         }
     }

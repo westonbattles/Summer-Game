@@ -106,7 +106,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -171,7 +171,9 @@ MonoBehaviour:
   hitOrigin: {fileID: 0}
   hittableLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 384
+  applyKnockback: 1
+  knockbackStrength: 15
 --- !u!114 &3786274940079891050
 MonoBehaviour:
   m_ObjectHideFlags: 0
