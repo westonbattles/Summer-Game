@@ -53,7 +53,7 @@ public class Dash : AbilityBehaviour
 
     public override float GetCooldownFraction(AbilityState state)
     {
-        if (state is not DashState d) return 0f; // nice vibe coding jake LMAOOOOOO
+        if (state is not DashState d) return 0f;
         if (dashCooldownTime <= 0f) return 0f;
         return Mathf.Clamp01(d.CooldownRemaining / dashCooldownTime);
     }
