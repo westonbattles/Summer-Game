@@ -35,6 +35,7 @@ public class Player : MonoBehaviour, ICharacterController
 
     public static Player Instance { get; private set; }
     public PlayerModifiers Modifiers { get; private set; } = new(); // items will change stuff from here
+    public PlayerAnimator Animator { get; private set; }
     public PlayerAim Aim { get; private set; }
     public PlayerLook Look { get; private set; }
     public AbilityController AbilityController { get; private set; }
@@ -50,7 +51,6 @@ public class Player : MonoBehaviour, ICharacterController
     
     AbilityController _abilityController;
     PlayerCharacterSwitcher _characterSwitcher;
-    PlayerAnimator _playerAnimator;
     
     // dash variables
     Vector3 _dashVelocity;
@@ -80,7 +80,7 @@ public class Player : MonoBehaviour, ICharacterController
         _abilityController = GetComponent<AbilityController>();
         _characterSwitcher = GetComponent<PlayerCharacterSwitcher>();
         
-        _playerAnimator = new PlayerAnimator(_characterSwitcher);
+        Animator = new PlayerAnimator(_characterSwitcher);
 
         if (autoBhop)
         {
@@ -106,6 +106,10 @@ public class Player : MonoBehaviour, ICharacterController
         {
             if (_abilityController.GetCurrentAbility(AbilitySlot.Primary) == null) Debug.Log("Can't execute Primary ability: ability has not been set");
             else _abilityController.ExecuteAbility(AbilitySlot.Primary);
+            //{
+                //bool executed = _abilityController.ExecuteAbility(AbilitySlot.Primary);
+                //if (executed && _characterSwitcher.CurrentCharacter == PlayerCharacter.Hand) _playerAnimator.PlayPrimaryAbility(); // eye uses IK not animator controller
+            //}
         }
         if (_input.SecondaryAbilityPressed)
         {
@@ -130,7 +134,7 @@ public class Player : MonoBehaviour, ICharacterController
         Vector3 localVelocity3 = transform.InverseTransformDirection(planarVelocity);
         Vector2 localVelocity = new Vector2(localVelocity3.x, localVelocity3.z);
         
-        _playerAnimator.HandleMovementAnimation(
+        Animator.HandleMovementAnimation(
             _input.Move,
             localVelocity,
             _motor.GroundingStatus.IsStableOnGround);
@@ -211,7 +215,7 @@ public class Player : MonoBehaviour, ICharacterController
         if (_jumpBufferCounter > 0f)
         {
             ApplyJump(ref currentVelocity, ref horizontalVelocity, target, deltaTime);
-            _playerAnimator.PlayJumpAnimation();
+            Animator.PlayJumpAnimation();
         }
         else
         {

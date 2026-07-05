@@ -14,6 +14,7 @@ public class PlayerAnimator
     static readonly int SecondaryAbility = Animator.StringToHash("SecondaryAbility");
     static readonly int MovementAbility = Animator.StringToHash("MovementAbility");
     static readonly int SpecialAbility = Animator.StringToHash("SpecialAbility");
+    static readonly int PunchIndex = Animator.StringToHash("PunchIndex");
 
     readonly PlayerCharacterSwitcher _characterSwitcher;
     Animator CurrentAnimator => _characterSwitcher.CurrentAnimator;
@@ -69,6 +70,13 @@ public class PlayerAnimator
     }
 
     public void PlayJumpAnimation() { CurrentAnimator.SetTrigger(Jump); }
+
+    public void PlayBrassKnucklesAnimation(int punchIndex)
+    {
+        CurrentAnimator.SetTrigger(PrimaryAbility);
+        CurrentAnimator.SetInteger(PunchIndex, punchIndex);
+    }
+    
     public void PlayPrimaryAbility() { CurrentAnimator.SetTrigger(PrimaryAbility); }
     public void PlaySecondaryAbility() { CurrentAnimator.SetTrigger(SecondaryAbility); }
     public void PlayMovementAbility() { CurrentAnimator.SetTrigger(MovementAbility); }

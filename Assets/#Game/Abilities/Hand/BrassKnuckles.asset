@@ -26,13 +26,13 @@ MonoBehaviour:
         baseDamage: 10
         baseComboIncrease: 0.25
         baseComboStages: 3
-        baseCooldownTime: 0.65
-        baseComboResetTime: 2.5
-        boxCastHalfExtents: {x: 0.385, y: 0.6, z: 0.34}
-        boxCastOffsetDistance: 0.54
+        baseCooldownTime: 0.72
+        baseComboResetTime: 2.8
+        boxCastHalfExtents: {x: 0.53, y: 0.6, z: 0.49}
+        boxCastOffsetDistance: 0.6
         boxCastOffsetVector3: {x: 0, y: 1.2, z: 0}
         maxEntityCount: 16
         hitMask:
           serializedVersion: 2
           m_Bits: 64
-        showGizmo: 0
+        showGizmo: 1

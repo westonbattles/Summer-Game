@@ -15,7 +15,7 @@ public class BrassKnuckles : AbilityBehaviour
     [SerializeField] public float baseComboResetTime = 2.5f;
     
     // Modifiers
-    public int MaxCombo => baseComboStages + Player.Instance.Modifiers.BrassKnucklesComboStagesBonus;
+    public int MaxCombo => baseComboStages - 1 + Player.Instance.Modifiers.BrassKnucklesComboStagesBonus; // minus 1 bc 0 is our first 'combo' index
     public float ComboIncrease => baseComboIncrease * Player.Instance.Modifiers.BrassKnucklesComboIncreaseDamageMultiplier;
     
     // todo: list of animations for each state?
@@ -35,6 +35,7 @@ public class BrassKnuckles : AbilityBehaviour
         public Player Player;
 
         public int ComboState = 0;
+        public int ComboCount = 0;              // increases every punch that gets landed in combo -> cool achievement or soething for like 100 combo punches
         // public bool ComboActive => ComboState != ComboStage.First;
         public float CooldownRemaining;         // how much time left on the ability cooldown
         public float ComboResetTimeRemaining;   // how much time left on the combo reset timer
@@ -69,6 +70,7 @@ public class BrassKnuckles : AbilityBehaviour
         if (brassKnuckles.ComboResetTimeRemaining == 0)
         {
             brassKnuckles.ComboState = 0; // reset the state when combo timer runs out
+            brassKnuckles.ComboCount = 0;
         }
     }
 
@@ -90,7 +92,7 @@ public class BrassKnuckles : AbilityBehaviour
         Vector3 positionOffset = rotation * Vector3.forward * boxCastOffsetDistance + boxCastOffsetVector3;
 
         Collider[] results = new Collider[maxEntityCount];
-
+        
         if (Physics.OverlapBoxNonAlloc(
                 positionOffset + brassKnuckles.Player.transform.position,
                 boxCastHalfExtents,
@@ -98,23 +100,35 @@ public class BrassKnuckles : AbilityBehaviour
                 rotation,
                 hitMask) > 0)
         {
-            float damage = baseDamage * brassKnuckles.GetActiveMultiplier(ComboIncrease);
-            DamageInfo damageInfo = new DamageInfo(damage, brassKnuckles.Player.gameObject, isCrit: false); // todo : implement crit chance?
             
+            Debug.Log($"Hit! Combo State: {brassKnuckles.ComboState}, Multiplier: {brassKnuckles.GetActiveMultiplier(ComboIncrease)}");
+            
+            float damage = baseDamage * brassKnuckles.GetActiveMultiplier(ComboIncrease);
+            DamageInfo damageInfo =
+                new DamageInfo(damage, brassKnuckles.Player.gameObject, isCrit: false); // todo : implement crit chance?
+
             foreach (Collider result in results)
             {
                 IDamageable target = result?.GetComponentInParent<IDamageable>();
                 target?.TakeDamage(damageInfo);
             }
             
-            // todo: punch hit vfx / particles. maybe individual on each enemy? but prob not
             
+            // todo: punch hit vfx / particles. maybe individual on each enemy? but prob not
+
             // update combo state 
             if (brassKnuckles.ComboState < MaxCombo) brassKnuckles.ComboState += 1;
+            brassKnuckles.ComboCount += 1;
             brassKnuckles.ComboResetTimeRemaining = baseComboResetTime;
+            
         }
+        else
+        { Debug.Log($"Miss! Combo State: {brassKnuckles.ComboState}, Multiplier: {brassKnuckles.GetActiveMultiplier(ComboIncrease)}"); }
+
         
         // todo: swing animation + vfx
+        brassKnuckles.Player.Animator.PlayBrassKnucklesAnimation(brassKnuckles.ComboCount % baseComboStages);
+        
         
         brassKnuckles.CooldownRemaining = baseCooldownTime; // start cooldown countdown
         return true;
