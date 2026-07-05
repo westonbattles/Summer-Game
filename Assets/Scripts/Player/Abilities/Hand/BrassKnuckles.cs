@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 [Serializable]
@@ -18,7 +20,8 @@ public class BrassKnuckles : AbilityBehaviour
     public int MaxCombo => baseComboStages - 1 + Player.Instance.Modifiers.BrassKnucklesComboStagesBonus; // minus 1 bc 0 is our first 'combo' index
     public float ComboIncrease => baseComboIncrease * Player.Instance.Modifiers.BrassKnucklesComboIncreaseDamageMultiplier;
     
-    // todo: list of animations for each state?
+    [Header("Animation Syncing")]
+    [SerializeField] float[] punchHitDelays = { 0.13f, 0.13f, 0.4f };
     
     // https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Physics.OverlapBoxNonAlloc.html properties
     [Header("Boxcast")]
@@ -35,10 +38,12 @@ public class BrassKnuckles : AbilityBehaviour
         public Player Player;
 
         public int ComboState = 0;
-        public int ComboCount = 0;              // increases every punch that gets landed in combo -> cool achievement or soething for like 100 combo punches
+        public int PunchIndex = 0;              // increases every punch that happens so we can have suequntial aniamtions
         // public bool ComboActive => ComboState != ComboStage.First;
         public float CooldownRemaining;         // how much time left on the ability cooldown
         public float ComboResetTimeRemaining;   // how much time left on the combo reset timer
+        public bool HitPending;
+        public float HitDelayRemaining;
 
         public BrassKnucklesState(Player player)
         {
@@ -70,7 +75,17 @@ public class BrassKnuckles : AbilityBehaviour
         if (brassKnuckles.ComboResetTimeRemaining == 0)
         {
             brassKnuckles.ComboState = 0; // reset the state when combo timer runs out
-            brassKnuckles.ComboCount = 0;
+            brassKnuckles.PunchIndex = 0;
+        }
+
+        if (brassKnuckles.HitPending)
+        {
+            brassKnuckles.HitDelayRemaining = Mathf.Max(0f, brassKnuckles.HitDelayRemaining -= deltaTime);
+            if (brassKnuckles.HitDelayRemaining == 0)
+            {
+                brassKnuckles.HitPending = false;
+                Punch(brassKnuckles);
+            }
         }
     }
 
@@ -84,13 +99,30 @@ public class BrassKnuckles : AbilityBehaviour
   
         //Debug.Log($"Combo State: {brassKnuckles.ComboState}"); // 0 -> 1 -> 2 ->...
         
-        
         // succesful execution
+
+        brassKnuckles.PunchIndex %= baseComboStages;
         
+        brassKnuckles.HitPending = true;
+        brassKnuckles.HitDelayRemaining = punchHitDelays[brassKnuckles.PunchIndex];
+        
+        // swing animation
+        if (brassKnuckles.PunchIndex == 0) brassKnuckles.Player.Animator.PlayBrassKnucklesAnimation(Random.Range(0,2));
+        else brassKnuckles.Player.Animator.PlayBrassKnucklesAnimation(brassKnuckles.PunchIndex);
+        
+        // todo: swing vfx
+        
+        brassKnuckles.PunchIndex += 1;
+        brassKnuckles.CooldownRemaining = baseCooldownTime; // start cooldown countdown
+        return true;
+    }
+
+    void Punch(BrassKnucklesState brassKnuckles)
+    {
         // boxcast
         Quaternion rotation = Quaternion.AngleAxis(brassKnuckles.Player.Look.Yaw, Vector3.up);
         Vector3 positionOffset = rotation * Vector3.forward * boxCastOffsetDistance + boxCastOffsetVector3;
-
+        
         Collider[] results = new Collider[maxEntityCount];
         
         if (Physics.OverlapBoxNonAlloc(
@@ -118,22 +150,13 @@ public class BrassKnuckles : AbilityBehaviour
 
             // update combo state 
             if (brassKnuckles.ComboState < MaxCombo) brassKnuckles.ComboState += 1;
-            brassKnuckles.ComboCount += 1;
             brassKnuckles.ComboResetTimeRemaining = baseComboResetTime;
             
         }
         else
         { Debug.Log($"Miss! Combo State: {brassKnuckles.ComboState}, Multiplier: {brassKnuckles.GetActiveMultiplier(ComboIncrease)}"); }
-
-        
-        // todo: swing animation + vfx
-        brassKnuckles.Player.Animator.PlayBrassKnucklesAnimation(brassKnuckles.ComboCount % baseComboStages);
-        
-        
-        brassKnuckles.CooldownRemaining = baseCooldownTime; // start cooldown countdown
-        return true;
     }
-
+    
     public override float GetCooldownFraction(AbilityState state)
     {
         BrassKnucklesState brassKnuckles = state as BrassKnucklesState;
@@ -141,10 +164,14 @@ public class BrassKnuckles : AbilityBehaviour
         
         return brassKnuckles.CooldownRemaining / baseCooldownTime;
     }
-    // no cancel since carrying momentum after character swap is kinda cool
-    /*public override void Cancel(AbilityState state)
+
+    public override void Cancel(AbilityState state)
     {
-    }*/
+        BrassKnucklesState brassKnuckles = state as BrassKnucklesState;
+        if (brassKnuckles == null) return;
+
+        brassKnuckles.HitPending = false; // make sure we don't do a delayed hit after cancel
+    }
     
     
     // gizmo debug for hitbox. can just call in player.cs OnDrawGizmo or something
