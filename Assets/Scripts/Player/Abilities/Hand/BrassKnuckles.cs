@@ -44,6 +44,9 @@ public class BrassKnuckles : AbilityBehaviour
         public float ComboResetTimeRemaining;   // how much time left on the combo reset timer
         public bool HitPending;
         public float HitDelayRemaining;
+        
+        public HashSet<IDamageable> DamagedTargets = new();
+        
 
         public BrassKnucklesState(Player player)
         {
@@ -101,14 +104,14 @@ public class BrassKnuckles : AbilityBehaviour
         
         // succesful execution
 
-        brassKnuckles.PunchIndex %= baseComboStages;
+        int animationState = brassKnuckles.PunchIndex % baseComboStages;
         
         brassKnuckles.HitPending = true;
-        brassKnuckles.HitDelayRemaining = punchHitDelays[brassKnuckles.PunchIndex];
+        brassKnuckles.HitDelayRemaining = punchHitDelays[animationState];
         
         // swing animation
         if (brassKnuckles.PunchIndex == 0) brassKnuckles.Player.Animator.PlayBrassKnucklesAnimation(Random.Range(0,2));
-        else brassKnuckles.Player.Animator.PlayBrassKnucklesAnimation(brassKnuckles.PunchIndex);
+        else brassKnuckles.Player.Animator.PlayBrassKnucklesAnimation(animationState);
         
         // todo: swing vfx
         
@@ -124,27 +127,32 @@ public class BrassKnuckles : AbilityBehaviour
         Vector3 positionOffset = rotation * Vector3.forward * boxCastOffsetDistance + boxCastOffsetVector3;
         
         Collider[] results = new Collider[maxEntityCount];
+        int hitCount = Physics.OverlapBoxNonAlloc(
+            positionOffset + brassKnuckles.Player.transform.position,
+            boxCastHalfExtents,
+            results,
+            rotation,
+            hitMask);
         
-        if (Physics.OverlapBoxNonAlloc(
-                positionOffset + brassKnuckles.Player.transform.position,
-                boxCastHalfExtents,
-                results,
-                rotation,
-                hitMask) > 0)
+        if (hitCount > 0)
         {
             
             Debug.Log($"Hit! Combo State: {brassKnuckles.ComboState}, Multiplier: {brassKnuckles.GetActiveMultiplier(ComboIncrease)}");
             
+            // build damageinfo
             float damage = baseDamage * brassKnuckles.GetActiveMultiplier(ComboIncrease);
-            DamageInfo damageInfo =
-                new DamageInfo(damage, brassKnuckles.Player.gameObject, isCrit: false); // todo : implement crit chance?
-
-            foreach (Collider result in results)
-            {
-                IDamageable target = result?.GetComponentInParent<IDamageable>();
-                target?.TakeDamage(damageInfo);
-            }
+            DamageInfo damageInfo = new DamageInfo(damage, brassKnuckles.Player.gameObject, isCrit: false); // todo : implement crit chance?
             
+            // de-duplicate
+            brassKnuckles.DamagedTargets.Clear();
+            for (int i = 0; i < hitCount; i++)
+            {
+                IDamageable target = results[i].GetComponentInParent<IDamageable>();
+                if (target != null && brassKnuckles.DamagedTargets.Add(target))
+                {
+                    target?.TakeDamage(damageInfo);
+                }
+            }
             
             // todo: punch hit vfx / particles. maybe individual on each enemy? but prob not
 
