@@ -15,17 +15,23 @@ public class BrassKnuckles : AbilityBehaviour
     [SerializeField] public float baseComboResetTime = 2.5f;
     
     // Modifiers
-    public int MaxCombo => baseComboStages + Player.Instance.Modifiers.BrassKnucklesExtraComboNumber;
+    public int MaxCombo => baseComboStages + Player.Instance.Modifiers.BrassKnucklesComboStagesBonus;
+    public float ComboIncrease => baseComboIncrease * Player.Instance.Modifiers.BrassKnucklesComboIncreaseDamageMultiplier;
     
     // todo: list of animations for each state?
     
     // https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Physics.OverlapBoxNonAlloc.html properties
-
+    [Header("Boxcast")]
+    [SerializeField] Vector3 boxCastHalfExtents = new Vector3(0.385f, 0.6f, 0.345f);
+    [SerializeField] float boxCastOffsetDistance;
+    [SerializeField] Vector3 boxCastOffsetVector3;
+    [SerializeField] int maxEntityCount = 16;
+    [SerializeField] LayerMask hitMask = ~0;
+    
     
     class BrassKnucklesState : AbilityState
     {
         public Player Player;
-        public PlayerAim PlayerAim;
 
         public int ComboState = 0;
         // public bool ComboActive => ComboState != ComboStage.First;
@@ -35,7 +41,11 @@ public class BrassKnuckles : AbilityBehaviour
         public BrassKnucklesState(Player player)
         {
             Player = player;
-            PlayerAim = player.Aim;
+        }
+
+        public float GetActiveMultiplier(float comboIncrease)
+        {
+            return 1f + ComboState * comboIncrease;
         }
     }
 
@@ -51,28 +61,59 @@ public class BrassKnuckles : AbilityBehaviour
         BrassKnucklesState brassKnuckles = state as BrassKnucklesState;
         if (brassKnuckles == null) return;
         
-        // todo: state management
-        
-        
         brassKnuckles.CooldownRemaining = Mathf.Max(0f, brassKnuckles.CooldownRemaining- deltaTime);
+        brassKnuckles.ComboResetTimeRemaining = Mathf.Max(0f, brassKnuckles.ComboResetTimeRemaining - deltaTime);
+
+        //Debug.Log($"{brassKnuckles.ComboResetTimeRemaining}");
+        if (brassKnuckles.ComboResetTimeRemaining == 0)
+        {
+            brassKnuckles.ComboState = 0; // reset the state when combo timer runs out
+        }
     }
 
     public override bool TryExecute(AbilityState state)
     {
+        
         // make sure we actually can/should execute
         BrassKnucklesState brassKnuckles = state as BrassKnucklesState;
         if (brassKnuckles == null) return false;
         if (brassKnuckles.CooldownRemaining > 0f) return false;
   
-        Debug.Log($"Combo State: {brassKnuckles.ComboState}");
-
+        //Debug.Log($"Combo State: {brassKnuckles.ComboState}"); // 0 -> 1 -> 2 ->...
+        
         
         // succesful execution
         
         // boxcast
+        Quaternion rotation = Quaternion.AngleAxis(brassKnuckles.Player.Look.Yaw, Vector3.up);
+        Vector3 positionOffset = rotation * Vector3.forward * boxCastOffsetDistance + boxCastOffsetVector3;
+
+        Collider[] results = new Collider[maxEntityCount];
+
+        if (Physics.OverlapBoxNonAlloc(
+                positionOffset + brassKnuckles.Player.transform.position,
+                boxCastHalfExtents,
+                results,
+                rotation,
+                hitMask) > 0)
+        {
+            float damage = baseDamage * brassKnuckles.GetActiveMultiplier(ComboIncrease);
+            DamageInfo damageInfo = new DamageInfo(damage, brassKnuckles.Player.gameObject, isCrit: false); // todo : implement crit chance?
+            
+            foreach (Collider result in results)
+            {
+                IDamageable target = result?.GetComponentInParent<IDamageable>();
+                target?.TakeDamage(damageInfo);
+            }
+            
+            // todo: punch hit vfx / particles. maybe individual on each enemy? but prob not
+            
+            // update combo state 
+            if (brassKnuckles.ComboState < MaxCombo) brassKnuckles.ComboState += 1;
+            brassKnuckles.ComboResetTimeRemaining = baseComboResetTime;
+        }
         
-        // update combo state
-        if (brassKnuckles.ComboState < MaxCombo) brassKnuckles.ComboState += 1;
+        // todo: swing animation + vfx
         
         brassKnuckles.CooldownRemaining = baseCooldownTime; // start cooldown countdown
         return true;
@@ -89,4 +130,28 @@ public class BrassKnuckles : AbilityBehaviour
     /*public override void Cancel(AbilityState state)
     {
     }*/
+    
+    
+    // gizmo debug for hitbox. can just call in player.cs OnDrawGizmo or something
+    public void DrawGizmos(Transform playerTransform)
+    {
+
+        Quaternion rotation =
+            Player.Instance != null && Player.Instance.Look != null
+                ? Quaternion.AngleAxis(Player.Instance.Look.Yaw, Vector3.up)
+                : playerTransform.rotation;
+        
+        Vector3 center =
+            playerTransform.position +
+            rotation * Vector3.forward * boxCastOffsetDistance +
+            boxCastOffsetVector3;
+
+        Matrix4x4 previousMatrix = Gizmos.matrix;
+
+        Gizmos.color = Color.limeGreen;
+        Gizmos.matrix = Matrix4x4.TRS(center, rotation, Vector3.one);
+        Gizmos.DrawWireCube(Vector3.zero, boxCastHalfExtents * 2f);
+
+        Gizmos.matrix = previousMatrix;
+    }
 }

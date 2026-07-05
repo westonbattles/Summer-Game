@@ -149,8 +149,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChaseNavigator
   player: {fileID: 0}
-  stopDistance: 1
-  resumeDistance: 2
+  stopDistance: 3
+  resumeDistance: 5
 --- !u!114 &4259839572381496315
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,8 +172,8 @@ MonoBehaviour:
   hittableLayers:
     serializedVersion: 2
     m_Bits: 384
-  applyKnockback: 1
-  knockbackStrength: 15
+  applyKnockback: 0
+  knockbackStrength: 4
 --- !u!114 &3786274940079891050
 MonoBehaviour:
   m_ObjectHideFlags: 0

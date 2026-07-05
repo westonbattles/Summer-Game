@@ -16,9 +16,22 @@ MonoBehaviour:
   description: 
   icon: {fileID: 0}
   behaviour:
-    rid: -2
+    rid: 1748538060542836824
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
+    - rid: 1748538060542836824
+      type: {class: BrassKnuckles, ns: , asm: Assembly-CSharp}
+      data:
+        baseDamage: 10
+        baseComboIncrease: 0.25
+        baseComboStages: 3
+        baseCooldownTime: 0.65
+        baseComboResetTime: 2.5
+        boxCastHalfExtents: {x: 0.385, y: 0.6, z: 0.34}
+        boxCastOffsetDistance: 0.54
+        boxCastOffsetVector3: {x: 0, y: 1.2, z: 0}
+        maxEntityCount: 16
+        hitMask:
+          serializedVersion: 2
+          m_Bits: 64

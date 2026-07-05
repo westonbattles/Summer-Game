@@ -56,7 +56,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttack
         }
         if (target == null)
         {
-            Debug.Log($"EnemyMeleeAttack (TryExecute): {name}: blocked — target is null");
+            Debug.Log($"EnemyMeleeAttack (TryExecute): {name}: blocked ï¿½ target is null");
             return false;
         }
 
@@ -104,11 +104,11 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttack
 
     private void OnDrawGizmosSelected()
     {
-        // Engagement range — how close the target needs to be before TryExecute() succeeds.
+        // Engagement range ï¿½ how close the target needs to be before TryExecute() succeeds.
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, range);
 
-        // Hit detection — where LandHit()'s OverlapSphere actually checks, which may
+        // Hit detection ï¿½ where LandHit()'s OverlapSphere actually checks, which may
         // differ from engagement range if hitOrigin is offset from root.
         Transform origin = hitOrigin != null ? hitOrigin : transform;
         Gizmos.color = Color.red;

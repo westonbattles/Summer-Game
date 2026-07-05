@@ -25,6 +25,7 @@ public class Ability : ScriptableObject
 
         return new AbilityInstance(this, behaviour);
     }
+    public AbilityBehaviour Behaviour => behaviour;
 }
 
 
@@ -57,7 +58,7 @@ public sealed class AbilityInstance
     {
         _behaviour.Cancel(_state);
     }
-
+    
     // display reads for UI
     public Sprite Icon => Ability.icon;
     public float CooldownFraction => _behaviour.GetCooldownFraction(_state);

@@ -58,6 +58,12 @@ public class Player : MonoBehaviour, ICharacterController
     bool _isDashing;
     public bool IsDashing => _isDashing;
 
+    void OnDrawGizmos()
+    {
+        AbilityBehaviour ab = HandLoadout.GetAbility(AbilitySlot.Primary).Behaviour;
+        if (ab is BrassKnuckles bk)  bk.DrawGizmos(transform);
+    }
+
     void Awake()
     {
         Instance = this;
