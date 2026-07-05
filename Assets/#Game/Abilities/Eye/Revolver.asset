@@ -25,7 +25,7 @@ MonoBehaviour:
       data:
         magazineSize: 6
         reloadDuration: 1
-        baseDamage: 12
+        baseDamage: 100
         baseBulletSpeed: 40
         baseMaxRange: 100
         baseSecondsBetweenShots: 0.6

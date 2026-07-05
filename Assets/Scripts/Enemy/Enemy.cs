@@ -7,13 +7,14 @@ using UnityEngine;
 /// component; attacks/affixes are separate components added per-enemy.
 /// </summary>
 [RequireComponent(typeof(Health))]
+[RequireComponent(typeof(XPDropper))]
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float movementSpeed;
-    [field: SerializeField] public int XPValue { get; private set; }
     [field: SerializeField] public bool AffixEligible { get; private set; }
 
     private Health health;
+    private XPDropper xpDropper;
 
     /// <summary>Raised after death logic runs. Spawner listens and releases to pool.</summary>
     public event Action<Enemy> OnDied;
@@ -22,7 +23,7 @@ public class Enemy : MonoBehaviour
     /// Static so any progression system can subscribe once without holding refs to
     /// individual enemies. Carries the XP amount and who gets credit (the killer).
     /// </summary>
-    public static event Action<int, GameObject> OnAnyEnemyGrantedXP;
+    public static event Action<int, GameObject> OnAnyEnemyDied;
 
     /// <summary>
     /// Per-enemy drop hook. Fires at the death position so a future loot system can
@@ -34,6 +35,7 @@ public class Enemy : MonoBehaviour
     protected virtual void Awake()
     {
         health = GetComponent<Health>();
+        xpDropper = GetComponent<XPDropper>();
     }
 
     private void OnEnable()
@@ -50,8 +52,10 @@ public class Enemy : MonoBehaviour
     {
         // Enemy-specific death work happens here, BEFORE we hand back to the pool:
 
-        // 1. XP — announce the grant; credit the killing blow's source.
-        OnAnyEnemyGrantedXP?.Invoke(XPValue, killingBlow.Source);
+        // 1. XP — spawn the orb.
+        xpDropper.Drop();
+
+        OnAnyEnemyDied?.Invoke(xpDropper.Value, killingBlow.Source);
 
         // 2. Drops — announce at this position, while still active/placed.
         OnDropLoot?.Invoke(transform.position, AffixEligible);
