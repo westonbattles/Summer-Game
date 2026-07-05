@@ -44,6 +44,7 @@ public class BrassKnuckles : AbilityBehaviour
         public float ComboResetTimeRemaining;   // how much time left on the combo reset timer
         public bool HitPending;
         public float HitDelayRemaining;
+        public int LastAnimation;
         
         public HashSet<IDamageable> DamagedTargets = new();
         
@@ -53,10 +54,7 @@ public class BrassKnuckles : AbilityBehaviour
             Player = player;
         }
 
-        public float GetActiveMultiplier(float comboIncrease)
-        {
-            return 1f + ComboState * comboIncrease;
-        }
+        public float GetActiveMultiplier(float comboIncrease) { return 1f + ComboState * comboIncrease; }
     }
 
     public override AbilityState CreateState()
@@ -74,13 +72,7 @@ public class BrassKnuckles : AbilityBehaviour
         brassKnuckles.CooldownRemaining = Mathf.Max(0f, brassKnuckles.CooldownRemaining- deltaTime);
         brassKnuckles.ComboResetTimeRemaining = Mathf.Max(0f, brassKnuckles.ComboResetTimeRemaining - deltaTime);
 
-        //Debug.Log($"{brassKnuckles.ComboResetTimeRemaining}");
-        if (brassKnuckles.ComboResetTimeRemaining == 0)
-        {
-            brassKnuckles.ComboState = 0; // reset the state when combo timer runs out
-            brassKnuckles.PunchIndex = 0;
-        }
-
+        
         if (brassKnuckles.HitPending)
         {
             brassKnuckles.HitDelayRemaining = Mathf.Max(0f, brassKnuckles.HitDelayRemaining -= deltaTime);
@@ -89,6 +81,13 @@ public class BrassKnuckles : AbilityBehaviour
                 brassKnuckles.HitPending = false;
                 Punch(brassKnuckles);
             }
+        }
+        
+        //Debug.Log($"{brassKnuckles.ComboResetTimeRemaining}");
+        if (!brassKnuckles.HitPending && brassKnuckles.ComboResetTimeRemaining == 0)
+        {
+            brassKnuckles.ComboState = 0; // reset the state when combo timer runs out
+            brassKnuckles.PunchIndex = 0;
         }
     }
 
@@ -110,8 +109,12 @@ public class BrassKnuckles : AbilityBehaviour
         brassKnuckles.HitDelayRemaining = punchHitDelays[animationState];
         
         // swing animation
-        if (brassKnuckles.PunchIndex == 0) brassKnuckles.Player.Animator.PlayBrassKnucklesAnimation(Random.Range(0,2));
-        else brassKnuckles.Player.Animator.PlayBrassKnucklesAnimation(animationState);
+        // random 0,1 if we are swinging and have hit nothing yet
+        if (brassKnuckles.PunchIndex == 0) animationState = Random.Range(0, 2);
+        // if are in a combo, play opposite animation to the last one if it was a sepcific animation
+        else if (brassKnuckles.LastAnimation == 1 && animationState == 1) animationState = 0;
+        brassKnuckles.Player.Animator.PlayBrassKnucklesAnimation(animationState);
+        brassKnuckles.LastAnimation = animationState;
         
         // todo: swing vfx
         
