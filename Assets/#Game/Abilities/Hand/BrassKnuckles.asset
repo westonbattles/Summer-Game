@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Ability
   displayName: 
   description: 
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 8cf3ebfdfb37c4f49bf1a6496500a455, type: 3}
   behaviour:
     rid: 1748538060542836824
   references:
@@ -35,3 +35,4 @@ MonoBehaviour:
         hitMask:
           serializedVersion: 2
           m_Bits: 64
+        showGizmo: 0

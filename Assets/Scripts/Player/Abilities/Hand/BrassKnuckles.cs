@@ -27,6 +27,7 @@ public class BrassKnuckles : AbilityBehaviour
     [SerializeField] Vector3 boxCastOffsetVector3;
     [SerializeField] int maxEntityCount = 16;
     [SerializeField] LayerMask hitMask = ~0;
+    [SerializeField] bool showGizmo = false;
     
     
     class BrassKnucklesState : AbilityState
@@ -135,6 +136,7 @@ public class BrassKnuckles : AbilityBehaviour
     // gizmo debug for hitbox. can just call in player.cs OnDrawGizmo or something
     public void DrawGizmos(Transform playerTransform)
     {
+        if (!showGizmo) return;
 
         Quaternion rotation =
             Player.Instance != null && Player.Instance.Look != null

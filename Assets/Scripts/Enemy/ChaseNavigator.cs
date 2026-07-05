@@ -39,6 +39,7 @@ public class ChaseNavigator : MonoBehaviour
             {
                 isChasing = false;
                 agent.isStopped = true;
+                agent.velocity = Vector3.zero;
             }
         }
         else
