@@ -5943,6 +5943,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: autoBhop
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: dashFriction
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: dashLandMomentumDecayTime
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 6463087256270042916, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: m_Name
       value: Player

@@ -45,7 +45,8 @@ public class Dash : AbilityBehaviour
         if (dash.CooldownRemaining > 0f) return false;  // can't dash cuz cooldown still active
 
         //dash.Player.Dash(dash.PlayerAim.AimDirection, dashSpeed);
-        dash.Player.DashAlongPlane(dashSpeed);
+        //dash.Player.DashVertically(dashSpeed);
+        dash.Player.DashAlongInputAxis(dashSpeed); //<- base dash
 
         dash.CooldownRemaining = dashCooldownTime; // update cooldown
         return true;

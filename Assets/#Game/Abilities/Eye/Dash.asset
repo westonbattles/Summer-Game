@@ -23,5 +23,5 @@ MonoBehaviour:
     - rid: 6477902080174719171
       type: {class: Dash, ns: , asm: Assembly-CSharp}
       data:
-        dashSpeed: 17
+        dashSpeed: 25
         dashCooldownTime: 2.3

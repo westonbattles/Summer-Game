@@ -29,9 +29,9 @@ MonoBehaviour:
         baseCooldownTime: 0.72
         baseComboResetTime: 2.8
         punchHitDelays:
-        - 0.21
-        - 0.21
-        - 0.4
+        - 0.158
+        - 0.158
+        - 0.35
         boxCastHalfExtents: {x: 0.53, y: 0.6, z: 0.49}
         boxCastOffsetDistance: 0.6
         boxCastOffsetVector3: {x: 0, y: 1.2, z: 0}

@@ -18,16 +18,20 @@ public class Player : MonoBehaviour, ICharacterController
     [SerializeField] bool autoBhop;
 
     [Header("Movement")]
-    [SerializeField] float gravity = 40f;
-    [SerializeField] float gravityMultiplier = 1.025f;
-    [SerializeField] float groundAccel = 130f;
-    [SerializeField] float maxSpeed = 10f;
+    [SerializeField] float gravity = 31f;
+    [SerializeField] float gravityMultiplier = 1f;
+    [SerializeField] float groundAccel = 140f;
+    [SerializeField] float maxSpeed = 8f;
     [SerializeField] float airAccel = 50f;
     [SerializeField] float airSpeed = 1f;
-    [SerializeField] float friction = 12f;
-    [SerializeField] float jumpHeight = 12f;
-    [SerializeField] float jumpBufferTime = 0.2f;
+    [SerializeField] float baseFriction = 12f;
+    [SerializeField] float jumpHeight = 10f;
+    [SerializeField] float jumpBufferTime = 0.05f;
 
+    [Header("Dash")]
+    //[SerializeField] float dashFriction = 6f;
+    [SerializeField] float dashLandMomentumDecayTime = 1f; // time to apply updated friction for
+    
     [Header("Loadouts")]
     [SerializeField] AbilityLoadout eyeLoadout;
     [SerializeField] AbilityLoadout handLoadout;
@@ -52,10 +56,13 @@ public class Player : MonoBehaviour, ICharacterController
     AbilityController _abilityController;
     PlayerCharacterSwitcher _characterSwitcher;
     
+    float _friction;
+    
     // dash variables
     Vector3 _dashVelocity;
     bool _shouldDash;
     bool _isDashing;
+    float _dashLandMomentumDecayTimer;
     public bool IsDashing => _isDashing;
 
     void OnDrawGizmos()
@@ -79,7 +86,8 @@ public class Player : MonoBehaviour, ICharacterController
 
         _abilityController = GetComponent<AbilityController>();
         _characterSwitcher = GetComponent<PlayerCharacterSwitcher>();
-        
+
+        _friction = baseFriction;
         Animator = new PlayerAnimator(_characterSwitcher);
 
         if (autoBhop)
@@ -97,18 +105,35 @@ public class Player : MonoBehaviour, ICharacterController
 
     void Update()
     {
+        // update jump buffer
+        if (_input.JumpPressed) _jumpBufferCounter = jumpBufferTime;
+        else _jumpBufferCounter -= Time.deltaTime;
         
+        // update dash momentum timer
+        _dashLandMomentumDecayTimer = Mathf.Max(0f, _dashLandMomentumDecayTimer - Time.deltaTime);
         
-        UpdateJumpBuffer();
+        HandleInput();
         
+        Vector3 planarVelocity = Vector3.ProjectOnPlane(_motor.Velocity, _motor.CharacterUp);
+        Vector3 localVelocity3 = transform.InverseTransformDirection(planarVelocity);
+        Vector2 localVelocity = new Vector2(localVelocity3.x, localVelocity3.z);
+        
+        Animator.HandleMovementAnimation(
+            _input.Move,
+            localVelocity,
+            _motor.GroundingStatus.IsStableOnGround);
+    }
+
+    void HandleInput()
+    {
         // handle ability input
         if (_input.PrimaryAbilityPressed)
         {
             if (_abilityController.GetCurrentAbility(AbilitySlot.Primary) == null) Debug.Log("Can't execute Primary ability: ability has not been set");
             else _abilityController.ExecuteAbility(AbilitySlot.Primary);
             //{
-                //bool executed = _abilityController.ExecuteAbility(AbilitySlot.Primary);
-                //if (executed && _characterSwitcher.CurrentCharacter == PlayerCharacter.Hand) _playerAnimator.PlayPrimaryAbility(); // eye uses IK not animator controller
+            //bool executed = _abilityController.ExecuteAbility(AbilitySlot.Primary);
+            //if (executed && _characterSwitcher.CurrentCharacter == PlayerCharacter.Hand) _playerAnimator.PlayPrimaryAbility(); // eye uses IK not animator controller
             //}
         }
         if (_input.SecondaryAbilityPressed)
@@ -129,30 +154,8 @@ public class Player : MonoBehaviour, ICharacterController
         
         // handle swap
         if (_input.SwapPressed) _characterSwitcher.Swap();
-
-        Vector3 planarVelocity = Vector3.ProjectOnPlane(_motor.Velocity, _motor.CharacterUp);
-        Vector3 localVelocity3 = transform.InverseTransformDirection(planarVelocity);
-        Vector2 localVelocity = new Vector2(localVelocity3.x, localVelocity3.z);
-        
-        Animator.HandleMovementAnimation(
-            _input.Move,
-            localVelocity,
-            _motor.GroundingStatus.IsStableOnGround);
-        
-
     }
-
-    void UpdateJumpBuffer()
-    {
-        if (_input.JumpPressed)
-        {
-            _jumpBufferCounter = jumpBufferTime;
-        }
-        else
-        {
-            _jumpBufferCounter -= Time.deltaTime;
-        }
-    }
+    
     
     public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
     {
@@ -220,7 +223,7 @@ public class Player : MonoBehaviour, ICharacterController
         else
         {
             horizontalVelocity = MoveGround(target, horizontalVelocity, deltaTime);
-            horizontalVelocity = Vector2.ClampMagnitude(horizontalVelocity, maxSpeed);
+            if (_dashLandMomentumDecayTimer <= 0f) horizontalVelocity = Vector2.ClampMagnitude(horizontalVelocity, maxSpeed);
         }
 
         currentVelocity = new Vector3(horizontalVelocity.x, currentVelocity.y, horizontalVelocity.y);
@@ -250,7 +253,7 @@ public class Player : MonoBehaviour, ICharacterController
         float speed = horizontalVelocity.magnitude;
         if (speed > 0f)
         {
-            float drop = speed * friction * deltaTime;
+            float drop = speed * _friction * deltaTime;
             horizontalVelocity *= Mathf.Max(speed - drop, 0f) / speed;
         }
 
@@ -274,14 +277,29 @@ public class Player : MonoBehaviour, ICharacterController
     }
 
     /// Dashes in move input direction only, no up/down
-    public void DashAlongPlane(float speed)
+    public void DashAlongInputAxis(float speed)
     {
         Vector2 moveInput = _input.Move == Vector2.zero ? Vector2.up : _input.Move;
         
         float yaw = _look.Yaw;
-        Vector3 dashDirection = Quaternion.AngleAxis(yaw, Vector3.up) * new Vector3(moveInput.x, 0.2f, moveInput.y).normalized; // rotate move input to match look rotation - https://stackoverflow.com/questions/74894102/unity-rotating-a-vector3-along-an-axis
-                                                                                                                                // y=0.2 is for testing purposes - but kinda feels good? might leave it tbh
+        float yOffset = 0f;
+        Vector3 dashDirection = Quaternion.AngleAxis(yaw, Vector3.up) * new Vector3(moveInput.x, yOffset, moveInput.y).normalized; // rotate move input to match look rotation - https://stackoverflow.com/questions/74894102/unity-rotating-a-vector3-along-an-axis
+        
         Dash(dashDirection, speed);
+    }
+    
+    // dash based on player look direction, but dashes downward are forced forward
+    public void DashVertically(float speed)
+    {
+        Vector3 forwardVector = _look.LookRotation * Vector3.forward;
+        // project downward look directions onto the flat y plane, and normalize (this will dash us along the ground)
+        if (forwardVector.y < 0)
+        {
+            forwardVector.y = 0;
+            forwardVector.Normalize();
+        }
+        
+        Dash(forwardVector, speed);
     }
     
     /// Performs dash in a given direction with given speed
@@ -290,6 +308,7 @@ public class Player : MonoBehaviour, ICharacterController
         _dashVelocity = directionNormalized * speed;
         _shouldDash = true;
         _isDashing = true;
+        _dashLandMomentumDecayTimer = dashLandMomentumDecayTime;
         //PlayRandomSound(launchSounds, launchPitchMin, launchPitchMax);
         
         _motor.ForceUnground(.25f); // lets you dash along objects without insta stopping you   
