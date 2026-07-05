@@ -235,6 +235,12 @@ public class Player : MonoBehaviour, ICharacterController
         _jumpBufferCounter = 0f;
         currentVelocity = currentVelocity - Vector3.Project(currentVelocity, _motor.CharacterUp);
         currentVelocity += _motor.CharacterUp * jumpHeight;
+
+        float speed = horizontalVelocity.magnitude;
+        float carry = speed;
+        if (carry > maxSpeed) carry = (speed - maxSpeed) * Modifiers.BhopMomentumCarryPercent + maxSpeed; // same as Mathf.Lerp(maxSpeed, speed, Modifiers.BhopMomentumCarryPercent); without the 0-1 clamping
+        
+        horizontalVelocity = (horizontalVelocity / speed) * carry;
         horizontalVelocity = MoveAir(target, horizontalVelocity, deltaTime);
     }
 

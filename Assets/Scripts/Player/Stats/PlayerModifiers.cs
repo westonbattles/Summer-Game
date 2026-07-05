@@ -5,6 +5,7 @@
 public class PlayerModifiers
 {
     public float MaxHealthBonus = 0f;
+    public float BhopMomentumCarryPercent = 0.33f; // how much horizontal velocity you keep on perfect bhops
     
     // EYE ABILITIES
     public int RevolverBulletsBonus = 0;
