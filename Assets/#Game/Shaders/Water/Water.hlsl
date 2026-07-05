@@ -21,15 +21,15 @@ static const float _speed_x    = 0.2;
 static const float _speed_y    = 0.3;
 
 static const float _emboss     = 0.50;
-static const float _intensity  = 2.4;
-static const int   _steps      = 8;
-static const float _frequency  = 6.0;
+static const float _intensity  = 2.9;
+static const int   _steps      = 4;
+static const float _frequency  = 9.0;
 static const int   _angle      = 7;
 
 static const float _delta                = 60.0;
 static const float _gain                 = 700.0;
 static const float _reflectionCutOff    = 0.012;
-static const float _reflectionIntensity = 200000.0;
+static const float _reflectionIntensity = 10000.0;
 
 float WaveCol(float2 coord, float time)
 {

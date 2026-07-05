@@ -368,6 +368,37 @@ Transform:
   - {fileID: 5011142599298063276}
   m_Father: {fileID: 3987992205653833792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6251331926660761085
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6979452157414585628}
+  m_Layer: 7
+  m_Name: XPCollectPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6979452157414585628
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6251331926660761085}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.069, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8042118604927072296}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6463087256270042916
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,6 +417,7 @@ GameObject:
   - component: {fileID: 7464586106785895091}
   - component: {fileID: 4032942381568221474}
   - component: {fileID: 3362251599199739867}
+  - component: {fileID: 4724841177392358001}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -409,6 +441,7 @@ Transform:
   - {fileID: 153811360960836323}
   - {fileID: 6878892640632599353}
   - {fileID: 7325816549336099278}
+  - {fileID: 6979452157414585628}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &8260488084285784578
@@ -581,6 +614,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   baseMaxHP: 100
+--- !u!114 &4724841177392358001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6463087256270042916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 797afe2115bbbe24fa3dfff6ed5c626f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerExperience
+  baseRequirement: 100
+  growthFactor: 1.5
+  collectPoint: {fileID: 6979452157414585628}
 --- !u!1 &6505037897921243107
 GameObject:
   m_ObjectHideFlags: 0
