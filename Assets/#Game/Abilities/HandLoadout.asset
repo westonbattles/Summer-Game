@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AbilityLoadout
   primary: {fileID: 11400000, guid: 53df159c449c64e2280dcfbc8f04a381, type: 2}
   secondary: {fileID: 0}
-  movement: {fileID: 0}
+  movement: {fileID: 11400000, guid: 477b45872e70f4732b00aa0166afb838, type: 2}
   special: {fileID: 0}

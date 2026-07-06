@@ -50,6 +50,8 @@ public class Player : MonoBehaviour, ICharacterController
 
     public AbilityLoadout EyeLoadout => eyeLoadout;
     public AbilityLoadout HandLoadout => handLoadout;
+
+    public bool IsGrounded => _motor.GroundingStatus.IsStableOnGround;
     
     KinematicCharacterMotor _motor;
     float _jumpBufferCounter;
@@ -62,6 +64,8 @@ public class Player : MonoBehaviour, ICharacterController
     bool _isDashing;
     float _dashLandMomentumDecayTimer;
     public bool IsDashing => _isDashing;
+
+    bool _shouldGroundPound;
 
     void OnDrawGizmos()
     {
@@ -170,6 +174,12 @@ public class Player : MonoBehaviour, ICharacterController
             _shouldDash = false;
             return;
         }
+
+        if (_shouldGroundPound)
+        {
+            currentVelocity = currentVelocity + _dashVelocity;
+            _shouldGroundPound = false;
+        }
         
         Vector3 inputDirection = GetPlanarMoveDirection();
 
@@ -276,8 +286,6 @@ public class Player : MonoBehaviour, ICharacterController
 
         return horizontalVelocity + acceleration * deltaTime * target; // floats before vector
     }
-
-    Dash EquippedDash => AbilityController.GetCurrentAbility(AbilitySlot.Movement)?.Behaviour as Dash;
     
     /// Dashes in move input direction only, no up/down
     public void DashAlongInputAxis(float speed)
@@ -303,7 +311,8 @@ public class Player : MonoBehaviour, ICharacterController
         }
         
         // apply vertical damping
-        float damp = EquippedDash?.VerticalDashDampPercent ?? 1f;
+        Dash dash = HandLoadout.GetAbility(AbilitySlot.Movement)?.Behaviour as Dash;
+        float damp = dash?.VerticalDashDampPercent ?? 1f;
         Vector3 squishedForwardVector = new Vector3(forwardVector.x, forwardVector.y * damp, forwardVector.z);
         Dash(squishedForwardVector, speed);
     }
@@ -314,7 +323,20 @@ public class Player : MonoBehaviour, ICharacterController
         _dashVelocity = directionNormalized * speed;
         _shouldDash = true;
         _isDashing = true;
-        _dashLandMomentumDecayTimer = EquippedDash?.DashLandMomentumDecayTime ?? 0f;
+
+        Dash dash = EyeLoadout.GetAbility(AbilitySlot.Movement).Behaviour as Dash;
+        _dashLandMomentumDecayTimer = dash?.DashLandMomentumDecayTime ?? 0f;
+        //PlayRandomSound(launchSounds, launchPitchMin, launchPitchMax);
+        
+        _motor.ForceUnground(.25f); // lets you dash along objects without insta stopping you   
+    }
+
+    public void GroundPound(float speed)
+    {
+        _dashVelocity = Vector3.down * speed;
+        _shouldGroundPound = true;
+        _isDashing = true;
+        //_dashLandMomentumDecayTimer = EquippedDash?.DashLandMomentumDecayTime ?? 0f;
         //PlayRandomSound(launchSounds, launchPitchMin, launchPitchMax);
         
         _motor.ForceUnground(.25f); // lets you dash along objects without insta stopping you   

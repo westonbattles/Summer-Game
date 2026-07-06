@@ -17,13 +17,19 @@ public class Revolver : AbilityBehaviour
 
     [Header("Prefab")]
     [SerializeField] Projectile bulletPrefab;
-    //[Tooltip("Transform for the tip of the gun's muzzle to use as the origin for our revolver shots")]
-    //[SerializeField] Transform muzzle;
     
-    //[Header("Projectile")]
-    //[SerializeField] Projectile projectilePrefab;
-    //[SerializeField] float projectileSpeed = 80f;
-    //[SerializeField] Transform muzzle;
+    // MODIFIERS
+    // to use a stat modifier, simply use it here! like so
+    // public ModifiableStat => baseStat | could be turned into the following:
+    // public ModifiableStat => baseStat + Player.Instance.Modifiers.StatModifierAddName
+    // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
+    // (or any other way u want to use the modifier)
+    public int MagazineSize => magazineSize + Player.Instance.Modifiers.RevolverBulletsBonus;
+    public float ReloadDuration => reloadDuration;
+    public float Damage => baseDamage;
+    public float BulletSpeed => baseBulletSpeed;
+    public float MaxRange => baseMaxRange;
+    public float SecondsBetweenShots => baseSecondsBetweenShots;
 
     class RevolverState : AbilityState
     {
@@ -54,7 +60,7 @@ public class Revolver : AbilityBehaviour
             return null;
         }
         RevolverRecoilController recoilController = playerAim.GetComponentInChildren<RevolverRecoilController>(includeInactive: true);
-        RevolverState state = new RevolverState(playerAim, recoilController, magazineSize);
+        RevolverState state = new RevolverState(playerAim, recoilController, MagazineSize);
         return state;
     }
 
@@ -85,7 +91,7 @@ public class Revolver : AbilityBehaviour
         if (revolver.ShotCooldownRemaining > 0f) return false; // shot still on cooldown
         if (revolver.IsReloading) return false;
         
-        Vector3 targetPoint = revolver.PlayerAim.GetTargetPoint(baseMaxRange, hitLayers);
+        Vector3 targetPoint = revolver.PlayerAim.GetTargetPoint(MaxRange, hitLayers);
         Vector3 shotOrigin = revolver.RecoilController.Muzzle.position;
         Vector3 aimDirection = revolver.PlayerAim.GetShotDirection(shotOrigin, targetPoint); // normalized vector pointing in direction of where shot should be fired
 
@@ -94,7 +100,7 @@ public class Revolver : AbilityBehaviour
 
         bool isCrit = false; // Todo: implement crit chance
 
-        DamageInfo damageInfo = new DamageInfo(baseDamage, Player.Instance.gameObject, isCrit);
+        DamageInfo damageInfo = new DamageInfo(Damage, Player.Instance.gameObject, isCrit);
         
         // if obstruction exists between player and muzzle, place bullet at the obstruction there (should auto-impact)
         Vector3 playerOrigin = Player.Instance.transform.position;
@@ -112,11 +118,11 @@ public class Revolver : AbilityBehaviour
         }
         
         
-        projectile.Launch(shotOrigin, aimDirection, baseBulletSpeed, damageInfo);
+        projectile.Launch(shotOrigin, aimDirection, BulletSpeed, damageInfo);
         revolver.Ammunition -= 1;
-        //Debug.Log($"Ability: Shot Revolver! ({revolver.Ammunition}/{magazineSize})");
+        //Debug.Log($"Ability: Shot Revolver! ({revolver.Ammunition}/{MagazineSize})");
         
-        revolver.ShotCooldownRemaining = baseSecondsBetweenShots; // update cooldown
+        revolver.ShotCooldownRemaining = SecondsBetweenShots; // update cooldown
         
         // visual recoil
         revolver.RecoilController?.Kick(aimDirection);
@@ -128,21 +134,21 @@ public class Revolver : AbilityBehaviour
     {
         Debug.Log("Beginning Reload");
         
-        if (reloadDuration <= 0f) // if we set reload duration to -1 it'll insta reload giving us frenzy ability potential if we want
+        if (ReloadDuration <= 0f) // if we set reload duration to -1 it'll insta reload giving us frenzy ability potential if we want
         {
             FinishReload(revolver);
             return;
         }
 
         revolver.IsReloading = true;
-        revolver.ReloadTimeRemaining = reloadDuration;
+        revolver.ReloadTimeRemaining = ReloadDuration;
     }
 
     void FinishReload(RevolverState revolver)
     {
         Debug.Log("Finished Reload");
         
-        revolver.Ammunition = magazineSize;
+        revolver.Ammunition = MagazineSize;
         revolver.ReloadTimeRemaining = 0f; // can remove, just makes things cleaner
         revolver.IsReloading = false;
     }
@@ -150,15 +156,15 @@ public class Revolver : AbilityBehaviour
     public override int GetCurrentCharges(AbilityState state) => 
         state is RevolverState r ? r.Ammunition : 0;
 
-    public override int GetMaxCharges(AbilityState state) => magazineSize;
+    public override int GetMaxCharges(AbilityState state) => MagazineSize;
 
     public override float GetCooldownFraction(AbilityState state)
     {
         if (state is not RevolverState r) return 0f;
-        if (r.IsReloading && reloadDuration > 0f)
-            return Mathf.Clamp01(r.ReloadTimeRemaining / reloadDuration);
-        if (baseSecondsBetweenShots > 0f)
-            return Mathf.Clamp01(r.ShotCooldownRemaining / baseSecondsBetweenShots);
+        if (r.IsReloading && ReloadDuration > 0f)
+            return Mathf.Clamp01(r.ReloadTimeRemaining / ReloadDuration);
+        if (SecondsBetweenShots > 0f)
+            return Mathf.Clamp01(r.ShotCooldownRemaining / SecondsBetweenShots);
         return 0f;
     }
 

@@ -5,11 +5,19 @@ using UnityEngine;
 public class Dash : AbilityBehaviour
 {
     [Header("Properties")] 
-    [SerializeField] public float dashSpeed = 17f;
-    [SerializeField] public float dashCooldownTime = 2.3f;
+    [SerializeField] float dashSpeed = 17f;
+    [SerializeField] float dashCooldownTime = 2.3f;
     [SerializeField] float dashLandMomentumDecayTime = 0.6f; // time to apply updated friction for
     [SerializeField] float verticalDashDampPercent = 0.7f; // good feeling horizontal dashes lead to too strong vertical dashes, this value squishes down the vertical component for vert dashes to account for that
 
+    // MODIFIERS
+    // to use a stat modifier, simply use it here! like so
+    // public ModifiableStat => baseStat | could be turned into the following:
+    // public ModifiableStat => baseStat + Player.Instance.Modifiers.StatModifierAddName
+    // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
+    // (or any other way u want to use the modifier)
+    public float DashSpeed => dashSpeed;
+    public float DashCooldownTime => dashCooldownTime;
     public float DashLandMomentumDecayTime => dashLandMomentumDecayTime;
     public float VerticalDashDampPercent => verticalDashDampPercent;
     
@@ -47,18 +55,18 @@ public class Dash : AbilityBehaviour
         if (dash == null) return false;                 // cant execute rip
         if (dash.CooldownRemaining > 0f) return false;  // can't dash cuz cooldown still active
 
-        if (dash.Player.Modifiers.DashVerticallyEnabled && (dash.Player.Input.Move.y > 0 || dash.Player.Input.Move == Vector2.zero)) dash.Player.DashVertically(dashSpeed);
-        else dash.Player.DashAlongInputAxis(dashSpeed); //<- base dash
+        if (dash.Player.Modifiers.DashVerticallyEnabled && (dash.Player.Input.Move.y > 0 || dash.Player.Input.Move == Vector2.zero)) dash.Player.DashVertically(DashSpeed);
+        else dash.Player.DashAlongInputAxis(DashSpeed); //<- base dash
         
-        dash.CooldownRemaining = dashCooldownTime; // update cooldown
+        dash.CooldownRemaining = DashCooldownTime; // update cooldown
         return true;
     }
 
     public override float GetCooldownFraction(AbilityState state)
     {
         if (state is not DashState d) return 0f;
-        if (dashCooldownTime <= 0f) return 0f;
-        return Mathf.Clamp01(d.CooldownRemaining / dashCooldownTime);
+        if (DashCooldownTime <= 0f) return 0f;
+        return Mathf.Clamp01(d.CooldownRemaining / DashCooldownTime);
     }
     // no cancel since carrying momentum after character swap is kinda cool
     /*public override void Cancel(AbilityState state)
