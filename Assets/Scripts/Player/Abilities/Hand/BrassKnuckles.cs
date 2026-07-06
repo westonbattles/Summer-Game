@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,16 +8,25 @@ using Random = UnityEngine.Random;
 public class BrassKnuckles : AbilityBehaviour
 {
     [Header("Properties")] 
-    [SerializeField] public float baseDamage = 10f;
+    [SerializeField] float baseDamage = 10f;
     [Tooltip("Percentage that damage scales with each subsequent combo state")]
-    [SerializeField] public float baseComboIncrease = 0.25f;
-    [SerializeField] public int baseComboStages = 3;
-    [SerializeField] public float baseCooldownTime = 0.65f;
-    [SerializeField] public float baseComboResetTime = 2.5f;
+    [SerializeField] float baseComboIncrease = 0.25f;
+    [SerializeField] int baseComboStages = 3;
+    [SerializeField] float baseCooldownTime = 0.65f;
+    [SerializeField] float baseComboResetTime = 2.5f;
     
-    // Modifiers
-    public int MaxCombo => baseComboStages - 1 + Player.Instance.Modifiers.BrassKnucklesComboStagesBonus; // minus 1 bc 0 is our first 'combo' index
+    // MODIFIERS
+    // to use a stat modifier, simply use it here! like so
+    // public ModifiableStat => baseStat | could be turned into the following:
+    // public ModifiableStat => baseStat + Player.Instance.Modifiers.StatModifierAddName
+    // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
+    // (or any other way u want to use the modifier)
+    public float Damage => baseDamage;
     public float ComboIncrease => baseComboIncrease * Player.Instance.Modifiers.BrassKnucklesComboIncreaseDamageMultiplier;
+    public int ComboStages => baseComboStages;
+    public float CooldownTime => baseCooldownTime;
+    public float ComboResetTime => baseComboResetTime;
+    public int MaxCombo => ComboStages - 1 + Player.Instance.Modifiers.BrassKnucklesComboStagesBonus; // minus 1 bc 0 is our first 'combo' index
     
     [Header("Animation Syncing")]
     [SerializeField] float[] punchHitDelays = { 0.13f, 0.13f, 0.4f };
@@ -103,7 +111,7 @@ public class BrassKnuckles : AbilityBehaviour
         
         // succesful execution
 
-        int animationState = brassKnuckles.PunchIndex % baseComboStages;
+        int animationState = brassKnuckles.PunchIndex % ComboStages;
         
         brassKnuckles.HitPending = true;
         brassKnuckles.HitDelayRemaining = punchHitDelays[animationState];
@@ -119,7 +127,7 @@ public class BrassKnuckles : AbilityBehaviour
         // todo: swing vfx
         
         brassKnuckles.PunchIndex += 1;
-        brassKnuckles.CooldownRemaining = baseCooldownTime; // start cooldown countdown
+        brassKnuckles.CooldownRemaining = CooldownTime; // start cooldown countdown
         return true;
     }
 
@@ -139,11 +147,10 @@ public class BrassKnuckles : AbilityBehaviour
         
         if (hitCount > 0)
         {
-            
-            Debug.Log($"Hit! Combo State: {brassKnuckles.ComboState}, Multiplier: {brassKnuckles.GetActiveMultiplier(ComboIncrease)}");
+            //Debug.Log($"Hit! Combo State: {brassKnuckles.ComboState}, Multiplier: {brassKnuckles.GetActiveMultiplier(ComboIncrease)}");
             
             // build damageinfo
-            float damage = baseDamage * brassKnuckles.GetActiveMultiplier(ComboIncrease);
+            float damage = Damage * brassKnuckles.GetActiveMultiplier(ComboIncrease);
             DamageInfo damageInfo = new DamageInfo(damage, brassKnuckles.Player.gameObject, isCrit: false); // todo : implement crit chance?
             
             // de-duplicate
@@ -161,11 +168,8 @@ public class BrassKnuckles : AbilityBehaviour
 
             // update combo state 
             if (brassKnuckles.ComboState < MaxCombo) brassKnuckles.ComboState += 1;
-            brassKnuckles.ComboResetTimeRemaining = baseComboResetTime;
-            
+            brassKnuckles.ComboResetTimeRemaining = ComboResetTime;
         }
-        else
-        { Debug.Log($"Miss! Combo State: {brassKnuckles.ComboState}, Multiplier: {brassKnuckles.GetActiveMultiplier(ComboIncrease)}"); }
     }
     
     public override float GetCooldownFraction(AbilityState state)
@@ -173,7 +177,7 @@ public class BrassKnuckles : AbilityBehaviour
         BrassKnucklesState brassKnuckles = state as BrassKnucklesState;
         if (brassKnuckles == null) return 0f;
         
-        return brassKnuckles.CooldownRemaining / baseCooldownTime;
+        return brassKnuckles.CooldownRemaining / CooldownTime;
     }
 
     public override void Cancel(AbilityState state)
