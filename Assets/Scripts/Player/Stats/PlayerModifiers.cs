@@ -9,7 +9,7 @@ public class PlayerModifiers
     
     // EYE ABILITIES
     public int RevolverBulletsBonus = 0;
-    public bool DashVerticallyEnabled = false;
+    public bool DashVerticallyEnabled = true;
     
     // HAND ABILITIES
     public int BrassKnucklesComboStagesBonus = 0;                   // how many extra combo stages do we get (each stage gives us an extra 25% * BrassKnucklesComboDamageMultiplier damage)

@@ -459,8 +459,19 @@
                 },
                 {
                     "name": "",
-                    "id": "53b3b12d-2704-4e3c-be81-bfb2f9891b42",
+                    "id": "5d0a4cde-4400-4509-904e-ad1800d11f88",
                     "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PrimaryAbility",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "53b3b12d-2704-4e3c-be81-bfb2f9891b42",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
@@ -481,11 +492,33 @@
                 },
                 {
                     "name": "",
+                    "id": "21527583-eb3b-4d40-a7ae-7a5fea141f3e",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SecondaryAbility",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "8451a158-d04c-4c37-ad2a-c79729df467e",
                     "path": "<Keyboard>/3",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
+                    "action": "MovementAbility",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ad57b7ed-10f3-4ca5-9e9f-456788505d1d",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
                     "action": "MovementAbility",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -503,8 +536,19 @@
                 },
                 {
                     "name": "",
+                    "id": "e69d3958-55f4-494c-9dac-dedbef9a3f26",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SpecialAbility",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "ef4bd6d9-514a-4007-aba6-7200a82dd869",
-                    "path": "<Keyboard>/tab",
+                    "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",

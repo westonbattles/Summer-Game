@@ -7,11 +7,15 @@ public class Dash : AbilityBehaviour
     [Header("Properties")] 
     [SerializeField] public float dashSpeed = 17f;
     [SerializeField] public float dashCooldownTime = 2.3f;
+    [SerializeField] float dashLandMomentumDecayTime = 0.6f; // time to apply updated friction for
+    [SerializeField] float verticalDashDampPercent = 0.7f; // good feeling horizontal dashes lead to too strong vertical dashes, this value squishes down the vertical component for vert dashes to account for that
 
+    public float DashLandMomentumDecayTime => dashLandMomentumDecayTime;
+    public float VerticalDashDampPercent => verticalDashDampPercent;
+    
     class DashState : AbilityState
     {
         public Player Player;
-        public PlayerAim PlayerAim;
 
         public bool IsDashing => Player.IsDashing;
         public float CooldownRemaining;         // how much time left on the shot cooldown
@@ -19,7 +23,6 @@ public class Dash : AbilityBehaviour
         public DashState(Player player)
         {
             Player = player;
-            PlayerAim = player.Aim;
         }
     }
 
@@ -44,10 +47,9 @@ public class Dash : AbilityBehaviour
         if (dash == null) return false;                 // cant execute rip
         if (dash.CooldownRemaining > 0f) return false;  // can't dash cuz cooldown still active
 
-        //dash.Player.Dash(dash.PlayerAim.AimDirection, dashSpeed);
-        //dash.Player.DashVertically(dashSpeed);
-        dash.Player.DashAlongInputAxis(dashSpeed); //<- base dash
-
+        if (dash.Player.Modifiers.DashVerticallyEnabled && (dash.Player.Input.Move.y > 0 || dash.Player.Input.Move == Vector2.zero)) dash.Player.DashVertically(dashSpeed);
+        else dash.Player.DashAlongInputAxis(dashSpeed); //<- base dash
+        
         dash.CooldownRemaining = dashCooldownTime; // update cooldown
         return true;
     }

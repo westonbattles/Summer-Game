@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using KinematicCharacterController;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
@@ -28,9 +29,9 @@ public class Player : MonoBehaviour, ICharacterController
     [SerializeField] float jumpHeight = 10f;
     [SerializeField] float jumpBufferTime = 0.05f;
 
-    [Header("Dash")]
     //[SerializeField] float dashFriction = 6f;
-    [SerializeField] float dashLandMomentumDecayTime = 1f; // time to apply updated friction for
+    //[SerializeField] float dashLandMomentumDecayTime = 0.6f; // time to apply updated friction for
+    //[SerializeField] float verticalDashDampPercent = 0.6f; // good feeling horizontal dashes lead to too strong vertical dashes, this value squishes down the vertical component for vert dashes to account for that
     
     [Header("Loadouts")]
     [SerializeField] AbilityLoadout eyeLoadout;
@@ -38,10 +39,12 @@ public class Player : MonoBehaviour, ICharacterController
     [SerializeField] AbilityLoadout startingLoadout;
 
     public static Player Instance { get; private set; }
+    public PlayerInputReader Input { get; private set; }
     public PlayerModifiers Modifiers { get; private set; } = new(); // items will change stuff from here
     public PlayerAnimator Animator { get; private set; }
     public PlayerAim Aim { get; private set; }
     public PlayerLook Look { get; private set; }
+
     public AbilityController AbilityController { get; private set; }
     public PlayerCharacterSwitcher CharacterSwitcher { get; private set; }
 
@@ -49,12 +52,7 @@ public class Player : MonoBehaviour, ICharacterController
     public AbilityLoadout HandLoadout => handLoadout;
     
     KinematicCharacterMotor _motor;
-    PlayerInputReader _input;
-    PlayerLook _look;
     float _jumpBufferCounter;
-    
-    AbilityController _abilityController;
-    PlayerCharacterSwitcher _characterSwitcher;
     
     float _friction;
     
@@ -74,28 +72,25 @@ public class Player : MonoBehaviour, ICharacterController
     void Awake()
     {
         Instance = this;
+        Input = GetComponent<PlayerInputReader>();
         Aim = GetComponent<PlayerAim>();
-        Look = GetComponent<PlayerLook>();
+        Look = GetComponentInChildren<PlayerLook>();
         AbilityController = GetComponent<AbilityController>();
         CharacterSwitcher = GetComponent<PlayerCharacterSwitcher>();
+        Animator = new PlayerAnimator(CharacterSwitcher);
         
         _motor = GetComponent<KinematicCharacterMotor>();
-        _input = GetComponent<PlayerInputReader>();
-        _look = GetComponentInChildren<PlayerLook>();
-        _input.Configure(autoBhop);
-
-        _abilityController = GetComponent<AbilityController>();
-        _characterSwitcher = GetComponent<PlayerCharacterSwitcher>();
+        Input.Configure(autoBhop);
 
         _friction = baseFriction;
-        Animator = new PlayerAnimator(_characterSwitcher);
+        
 
         if (autoBhop)
         {
             jumpBufferTime = 0.01f;
         }
         
-        _abilityController.SetLoadout(startingLoadout);
+        AbilityController.SetLoadout(startingLoadout);
     }
 
     void Start()
@@ -106,7 +101,7 @@ public class Player : MonoBehaviour, ICharacterController
     void Update()
     {
         // update jump buffer
-        if (_input.JumpPressed) _jumpBufferCounter = jumpBufferTime;
+        if (Input.JumpPressed) _jumpBufferCounter = jumpBufferTime;
         else _jumpBufferCounter -= Time.deltaTime;
         
         // update dash momentum timer
@@ -119,7 +114,7 @@ public class Player : MonoBehaviour, ICharacterController
         Vector2 localVelocity = new Vector2(localVelocity3.x, localVelocity3.z);
         
         Animator.HandleMovementAnimation(
-            _input.Move,
+            Input.Move,
             localVelocity,
             _motor.GroundingStatus.IsStableOnGround);
     }
@@ -127,33 +122,33 @@ public class Player : MonoBehaviour, ICharacterController
     void HandleInput()
     {
         // handle ability input
-        if (_input.PrimaryAbilityPressed)
+        if (Input.PrimaryAbilityPressed)
         {
-            if (_abilityController.GetCurrentAbility(AbilitySlot.Primary) == null) Debug.Log("Can't execute Primary ability: ability has not been set");
-            else _abilityController.ExecuteAbility(AbilitySlot.Primary);
+            if (AbilityController.GetCurrentAbility(AbilitySlot.Primary) == null) Debug.Log("Can't execute Primary ability: ability has not been set");
+            else AbilityController.ExecuteAbility(AbilitySlot.Primary);
             //{
-            //bool executed = _abilityController.ExecuteAbility(AbilitySlot.Primary);
+            //bool executed = AbilityController.ExecuteAbility(AbilitySlot.Primary);
             //if (executed && _characterSwitcher.CurrentCharacter == PlayerCharacter.Hand) _playerAnimator.PlayPrimaryAbility(); // eye uses IK not animator controller
             //}
         }
-        if (_input.SecondaryAbilityPressed)
+        if (Input.SecondaryAbilityPressed)
         {
-            if (_abilityController.GetCurrentAbility(AbilitySlot.Secondary) == null) Debug.Log("Can't execute Secondary ability: ability has not been set");
-            else _abilityController.ExecuteAbility(AbilitySlot.Secondary);
+            if (AbilityController.GetCurrentAbility(AbilitySlot.Secondary) == null) Debug.Log("Can't execute Secondary ability: ability has not been set");
+            else AbilityController.ExecuteAbility(AbilitySlot.Secondary);
         }
-        if (_input.MovementAbilityPressed)
+        if (Input.MovementAbilityPressed)
         {
-            if (_abilityController.GetCurrentAbility(AbilitySlot.Movement) == null) Debug.Log("Can't execute Movement ability: ability has not been set");
-            else _abilityController.ExecuteAbility(AbilitySlot.Movement);
+            if (AbilityController.GetCurrentAbility(AbilitySlot.Movement) == null) Debug.Log("Can't execute Movement ability: ability has not been set");
+            else AbilityController.ExecuteAbility(AbilitySlot.Movement);
         }
-        if (_input.SpecialAbilityPressed)
+        if (Input.SpecialAbilityPressed)
         {
-            if (_abilityController.GetCurrentAbility(AbilitySlot.Special) == null) Debug.Log("Can't execute Special ability: ability has not been set");
-            else _abilityController.ExecuteAbility(AbilitySlot.Special);
+            if (AbilityController.GetCurrentAbility(AbilitySlot.Special) == null) Debug.Log("Can't execute Special ability: ability has not been set");
+            else AbilityController.ExecuteAbility(AbilitySlot.Special);
         }
         
         // handle swap
-        if (_input.SwapPressed) _characterSwitcher.Swap();
+        if (Input.SwapPressed) CharacterSwitcher.Swap();
     }
     
     
@@ -193,14 +188,14 @@ public class Player : MonoBehaviour, ICharacterController
         Quaternion lookRotation = GetLookRotation();
         Vector3 forward = Vector3.ProjectOnPlane(lookRotation * Vector3.forward, _motor.CharacterUp).normalized;
         Vector3 right = Vector3.ProjectOnPlane(lookRotation * Vector3.right, _motor.CharacterUp).normalized;
-        Vector3 inputDirection = right * _input.Move.x + forward * _input.Move.y;
+        Vector3 inputDirection = right * Input.Move.x + forward * Input.Move.y;
         return Vector3.ClampMagnitude(inputDirection, 1f);
     }
 
     Quaternion GetLookRotation()
     {
-        return _look != null
-            ? _look.LookRotation
+        return Look != null
+            ? Look.LookRotation
             : transform.rotation;
     }
 
@@ -282,12 +277,14 @@ public class Player : MonoBehaviour, ICharacterController
         return horizontalVelocity + acceleration * deltaTime * target; // floats before vector
     }
 
+    Dash EquippedDash => AbilityController.GetCurrentAbility(AbilitySlot.Movement)?.Behaviour as Dash;
+    
     /// Dashes in move input direction only, no up/down
     public void DashAlongInputAxis(float speed)
     {
-        Vector2 moveInput = _input.Move == Vector2.zero ? Vector2.up : _input.Move;
+        Vector2 moveInput = Input.Move == Vector2.zero ? Vector2.up : Input.Move;
         
-        float yaw = _look.Yaw;
+        float yaw = Look.Yaw;
         float yOffset = 0f;
         Vector3 dashDirection = Quaternion.AngleAxis(yaw, Vector3.up) * new Vector3(moveInput.x, yOffset, moveInput.y).normalized; // rotate move input to match look rotation - https://stackoverflow.com/questions/74894102/unity-rotating-a-vector3-along-an-axis
         
@@ -297,7 +294,7 @@ public class Player : MonoBehaviour, ICharacterController
     // dash based on player look direction, but dashes downward are forced forward
     public void DashVertically(float speed)
     {
-        Vector3 forwardVector = _look.LookRotation * Vector3.forward;
+        Vector3 forwardVector = Look.LookRotation * Vector3.forward;
         // project downward look directions onto the flat y plane, and normalize (this will dash us along the ground)
         if (forwardVector.y < 0)
         {
@@ -305,7 +302,10 @@ public class Player : MonoBehaviour, ICharacterController
             forwardVector.Normalize();
         }
         
-        Dash(forwardVector, speed);
+        // apply vertical damping
+        float damp = EquippedDash?.VerticalDashDampPercent ?? 1f;
+        Vector3 squishedForwardVector = new Vector3(forwardVector.x, forwardVector.y * damp, forwardVector.z);
+        Dash(squishedForwardVector, speed);
     }
     
     /// Performs dash in a given direction with given speed
@@ -314,7 +314,7 @@ public class Player : MonoBehaviour, ICharacterController
         _dashVelocity = directionNormalized * speed;
         _shouldDash = true;
         _isDashing = true;
-        _dashLandMomentumDecayTimer = dashLandMomentumDecayTime;
+        _dashLandMomentumDecayTimer = EquippedDash?.DashLandMomentumDecayTime ?? 0f;
         //PlayRandomSound(launchSounds, launchPitchMin, launchPitchMax);
         
         _motor.ForceUnground(.25f); // lets you dash along objects without insta stopping you   

@@ -522,14 +522,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe3a9ef8336f64495aba67dc1514525a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
-  autoBhop: 1
+  autoBhop: 0
   gravity: 31
   gravityMultiplier: 1
   groundAccel: 140
   maxSpeed: 8
   airAccel: 50
   airSpeed: 1
-  friction: 12
+  baseFriction: 12
   jumpHeight: 10
   jumpBufferTime: 0.05
   eyeLoadout: {fileID: 11400000, guid: 33c053e3f5b55455d8cfe4c609fb7768, type: 2}

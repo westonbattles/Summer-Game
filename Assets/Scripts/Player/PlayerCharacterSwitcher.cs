@@ -16,7 +16,7 @@ public class PlayerCharacterSwitcher : MonoBehaviour
     [SerializeField] Animator eyeAnimator;
 
     Player _player;
-    AbilityController _abilityController;
+    AbilityController AbilityController;
 
     public PlayerCharacter CurrentCharacter { get; private set; }
     
@@ -25,7 +25,7 @@ public class PlayerCharacterSwitcher : MonoBehaviour
     void Awake()
     {
         _player = GetComponent<Player>();
-        _abilityController = GetComponent<AbilityController>();
+        AbilityController = GetComponent<AbilityController>();
     }
 
     void Start()
@@ -45,7 +45,7 @@ public class PlayerCharacterSwitcher : MonoBehaviour
 
         // swap loadout
         AbilityLoadout loadout = character == PlayerCharacter.Hand ? _player.HandLoadout : _player.EyeLoadout;
-        _abilityController.SetLoadout(loadout);
+        AbilityController.SetLoadout(loadout);
     }
     
     public void Swap()
