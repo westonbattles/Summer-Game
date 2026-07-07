@@ -52,6 +52,7 @@ public class Player : MonoBehaviour, ICharacterController
     public AbilityLoadout HandLoadout => handLoadout;
 
     public bool IsGrounded => _motor.GroundingStatus.IsStableOnGround;
+    public 
     
     KinematicCharacterMotor _motor;
     float _jumpBufferCounter;
@@ -64,8 +65,7 @@ public class Player : MonoBehaviour, ICharacterController
     bool _isDashing;
     float _dashLandMomentumDecayTimer;
     public bool IsDashing => _isDashing;
-
-    bool _shouldGroundPound;
+    
 
     void OnDrawGizmos()
     {
@@ -173,12 +173,6 @@ public class Player : MonoBehaviour, ICharacterController
             currentVelocity = _dashVelocity;
             _shouldDash = false;
             return;
-        }
-
-        if (_shouldGroundPound)
-        {
-            currentVelocity = currentVelocity + _dashVelocity;
-            _shouldGroundPound = false;
         }
         
         Vector3 inputDirection = GetPlanarMoveDirection();
@@ -331,12 +325,11 @@ public class Player : MonoBehaviour, ICharacterController
         _motor.ForceUnground(.25f); // lets you dash along objects without insta stopping you   
     }
 
-    public void GroundPound(float speed)
+    public void GroundPoundDash(Vector3 directionNormalized, float speed)
     {
-        _dashVelocity = Vector3.down * speed;
-        _shouldGroundPound = true;
+        _dashVelocity = directionNormalized * speed;
+        _shouldDash = true;
         _isDashing = true;
-        //_dashLandMomentumDecayTimer = EquippedDash?.DashLandMomentumDecayTime ?? 0f;
         //PlayRandomSound(launchSounds, launchPitchMin, launchPitchMax);
         
         _motor.ForceUnground(.25f); // lets you dash along objects without insta stopping you   

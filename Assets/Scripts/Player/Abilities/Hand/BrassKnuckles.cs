@@ -37,7 +37,7 @@ public class BrassKnuckles : AbilityBehaviour
     [SerializeField] float boxCastOffsetDistance;
     [SerializeField] Vector3 boxCastOffsetVector3;
     [SerializeField] int maxEntityCount = 16;
-    [SerializeField] LayerMask hitMask = ~0;
+    [SerializeField] LayerMask hitMask = Enemy.LayerMask | LayerMask.GetMask("Hittable");
     [SerializeField] bool showGizmo = false;
     
     
@@ -160,7 +160,7 @@ public class BrassKnuckles : AbilityBehaviour
                 IDamageable target = results[i].GetComponentInParent<IDamageable>();
                 if (target != null && brassKnuckles.DamagedTargets.Add(target))
                 {
-                    target?.TakeDamage(damageInfo);
+                    target.TakeDamage(damageInfo);
                 }
             }
             

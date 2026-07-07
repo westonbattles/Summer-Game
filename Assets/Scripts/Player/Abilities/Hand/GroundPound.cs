@@ -4,15 +4,30 @@ using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+enum GPState
+{
+    Inactive,
+    Windup,
+    Falling
+}
 
 [Serializable]
 public class GroundPound : AbilityBehaviour
 {
     [Header("Properties")] 
     [SerializeField] float baseDamage = 50f;
+    [SerializeField] float baseCritChance = 0.1f;
     [SerializeField] float baseCooldownTime = 4f;
     [SerializeField] float baseDownwardSpeed = 13f;
-    
+
+    [Header("Windup")]
+    [SerializeField] float windupTime = 0.2f;
+    [SerializeField] float windupSpeed = 10f;
+
+    [Header("Target Gathering")]
+    [SerializeField] LayerMask hitLayers = Enemy.LayerMask | LayerMask.GetMask("Hittable");
+    [SerializeField] Vector3 sphereCastPositionOffset;
+    [SerializeField] float sphereCastRadius = 0f;
     
     // MODIFIERS
     // to use a stat modifier, simply use it here! like so
@@ -26,10 +41,12 @@ public class GroundPound : AbilityBehaviour
     
     class GroundPoundState : AbilityState
     {
-        public Player Player;
+        public readonly Player Player;
+        public GPState State = GPState.Inactive;
 
-        public bool Active;                     // if we are actively falling thru the air about to do a ground pound
-        public float CooldownRemaining;         // how much time left on the ability cooldown
+        //public bool Active => State != GPState.Inactive;    // if we are actively doing a ground pound
+        public float CooldownRemaining;                     // how much time left on the ability cooldown
+        public float WindupTimer;                           // when to transition from initial upward boost to downward groundpound
         public HashSet<IDamageable> DamagedTargets = new();
         
 
@@ -46,21 +63,51 @@ public class GroundPound : AbilityBehaviour
         return state;
     }
 
+    void StartWindup(GroundPoundState groundPound)
+    {
+        groundPound.State = GPState.Windup;
+        groundPound.WindupTimer = windupTime;
+        groundPound.Player.GroundPoundDash(Vector3.up, windupSpeed);
+    }
+
+    void EndWindup(GroundPoundState groundPound)
+    {
+        groundPound.State = GPState.Falling;
+        groundPound.Player.GroundPoundDash(Vector3.down, DownwardSpeed);
+    }
+
+    /// Pound The Ground
+    void Pound(GroundPoundState groundPound, float deltaTime)
+    {
+        // todo: do some pounding
+
+        Vector3 position = groundPound.Player.transform.position + sphereCastPositionOffset;
+        Collider[] hits = new Collider[32];
+        //Physics.OverlapSphereNonAlloc(position, sphereCastRadius, hits, hitLayers);
+        
+        Debug.Log("Pounded");
+        
+        groundPound.State = GPState.Inactive;
+    }
+    
     public override void Tick(AbilityState state, float deltaTime)
     {
         GroundPoundState groundPound = state as GroundPoundState;
         if (groundPound == null) return;
 
-        if (groundPound.Active)
+        switch (groundPound.State)
         {
-            if (groundPound.Player.IsGrounded)
-            {
-                groundPound.Active = false;
-                Debug.Log("Pounded!");
-            }
+            case GPState.Windup:
+                if (groundPound.WindupTimer == 0f) EndWindup(groundPound);
+                else groundPound.WindupTimer = Mathf.Max(0f, groundPound.WindupTimer - deltaTime);
+                break;
+            case GPState.Falling:
+                if (groundPound.Player.IsGrounded) Pound(groundPound, deltaTime);
+                break;
         }
         
-        // update cooldown
+        
+        // update ability cooldown
         groundPound.CooldownRemaining = Mathf.Max(0f, groundPound.CooldownRemaining - deltaTime);
     }
 
@@ -71,27 +118,11 @@ public class GroundPound : AbilityBehaviour
         GroundPoundState groundPound = state as GroundPoundState;
         if (groundPound == null) return false;
         if (groundPound.CooldownRemaining > 0f) return false;
-        if (groundPound.Active) return false; // alr pounding
+        if (groundPound.State != GPState.Inactive) return false; // alr pounding
   
-       
         
         // succesful execution
-
-        groundPound.Active = true;
-
-        // if grounded -> slight upward momentum
-        if (groundPound.Player.IsGrounded)
-        {
-            
-        }
-        // else -> downward momentum
-        else
-        {
-            groundPound.Player.GroundPound(DownwardSpeed);
-        }
-        
-
-        // swing vfx
+        StartWindup(groundPound);
         
         groundPound.CooldownRemaining = CooldownTime; // start cooldown countdown
         return true;
@@ -110,7 +141,7 @@ public class GroundPound : AbilityBehaviour
         GroundPoundState groundPound = state as GroundPoundState;
         if (groundPound == null) return;
 
-        groundPound.Active = false; // make sure we don't do a delayed hit after cancel
+        groundPound.State = GPState.Inactive; // make sure we don't do a delayed hit after cancel
     }
     
     
