@@ -15,6 +15,8 @@ using Vector3 = UnityEngine.Vector3;
 [RequireComponent(typeof(PlayerLook))]
 public class Player : MonoBehaviour, ICharacterController
 {
+    public static LayerMask LayerMask => LayerMask.GetMask("Player");
+    
     [Header("Input")]
     [SerializeField] bool autoBhop;
 
@@ -71,6 +73,9 @@ public class Player : MonoBehaviour, ICharacterController
     {
         AbilityBehaviour ab = HandLoadout.GetAbility(AbilitySlot.Primary).Behaviour;
         if (ab is BrassKnuckles bk)  bk.DrawGizmos(transform);
+
+        ab = HandLoadout.GetAbility(AbilitySlot.Movement).Behaviour;
+        if (ab is GroundPound gp) gp.DrawGizmos(transform);
     }
 
     void Awake()

@@ -23,7 +23,12 @@ MonoBehaviour:
     - rid: 1748538077553885525
       type: {class: GroundPound, ns: , asm: Assembly-CSharp}
       data:
-        baseDamage: 50
+        baseDamage: 40
         baseCooldownTime: 4
+        baseDamageScalingFactor: 0.5
         baseDownwardSpeed: 13
-        HoriVelocityDamp: 1
+        windupTime: 0.2
+        windupSpeed: 10
+        sphereCastPositionOffset: {x: 0, y: 0, z: 0}
+        sphereCastRadius: 3.3
+        showGizmo: 0

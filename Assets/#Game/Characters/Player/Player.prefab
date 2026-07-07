@@ -227,7 +227,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7325816549336099278}
   - component: {fileID: 2577190129641887127}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Hurtbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -535,6 +535,7 @@ MonoBehaviour:
   eyeLoadout: {fileID: 11400000, guid: 33c053e3f5b55455d8cfe4c609fb7768, type: 2}
   handLoadout: {fileID: 11400000, guid: a4915b5678ee542d995b24e9087c2968, type: 2}
   startingLoadout: {fileID: 11400000, guid: 33c053e3f5b55455d8cfe4c609fb7768, type: 2}
+  _motor: {fileID: 0}
 --- !u!114 &4855516021531199088
 MonoBehaviour:
   m_ObjectHideFlags: 0

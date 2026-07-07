@@ -13,7 +13,7 @@ public class Revolver : AbilityBehaviour
     [SerializeField, Min(0)] float baseBulletSpeed = 70f;
     [SerializeField, Min(0)] float baseMaxRange = 100f;
     [SerializeField, Min(0)] float baseSecondsBetweenShots  = 0.15f; // shot cooldown
-    [SerializeField] LayerMask hitLayers = Enemy.LayerMask | LayerMask.GetMask("Hittable");
+    LayerMask HitLayers => Enemy.LayerMask | LayerMask.GetMask("Hittable");
 
     [Header("Prefab")]
     [SerializeField] Projectile bulletPrefab;
@@ -91,7 +91,7 @@ public class Revolver : AbilityBehaviour
         if (revolver.ShotCooldownRemaining > 0f) return false; // shot still on cooldown
         if (revolver.IsReloading) return false;
         
-        Vector3 targetPoint = revolver.PlayerAim.GetTargetPoint(MaxRange, hitLayers);
+        Vector3 targetPoint = revolver.PlayerAim.GetTargetPoint(MaxRange, HitLayers);
         Vector3 shotOrigin = revolver.RecoilController.Muzzle.position;
         Vector3 aimDirection = revolver.PlayerAim.GetShotDirection(shotOrigin, targetPoint); // normalized vector pointing in direction of where shot should be fired
 
@@ -111,7 +111,7 @@ public class Revolver : AbilityBehaviour
         if (obstructionDistance > 0.001f)
         {
             Vector3 direction = playerToMuzzle / obstructionDistance; // manually calculate normal with our magnitude
-            if (Physics.Raycast(playerOrigin, direction, out RaycastHit hitInfo, obstructionDistance, hitLayers, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(playerOrigin, direction, out RaycastHit hitInfo, obstructionDistance, HitLayers, QueryTriggerInteraction.Ignore))
             {
                 shotOrigin = hitInfo.point + direction * 0.001f; // move a bit into the obstruction so we can detect overlap later in projectile code
             }

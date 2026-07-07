@@ -36,7 +36,4 @@ MonoBehaviour:
         boxCastOffsetDistance: 0.6
         boxCastOffsetVector3: {x: 0, y: 1.2, z: 0}
         maxEntityCount: 16
-        hitMask:
-          serializedVersion: 2
-          m_Bits: 64
-        showGizmo: 1
+        showGizmo: 0

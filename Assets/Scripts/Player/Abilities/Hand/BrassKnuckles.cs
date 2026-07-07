@@ -37,9 +37,9 @@ public class BrassKnuckles : AbilityBehaviour
     [SerializeField] float boxCastOffsetDistance;
     [SerializeField] Vector3 boxCastOffsetVector3;
     [SerializeField] int maxEntityCount = 16;
-    [SerializeField] LayerMask hitMask = Enemy.LayerMask | LayerMask.GetMask("Hittable");
     [SerializeField] bool showGizmo = false;
     
+    LayerMask HitLayers => Enemy.LayerMask | LayerMask.GetMask("Hittable");
     
     class BrassKnucklesState : AbilityState
     {
@@ -143,7 +143,7 @@ public class BrassKnuckles : AbilityBehaviour
             boxCastHalfExtents,
             results,
             rotation,
-            hitMask);
+            HitLayers);
         
         if (hitCount > 0)
         {
