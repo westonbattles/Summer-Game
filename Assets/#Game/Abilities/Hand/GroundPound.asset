@@ -32,3 +32,4 @@ MonoBehaviour:
         sphereCastPositionOffset: {x: 0, y: 0, z: 0}
         sphereCastRadius: 3.3
         showGizmo: 0
+        groundPoundLandVFX: {fileID: 7076799518104773974, guid: db81bc0bb12c04ee6af8cee3090b87ca, type: 3}
