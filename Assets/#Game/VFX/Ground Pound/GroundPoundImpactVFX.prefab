@@ -14644,7 +14644,7 @@ MonoBehaviour:
   releaseType: 0
   startingCount: 4
   maxInactiveInstances: 8
-  maxConcurrentInstances: 8
+  maxConcurrentInstances: 12
 --- !u!1 &6566945421694347137
 GameObject:
   m_ObjectHideFlags: 0
@@ -19595,7 +19595,7 @@ ParticleSystem:
   startDelay:
     serializedVersion: 2
     minMaxState: 0
-    scalar: 0
+    scalar: 0.04
     minScalar: 0
     maxCurve:
       serializedVersion: 2

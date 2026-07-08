@@ -27,17 +27,30 @@ public class XPOrb : MonoBehaviour, IPoolable
     private float value;
     private float speed;
     private float age;
+    private bool launched;
+    private bool releaseToPoolOnDespawn;
+    private PooledVfx pooledVfx;
+
+    private void Awake()
+    {
+        pooledVfx = GetComponent<PooledVfx>();
+    }
 
     /// <summary>Called by XPDropper immediately after spawn. Stamps the value and arms the pursuit.</summary>
-    public void Launch(float xpValue)
+    public void Launch(float xpValue, bool releaseToPool = false)
     {
         value = xpValue;
         age = 0f;
         speed = startSpeed;
+        releaseToPoolOnDespawn = releaseToPool;
+        launched = true;
     }
 
     private void Update()
     {
+        if (!launched)
+            return;
+
         age += Time.deltaTime;
 
         if (age < flightDelay)
@@ -65,8 +78,14 @@ public class XPOrb : MonoBehaviour, IPoolable
 
     private void Despawn()
     {
-        // TODO: release back to the pool once the pool manager is generalized:
-        // PoolManager.Instance.Release(this);
+        launched = false;
+
+        if (releaseToPoolOnDespawn && pooledVfx != null && VFXPoolManager.Instance != null)
+        {
+            VFXPoolManager.Instance.Release(pooledVfx);
+            return;
+        }
+
         Destroy(gameObject);
     }
 
@@ -77,6 +96,7 @@ public class XPOrb : MonoBehaviour, IPoolable
 
     public void OnDespawn()
     {
-        // Nothing to tear down; no tweens, no velocity - pursuit state lives in Launch().
+        launched = false;
+        releaseToPoolOnDespawn = false;
     }
 }

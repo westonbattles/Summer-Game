@@ -45,7 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VFXPoolManager
   globalMaxActive: 128
-  startingVFXPrefabs: []
+  startingVFXPrefabs:
+  - {fileID: 2596861643026887589, guid: 01909df2432884541936b1cd9e7b4dc1, type: 3}
+  - {fileID: 7076799518104773974, guid: db81bc0bb12c04ee6af8cee3090b87ca, type: 3}
 --- !u!1 &2808294378423583614
 GameObject:
   m_ObjectHideFlags: 0
