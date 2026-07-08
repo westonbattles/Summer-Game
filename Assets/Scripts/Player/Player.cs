@@ -54,7 +54,7 @@ public class Player : MonoBehaviour, ICharacterController
     public AbilityLoadout HandLoadout => handLoadout;
 
     public bool IsGrounded => _motor.GroundingStatus.IsStableOnGround;
-    public 
+    public bool IgnoreEnemiesForCollision = true; // disable player colliding with enemies
     
     KinematicCharacterMotor _motor;
     float _jumpBufferCounter;
@@ -350,7 +350,14 @@ public class Player : MonoBehaviour, ICharacterController
         }
     }
     public void AfterCharacterUpdate(float deltaTime) { }
-    public bool IsColliderValidForCollisions(Collider coll) => true;
+
+    public bool IsColliderValidForCollisions(Collider coll)
+    {
+        if (!IgnoreEnemiesForCollision) return true;
+
+        bool isEnemyLayer = ((1 << coll.gameObject.layer) & Enemy.LayerMask.value) > 0f;
+        return !isEnemyLayer;
+    }
     public void OnDiscreteCollisionDetected(Collider hitCollider) { }
     public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }
     public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }

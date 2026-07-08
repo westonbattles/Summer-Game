@@ -84,6 +84,7 @@ public class GroundPound : AbilityBehaviour
 
     void EndWindup(GroundPoundState groundPound)
     {
+        groundPound.Player.IgnoreEnemiesForCollision = true;
         groundPound.State = GPState.Falling;
         groundPound.Player.GroundPoundDash(Vector3.down, DownwardSpeed);
     }
@@ -91,6 +92,8 @@ public class GroundPound : AbilityBehaviour
     /// Pound The Ground
     void Pound(GroundPoundState groundPound, float deltaTime)
     {
+        groundPound.Player.IgnoreEnemiesForCollision = false;
+        
         Vector3 position = groundPound.Player.transform.position + sphereCastPositionOffset;
         Collider[] hits = new Collider[64];
         int hitCount = Physics.OverlapSphereNonAlloc(position, sphereCastRadius, hits, HitLayers);
@@ -171,6 +174,7 @@ public class GroundPound : AbilityBehaviour
         GroundPoundState groundPound = state as GroundPoundState;
         if (groundPound == null) return;
 
+        groundPound.Player.IgnoreEnemiesForCollision = false;
         groundPound.State = GPState.Inactive; // make sure we don't do a delayed hit after cancel
     }
     

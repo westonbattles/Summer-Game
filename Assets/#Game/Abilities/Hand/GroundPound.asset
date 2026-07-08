@@ -23,7 +23,7 @@ MonoBehaviour:
     - rid: 1748538077553885525
       type: {class: GroundPound, ns: , asm: Assembly-CSharp}
       data:
-        baseDamage: 40
+        baseDamage: 20
         baseCooldownTime: 4
         baseDamageScalingFactor: 0.5
         baseDownwardSpeed: 13

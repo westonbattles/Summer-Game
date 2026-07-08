@@ -73,7 +73,6 @@ public class PlayerAnimator
 
     public void PlayBrassKnucklesAnimation(int punchIndex)
     {
-        Debug.Log(punchIndex);
         CurrentAnimator.SetTrigger(PrimaryAbility);
         CurrentAnimator.SetInteger(PunchIndex, punchIndex);
     }

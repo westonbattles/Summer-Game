@@ -132,8 +132,6 @@ public class Revolver : AbilityBehaviour
 
     void BeginReload(RevolverState revolver)
     {
-        Debug.Log("Beginning Reload");
-        
         if (ReloadDuration <= 0f) // if we set reload duration to -1 it'll insta reload giving us frenzy ability potential if we want
         {
             FinishReload(revolver);
@@ -146,8 +144,6 @@ public class Revolver : AbilityBehaviour
 
     void FinishReload(RevolverState revolver)
     {
-        Debug.Log("Finished Reload");
-        
         revolver.Ammunition = MagazineSize;
         revolver.ReloadTimeRemaining = 0f; // can remove, just makes things cleaner
         revolver.IsReloading = false;
