@@ -72,7 +72,7 @@ public class VFXPoolManager : MonoBehaviour
         return vfx;
     }
 
-    
+    // play vfx but have it follow a parent while playing
     public PooledVfx PlayAttatched(PooledVfx prefab, Transform parent)
     {
         // try get pool from prefab

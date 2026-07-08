@@ -27,7 +27,10 @@ public class GroundPound : AbilityBehaviour
     [Header("Target Gathering")]
     [SerializeField] Vector3 sphereCastPositionOffset;
     [SerializeField] float sphereCastRadius = 3.3f;
-    [SerializeField] bool showGizmo = true; 
+    [SerializeField] bool showGizmo = true;
+
+    [Header("VFX")]
+    [SerializeField] PooledVfx groundPoundLandVFX;
     
     LayerMask HitLayers => Enemy.LayerMask | LayerMask.GetMask("Hittable");
     
@@ -117,6 +120,7 @@ public class GroundPound : AbilityBehaviour
         }
         
         // todo: vfx circle thing (lowkey wanna take as tab at this - Weston)
+        VFXPoolManager.Instance.Play(groundPoundLandVFX, position, Quaternion.identity);
         
         groundPound.State = GPState.Inactive;
     }
