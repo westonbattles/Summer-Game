@@ -70,7 +70,7 @@ public class GroundPound : AbilityBehaviour
     // height is distance from max height during gronudpound to landing height
     float DamageScalingFunction(float height)
     {
-        return Damage * Mathf.Max(1f, DamageScalingFactor * (height + 1)); // max(1, 1/2[x+1])
+        return Damage * Mathf.Max(1.2f, DamageScalingFactor * (height + 1)); // max(1.2, 1/2[x+1])
         // could do a logarithmic scaling instead?
     }
     
