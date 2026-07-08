@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: 09e096e960fc66c4a907a617f9f53a5d, type: 2}
+  m_LightingDataAsset: {fileID: 112000000, guid: b2a62158e1ed7f9439e9263d1f78259d, type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: 71fb7f99906ed824eb3dd0ccaf9bc19d, type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -332,7 +332,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 2100000, guid: 80a29b704e3ee40f3b694c4779269bce, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3205,7 +3205,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 2100000, guid: 80a29b704e3ee40f3b694c4779269bce, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
