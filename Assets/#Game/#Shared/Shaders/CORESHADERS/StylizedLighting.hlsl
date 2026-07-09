@@ -232,4 +232,19 @@ void WaterSparkle_float(
 #endif
 }
 
+// Soft particles: fade out as the particle quad approaches opaque geometry,
+// hiding the hard intersection line. Same depth comparison as StylizedWater.
+// Multiply Fade into BOTH color and alpha so it works under alpha-blended
+// AND additive materials (additive ignores alpha; darkening color to black
+// is how additive things disappear).
+void SoftParticleFade_float(
+    float SceneEyeDepth, // Scene Depth node, Eye
+    float FragEyeDepth, // Screen Position node, Raw -> Split -> W
+    float FadeDistance, // world units over which to fade, try 0.5
+    out float Fade)
+{
+    float depthDiff = SceneEyeDepth - FragEyeDepth;
+    Fade = saturate(depthDiff / max(FadeDistance, 0.0001));
+}
+
 #endif // STYLIZED_LIGHTING_INCLUDED
