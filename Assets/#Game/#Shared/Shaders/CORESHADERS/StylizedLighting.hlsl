@@ -40,7 +40,7 @@ void StylizedLighting_float(
     float RimPower,
     float RimStrength,
     float RimShadowMask, // 0 = rim everywhere (props), 1 = rim only on
-                             // shadow side (characters, reads as bounce light)
+                         // shadow side (characters, reads as bounce light)
     out float3 Shading)
 {
 #if defined(SHADERGRAPH_PREVIEW)
@@ -245,6 +245,68 @@ void SoftParticleFade_float(
 {
     float depthDiff = SceneEyeDepth - FragEyeDepth;
     Fade = saturate(depthDiff / max(FadeDistance, 0.0001));
+}
+
+// Projects a sky direction onto a virtual flat cloud plane overhead.
+// UV feeds a Tiling And Offset node (scroll with Time) then your cloud
+// texture or noise. HorizonFade masks out the projection blowup near the
+// horizon — multiply it into your cloud sample before the sky function.
+void SkyPlanarUV_float(
+    float3 Direction,
+    float CloudScale, // try 0.5; smaller = bigger clouds
+    out float2 UV,
+    out float HorizonFade)
+{
+    float3 dir = normalize(Direction);
+    float y = max(dir.y, 0.001);
+    UV = dir.xz / y * CloudScale;
+    HorizonFade = smoothstep(0.05, 0.3, dir.y);
+}
+
+// Procedural gradient skybox with a sun disc that tracks the main
+// directional light, plus a stylized cloud layer. Assign the material in
+// Lighting > Environment > Skybox Material — never on a mesh renderer.
+// Direction = Position node (Object space) -> Normalize.
+// CloudSample = your cloud texture/noise (0..1) sampled with SkyPlanarUV,
+// already multiplied by HorizonFade. Pass 0 for a cloudless sky.
+void StylizedSky_float(
+    float3 Direction,
+    float3 ZenithColor,
+    float3 HorizonColor, // match fog color family for seamless distance
+    float3 GroundColor,
+    float HorizonSharpness, // exponent, try 2.5; higher = thinner horizon band
+    float3 SunColor, // HDR property; >1 intensity feeds bloom
+    float SunSize, // try 0.04
+    float SunSoftness, // edge softness, try 0.01; ~0 = hard stylized disc
+    float CloudSample, // 0..1 coverage from graph, pre-masked by HorizonFade
+    float3 CloudColor,
+    float CloudCutoff, // coverage threshold, try 0.5; higher = fewer clouds
+    float CloudSoftness, // edge softness, try 0.15; ~0 = hard toon clouds
+    out float3 Color)
+{
+#if defined(SHADERGRAPH_PREVIEW)
+    Color = lerp(HorizonColor, ZenithColor, saturate(Direction.y));
+#else
+    float3 dir = normalize(Direction);
+
+    // Sky gradient above the horizon, flat ground color below.
+    float up = saturate(dir.y);
+    float skyT = pow(up, 1.0 / max(HorizonSharpness, 0.0001));
+    float3 sky = lerp(HorizonColor, ZenithColor, skyT);
+    float horizonMask = smoothstep(-0.02, 0.02, dir.y);
+    Color = lerp(GroundColor, sky, horizonMask);
+
+    // Sun disc. mainLight.direction points AT the sun.
+    Light mainLight = GetMainLight();
+    float sunDot = dot(dir, mainLight.direction);
+    float disc = smoothstep(1.0 - SunSize - SunSoftness, 1.0 - SunSize, sunDot);
+    Color += SunColor * disc;
+
+    // Clouds last, so they occlude the sun disc when they cross it.
+    float cloud = smoothstep(CloudCutoff, CloudCutoff + max(CloudSoftness, 0.0001),
+                             CloudSample);
+    Color = lerp(Color, CloudColor, cloud);
+#endif
 }
 
 #endif // STYLIZED_LIGHTING_INCLUDED
