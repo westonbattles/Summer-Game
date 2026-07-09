@@ -788,6 +788,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2963975783971783808, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+      propertyPath: startingVFXPrefabs.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2963975783971783808, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+      propertyPath: 'startingVFXPrefabs.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1372171981074182977, guid: a6eb1d35b2af54c2e9ff47d4dd28698a, type: 3}
+    - target: {fileID: 2963975783971783808, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+      propertyPath: 'startingVFXPrefabs.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1372171981074182977, guid: a6eb1d35b2af54c2e9ff47d4dd28698a, type: 3}
     - target: {fileID: 4513342026305316520, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.05489
