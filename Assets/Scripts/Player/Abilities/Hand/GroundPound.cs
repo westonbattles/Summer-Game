@@ -137,7 +137,7 @@ public class GroundPound : AbilityBehaviour
                 else groundPound.WindupTimer = Mathf.Max(0f, groundPound.WindupTimer - deltaTime);
                 break;
             case GPState.Falling:
-                if (groundPound.Player.IsGrounded) Pound(groundPound, deltaTime);
+                if (groundPound.Player.IsGrounded || groundPound.Player.GroundedRaycast(0.05f)) Pound(groundPound, deltaTime);
                 break;
         }
         

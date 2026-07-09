@@ -54,6 +54,7 @@ public class Player : MonoBehaviour, ICharacterController
     public AbilityLoadout HandLoadout => handLoadout;
 
     public bool IsGrounded => _motor.GroundingStatus.IsStableOnGround;
+    public bool GroundedRaycast(float rayLength) { return Physics.Raycast(transform.position, Vector3.down, rayLength, LayerMask.GetMask("Ground"));}
     public bool IgnoreEnemiesForCollision = true; // disable player colliding with enemies
     
     KinematicCharacterMotor _motor;
