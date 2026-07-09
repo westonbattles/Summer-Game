@@ -31,6 +31,7 @@ public class GroundPound : AbilityBehaviour
 
     [Header("VFX")]
     [SerializeField] PooledVfx groundPoundLandVFX;
+    //[SerializeField] float baseVFXScale = 1.6f;
     
     LayerMask HitLayers => Enemy.LayerMask | LayerMask.GetMask("Hittable");
     
@@ -120,7 +121,12 @@ public class GroundPound : AbilityBehaviour
         }
         
         // todo: vfx circle thing (lowkey wanna take as tab at this - Weston)
-        VFXPoolManager.Instance.Play(groundPoundLandVFX, position, Quaternion.identity);
+        PooledVfx vfx = VFXPoolManager.Instance.Play(groundPoundLandVFX, position, Quaternion.identity);
+        if (vfx != null)
+        {
+            float increaseRatio = DamageRadius / sphereCastRadius;
+            vfx.transform.localScale *= increaseRatio;
+        }
         
         groundPound.State = GPState.Inactive;
     }
