@@ -2,9 +2,15 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
 [DisallowMultipleComponent]
-public class DecalProjectorLifetimeFade : MonoBehaviour
+public class DecalProjectorLifetimeAnimation : MonoBehaviour
 {
     [SerializeField] DecalProjector projector;
+
+    [Header("Scale In")]
+    [SerializeField] bool driveProjectorSize = true;
+    [SerializeField, Min(0f)] float scaleInDuration = 0.2f;
+    [SerializeField, Min(0f)] float startScale = 0f;
+    [SerializeField] AnimationCurve scaleInCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
     [Header("Timing")]
     [SerializeField, Min(0f)] float delayBeforeFade = 1f;
@@ -19,14 +25,17 @@ public class DecalProjectorLifetimeFade : MonoBehaviour
     [SerializeField] bool driveProjectorFadeFactor;
     [SerializeField] bool invertProjectorFadeFactor = true;
 
+    Vector3 baseProjectorSize;
     Material sourceMaterial;
     Material runtimeMaterial;
     int fadePropertyId;
     float elapsed;
+    bool hasBaseProjectorSize;
 
     void Awake()
     {
         CacheReferences();
+        CacheBaseProjectorSize();
         CreateRuntimeMaterial();
     }
 
@@ -34,13 +43,18 @@ public class DecalProjectorLifetimeFade : MonoBehaviour
     {
         elapsed = 0f;
         CacheReferences();
+        CacheBaseProjectorSize();
         CreateRuntimeMaterial();
+        ApplyScale(0f);
         ApplyFade(0f);
     }
 
     void Update()
     {
         elapsed += Time.deltaTime;
+
+        float normalizedScale = scaleInDuration <= 0f ? 1f : Mathf.Clamp01(elapsed / scaleInDuration);
+        ApplyScale(scaleInCurve.Evaluate(normalizedScale));
 
         float normalizedFade = Mathf.InverseLerp(delayBeforeFade, delayBeforeFade + fadeDuration, elapsed);
         ApplyFade(fadeCurve.Evaluate(normalizedFade));
@@ -50,6 +64,7 @@ public class DecalProjectorLifetimeFade : MonoBehaviour
     {
         elapsed = 0f;
         ApplyFade(0f);
+        ResetScale();
     }
 
     void OnDestroy()
@@ -67,6 +82,14 @@ public class DecalProjectorLifetimeFade : MonoBehaviour
     {
         if (projector == null) projector = GetComponent<DecalProjector>();
         ResolveFadePropertyName(projector != null ? projector.material : null);
+    }
+
+    void CacheBaseProjectorSize()
+    {
+        if (projector == null || hasBaseProjectorSize) return;
+
+        baseProjectorSize = projector.size;
+        hasBaseProjectorSize = true;
     }
 
     void CreateRuntimeMaterial()
@@ -95,6 +118,24 @@ public class DecalProjectorLifetimeFade : MonoBehaviour
         {
             projector.fadeFactor = invertProjectorFadeFactor ? 1f - fade : fade;
         }
+    }
+
+    void ApplyScale(float curveValue)
+    {
+        if (!driveProjectorSize || projector == null || !hasBaseProjectorSize) return;
+
+        float sizeScale = Mathf.LerpUnclamped(startScale, 1f, curveValue);
+        projector.size = new Vector3(
+            baseProjectorSize.x * sizeScale,
+            baseProjectorSize.y * sizeScale,
+            baseProjectorSize.z);
+    }
+
+    void ResetScale()
+    {
+        if (!driveProjectorSize || projector == null || !hasBaseProjectorSize) return;
+
+        projector.size = baseProjectorSize;
     }
 
     void ResolveFadePropertyName(Material targetMaterial)
