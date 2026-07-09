@@ -39248,8 +39248,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DecalProjectorLifetimeAnimation
   projector: {fileID: 6973460287106434033}
   driveProjectorSize: 1
-  scaleInDuration: 0.2
-  startScale: 0
+  scaleInDuration: 0.13
+  startScale: 0.05
   scaleInCurve:
     serializedVersion: 2
     m_Curve:

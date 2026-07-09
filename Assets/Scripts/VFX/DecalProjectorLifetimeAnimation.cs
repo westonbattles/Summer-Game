@@ -12,7 +12,7 @@ public class DecalProjectorLifetimeAnimation : MonoBehaviour
     [SerializeField, Min(0f)] float startScale = 0f;
     [SerializeField] AnimationCurve scaleInCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
-    [Header("Timing")]
+    [Header("Fade Out")]
     [SerializeField, Min(0f)] float delayBeforeFade = 1f;
     [SerializeField, Min(0.001f)] float fadeDuration = 1f;
     [SerializeField] AnimationCurve fadeCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
