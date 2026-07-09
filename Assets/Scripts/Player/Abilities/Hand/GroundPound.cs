@@ -82,14 +82,14 @@ public class GroundPound : AbilityBehaviour
         groundPound.State = GPState.Windup;
         groundPound.MaxHeight = float.MinValue;
         groundPound.WindupTimer = windupTime;
-        groundPound.Player.GroundPoundDash(Vector3.up, windupSpeed); // dash up for a sec
+        groundPound.Player.GroundPoundDash(Vector3.up, windupSpeed, true); // dash up for a sec
     }
 
     void EndWindup(GroundPoundState groundPound)
     {
         groundPound.Player.IgnoreEnemiesForCollision = true;
         groundPound.State = GPState.Falling;
-        groundPound.Player.GroundPoundDash(Vector3.down, DownwardSpeed);
+        groundPound.Player.GroundPoundDash(Vector3.down, DownwardSpeed , false);
     }
 
     /// Pound The Ground
@@ -137,7 +137,8 @@ public class GroundPound : AbilityBehaviour
                 else groundPound.WindupTimer = Mathf.Max(0f, groundPound.WindupTimer - deltaTime);
                 break;
             case GPState.Falling:
-                if (groundPound.Player.IsGrounded || groundPound.Player.GroundedRaycast(0.05f)) Pound(groundPound, deltaTime);
+                //EXPENSIVE raycast checks -> might make it feel more responsive?: if (groundPound.Player.IsGrounded || groundPound.Player.GroundedRaycast(0.05f)) Pound(groundPound, deltaTime);
+                if (groundPound.Player.IsGrounded) Pound(groundPound, deltaTime);
                 break;
         }
         
