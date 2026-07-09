@@ -38,14 +38,20 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _HorizonSharpness: 2.5
+    - _CloudCutoff: 0.14
+    - _CloudSample: 0
+    - _CloudScale: 0.27
+    - _CloudScatter: 4.73
+    - _CloudSoftness: 0.4
+    - _HorizonSharpness: 2.83
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _SunSize: 0.01
-    - _SunSoftness: 0.05
+    - _SunSize: -0.05
+    - _SunSoftness: 0.2
     m_Colors:
+    - _CloudColor: {r: 1, g: 0.9339623, b: 0.7830188, a: 1}
     - _GroundColor: {r: 0.19975066, g: 0.34843737, b: 0.68301874, a: 1}
-    - _HorizonColor: {r: 0.38970336, g: 0.30623698, b: 0.66792446, a: 1}
+    - _HorizonColor: {r: 0.49826512, g: 0.43985048, b: 0.6150943, a: 1}
     - _SunColor: {r: 5.992157, g: 4.581653, b: 0, a: 1}
     - _ZenithColor: {r: 0.04877886, g: 0.56535506, b: 0.8339623, a: 1}
   m_BuildTextureStacks: []

@@ -40,7 +40,7 @@ void StylizedLighting_float(
     float RimPower,
     float RimStrength,
     float RimShadowMask, // 0 = rim everywhere (props), 1 = rim only on
-                         // shadow side (characters, reads as bounce light)
+                             // shadow side (characters, reads as bounce light)
     out float3 Shading)
 {
 #if defined(SHADERGRAPH_PREVIEW)
@@ -149,15 +149,23 @@ void SwayFoliage_float(
 //   SceneEyeDepth : Scene Depth node, Sampling = Eye
 //   FragEyeDepth  : Screen Position node, Mode = Raw, Split -> W
 //   FoamNoise     : 0..1 noise (Gradient Noise on world-XZ UVs, scrolled by Time)
+//   DetailSample  : grayscale surface-imperfection/flotsam texture (0..1),
+//                   sampled on world-XZ UVs with a slow drift; pass 0 to disable
 void StylizedWater_float(
     float SceneEyeDepth,
     float FragEyeDepth,
     float FoamNoise,
+    float DetailSample,
+    float3 DetailColor, // scum/flotsam tint; try slightly darker than shallow color
+    float DetailStrength, // try 0.3; how visible the flotsam layer is
     float3 ShallowColor,
     float3 DeepColor,
     float DepthMaxDistance, // world units at which water reads as fully deep, try 2
     float3 FoamColor,
     float FoamDistance, // foam band thickness in world units, try 0.4
+    float CrestFoam, // from WaveCrestFoam.Foam; pass 0 to disable whitecaps
+    float CrestGlow, // from WaveCrestFoam.Crest (smooth pre-noise value)
+    float GlowStrength, // try 0.35; 0 disables. Subtle proto-foam brightening
     float ShallowAlpha, // try 0.4
     float DeepAlpha, // try 0.9
     out float3 Color,
@@ -171,36 +179,87 @@ void StylizedWater_float(
     Color = lerp(ShallowColor, DeepColor, depthT);
     Alpha = lerp(ShallowAlpha, DeepAlpha, depthT);
 
-    // Foam: hard-edged band where the water column is thin (shorelines and
-    // anything opaque poking through), with noise eating into the edge so
-    // it reads as churn instead of a contour line.
-    float foam = step(waterDepth, FoamDistance * FoamNoise);
+    // Surface detail / flotsam: drifting imperfections riding the surface.
+    // Applied under glow and foam so churn and whitecaps draw over it.
+    Color = lerp(Color, DetailColor, saturate(DetailSample * DetailStrength));
+
+    // Rising water brightens toward foam color before actual foam appears —
+    // reads as churn/subsurface light in the swell.
+    Color = lerp(Color, FoamColor, saturate(CrestGlow * GlowStrength));
+
+    // Foam from two sources sharing one color/alpha treatment:
+    // shoreline/intersection foam (depth-based) and wave crest whitecaps.
+    float shoreFoam = step(waterDepth, FoamDistance * FoamNoise);
+    float foam = max(shoreFoam, CrestFoam);
     Color = lerp(Color, FoamColor, foam);
     Alpha = lerp(Alpha, 1.0, foam);
 }
 
+// THE water wave field — single source of truth. WaterWaves (vertex) and
+// WaveCrestFoam (fragment) both call this; edit wave shape ONLY here so
+// displacement and crest foam can never disagree.
+// Three directional layers (Jake's mix): dominant macro, crossing medium,
+// fast micro-chop. Amplitudes sum to 1.0 so callers scale by height directly.
+float WaterWaveField(float2 posXZ, float waveScale, float t)
+{
+    float2 pos2D = posXZ * waveScale;
+    float2 dir1 = float2(1.0, 0.1);
+    float2 dir2 = float2(-0.4, 0.9);
+    float2 dir3 = float2(0.6, -0.7);
+    float wave1 = sin(dot(pos2D, dir1) + t) * 0.5;
+    float wave2 = sin(dot(pos2D, dir2) + t * 1.35) * 0.35;
+    float wave3 = sin(dot(pos2D * 2.5, dir3) + t * 2.1) * 0.15;
+    return wave1 + wave2 + wave3;
+}
+
 // Gentle vertical bob for the water surface. Vertex stage, same wiring
 // pattern as SwayFoliage: output -> master stack Position (Object).
-// Two sine layers at different frequencies/angles so the surface undulates
-// instead of pumping uniformly. Offset is computed in world space and
-// transformed back, so a scaled/rotated water plane still bobs by
-// WaveHeight world units.
+// Offset is computed in world space and transformed back, so a scaled or
+// rotated water plane still bobs by WaveHeight world units.
 void WaterWaves_float(
     float3 PositionOS,
     float3 PositionWS,
-    float WaveHeight, // world units, try 0.05 — subtle is the point
+    float WaveHeight, // try 0.05
     float WaveSpeed, // try 0.8
-    float WaveScale, // spatial frequency, try 0.5
+    float WaveScale, // try 0.5
     out float3 Out)
 {
 #if defined(SHADERGRAPH_PREVIEW)
     Out = PositionOS;
 #else
     float t = _Time.y * WaveSpeed;
-    float w = sin(PositionWS.x * WaveScale + t) * 0.6
-            + sin((PositionWS.x * 0.7 + PositionWS.z * 1.3) * WaveScale + t * 1.4) * 0.4;
-    float3 offsetWS = float3(0, w * WaveHeight, 0);
+    float totalWave = WaterWaveField(PositionWS.xz, WaveScale, t);
+    float3 offsetWS = float3(0.0, totalWave * WaveHeight, 0.0);
     Out = PositionOS + TransformWorldToObjectDir(offsetWS, false);
+#endif
+}
+
+// Crest foam / whitecaps: foams the tops of the wave field so motion reads
+// from above. Fragment stage. Works because displacement is vertical-only —
+// a fragment's world XZ is unchanged by the bob, so evaluating the field
+// here returns exactly the wave value that displaced this spot.
+// WaveSpeed/WaveScale MUST be fed from the same Blackboard properties as
+// the WaterWaves node, or crests and foam drift apart.
+// FoamNoise breaks the crest lines into patches (reuse the shoreline foam
+// noise sample, or a second sample at a different scale).
+void WaveCrestFoam_float(
+    float3 PositionWS,
+    float WaveSpeed,
+    float WaveScale,
+    float CrestThreshold, // field value where foam starts; field spans -1..1, try 0.5
+    float CrestSoftness, // try 0.15; ~0 = hard toon whitecaps
+    float FoamNoise, // 0..1
+    out float Foam,
+    out float Crest)         // smooth pre-noise crest 0..1 — feeds the glow
+{
+#if defined(SHADERGRAPH_PREVIEW)
+    Foam = 0.0;
+    Crest = 0.0;
+#else
+    float t = _Time.y * WaveSpeed;
+    float wave = WaterWaveField(PositionWS.xz, WaveScale, t);
+    Crest = smoothstep(CrestThreshold, CrestThreshold + max(CrestSoftness, 0.0001), wave);
+    Foam = Crest * step(0.35, FoamNoise + Crest * 0.5);
 #endif
 }
 
