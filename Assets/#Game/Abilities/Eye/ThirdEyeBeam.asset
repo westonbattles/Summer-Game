@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 491c59549d1ed7d47a3dc5fd303aa482, type: 3}
+  m_Name: ThirdEyeBeam
+  m_EditorClassIdentifier: Assembly-CSharp::Ability
+  displayName: ThirdEyeBeam
+  description: A constant beam of damage that pierces enemies
+  icon: {fileID: 21300000, guid: 6ae1c275e788ef649867df9623fdc169, type: 3}
+  behaviour:
+    rid: 3041244990992285770
+  references:
+    version: 2
+    RefIds:
+    - rid: 3041244990992285770
+      type: {class: ThirdEyeBeam, ns: , asm: Assembly-CSharp}
+      data:
+        baseDamagePerSecond: 20
+        baseCooldownTime: 10
+        beamDuration: 8
+        beamRange: 40
+        beamRadius: 0.35
+        windupTime: 0.2
+        castPositionOffset: {x: 0, y: 2, z: 0}
+        showGizmo: 1
+        obstructionLayers:
+          serializedVersion: 2
+          m_Bits: 528
+        beamLineRenderer: {fileID: 2648917411240475333, guid: aab774e9c6b0f3242addccc6c284b1ad, type: 3}
+        beamImpactVfx: {fileID: 0}
