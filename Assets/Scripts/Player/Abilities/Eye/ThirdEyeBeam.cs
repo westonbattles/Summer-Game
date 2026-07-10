@@ -76,7 +76,7 @@ public class ThirdEyeBeam : AbilityBehaviour
         Player player = Player.Instance;
         PlayerAim playerAim = player.Aim;
         if (playerAim == null)
-        {
+        {   g
             Debug.LogError("ThirdEyeBeam couldn't find PlayerAim");
             return null;
         }

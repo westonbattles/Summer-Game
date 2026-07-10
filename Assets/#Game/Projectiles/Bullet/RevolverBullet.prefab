@@ -116,7 +116,8 @@ MonoBehaviour:
   lifetime: 5
   hittableLayers:
     serializedVersion: 2
-    m_Bits: 65
+    m_Bits: 577
   poolCapacity: 16
   sphereCastRadius: 0.054
+  usePhysicsCollision: 0
   impactVFXPrefab: {fileID: -4200568939282018780, guid: 7fd722368492f4353a0936574197af35, type: 3}

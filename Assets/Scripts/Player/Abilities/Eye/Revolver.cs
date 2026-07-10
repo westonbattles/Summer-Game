@@ -13,7 +13,7 @@ public class Revolver : AbilityBehaviour
     [SerializeField, Min(0)] float baseBulletSpeed = 70f;
     [SerializeField, Min(0)] float baseMaxRange = 100f;
     [SerializeField, Min(0)] float baseSecondsBetweenShots  = 0.15f; // shot cooldown
-    LayerMask HitLayers => Enemy.LayerMask | LayerMask.GetMask("Hittable");
+    LayerMask HitLayers => Enemy.LayerMask | LayerMask.GetMask("Hittable", "Ground");
 
     [Header("Prefab")]
     [SerializeField] Projectile bulletPrefab;
