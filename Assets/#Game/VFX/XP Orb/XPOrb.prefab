@@ -9705,6 +9705,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PooledVfx
   releaseType: 1
-  startingCount: 32
-  maxInactiveInstances: 64
-  maxConcurrentInstances: 96
+  startingCount: 16
+  maxInactiveInstances: 32
+  maxConcurrentInstances: 48

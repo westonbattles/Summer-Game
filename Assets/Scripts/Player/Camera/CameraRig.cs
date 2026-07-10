@@ -33,8 +33,6 @@ public class CameraRig : MonoBehaviour
     [SerializeField] [Range(0,1)] float minFade = 0.2f;
     [SerializeField] [Range(0,10)] float fadeHiddenDistance = 0.5f;
     [SerializeField] [Range(0,10)] float fadeVisibleDistance = 2.0f;
-    [SerializeField] float fadeSmoothTime = 0.08f;
-    
     public Vector3 aimDirection { get; private set; } // gonna be a vector from player to the object spot that the crosshair is looking at
     
     Camera mainCamera;
