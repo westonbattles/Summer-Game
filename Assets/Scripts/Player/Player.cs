@@ -72,6 +72,8 @@ public class Player : MonoBehaviour, ICharacterController
 
     void OnDrawGizmos()
     {
+        if (Instance == null) return;
+        
         AbilityBehaviour ab = HandLoadout.GetAbility(AbilitySlot.Primary).Behaviour;
         if (ab is BrassKnuckles bk)  bk.DrawGizmos(transform);
 
