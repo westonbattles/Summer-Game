@@ -15,6 +15,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float movementSpeed;
     [field: SerializeField] public bool AffixEligible { get; private set; }
 
+    [Tooltip("The value added to the kill tracker on kill. Elites may have more. Tune later.")]
+    [SerializeField] private float killValue = 1f;  // TUNE LATER
     private Health health;
     private XPDropper xpDropper;
 
@@ -54,15 +56,17 @@ public class Enemy : MonoBehaviour
     {
         // Enemy-specific death work happens here, BEFORE we hand back to the pool:
 
-        // 1. XP � spawn the orb.
+        // 1. XP spawn the orb.
         xpDropper.Drop();
 
         OnAnyEnemyDied?.Invoke(xpDropper.Value, killingBlow.Source);
 
-        // 2. Drops � announce at this position, while still active/placed.
+        StageKills.Instance?.Tracker.ReportKill(killValue);     // BIG NOTE. IF IT FAILS, DROP THE ? AND MAKE IT NRE!
+
+        // 2. Drops announce at this position, while still active/placed.
         OnDropLoot?.Invoke(transform.position, AffixEligible);
 
-        // 3. Release � last, after death work is done.
-        OnDied?.Invoke(this);   // tells the spawner: I'm done, release me fool!
+        // 3. Release last, after death work is done.
+        OnDied?.Invoke(this);   // tells the spawner: I'm done, release me fool! :)
     }
 }
