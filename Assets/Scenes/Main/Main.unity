@@ -378,12 +378,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 141487395}
-  - component: {fileID: 141487394}
-  - component: {fileID: 141487393}
   - component: {fileID: 141487392}
   - component: {fileID: 141487391}
   - component: {fileID: 141487390}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -442,7 +440,7 @@ MeshRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: b912bc9f9bfbefe4588d4ebe04458b2e, type: 2}
@@ -469,30 +467,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &141487393
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 141487389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ca002da428252441b92f28d83c8a65f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ProBuilder::UnityEngine.ProBuilder.Shapes.ProBuilderShape
---- !u!114 &141487394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 141487389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8233d90336aea43098adf6dbabd606a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ProBuilder::UnityEngine.ProBuilder.ProBuilderMesh
 --- !u!4 &141487395
 Transform:
   m_ObjectHideFlags: 0
@@ -807,14 +781,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: Base
       objectReference: {fileID: 0}
+    - target: {fileID: -5568371526223589888, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
       propertyPath: m_Name
       value: battleplatform (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7071182760956848314, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 257
       objectReference: {fileID: 0}
     - target: {fileID: 7071182760956848314, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: f9255fa4c7681884eb7680101037cc51, type: 2}
+    - target: {fileID: 7202271454713460447, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 257
+      objectReference: {fileID: 0}
     - target: {fileID: 7202271454713460447, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -822,6 +812,10 @@ PrefabInstance:
     - target: {fileID: 8513859187771203891, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
       propertyPath: m_Name
       value: Gear
+      objectReference: {fileID: 0}
+    - target: {fileID: 8513859187771203891, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -901,6 +895,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2963975783971783808, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+      propertyPath: startingVFXPrefabs.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2963975783971783808, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+      propertyPath: 'startingVFXPrefabs.Array.data[1]'
+      value: 
+      objectReference: {fileID: 7076799518104773974, guid: db81bc0bb12c04ee6af8cee3090b87ca, type: 3}
+    - target: {fileID: 2963975783971783808, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+      propertyPath: 'startingVFXPrefabs.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1372171981074182977, guid: a6eb1d35b2af54c2e9ff47d4dd28698a, type: 3}
     - target: {fileID: 4513342026305316520, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.05489
@@ -959,7 +965,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 380926354}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Platforming
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1633,12 +1639,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 886627374}
-  - component: {fileID: 886627379}
-  - component: {fileID: 886627378}
   - component: {fileID: 886627377}
   - component: {fileID: 886627376}
   - component: {fileID: 886627375}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1712,7 +1716,7 @@ MeshRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: b912bc9f9bfbefe4588d4ebe04458b2e, type: 2}
@@ -1739,30 +1743,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &886627378
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 886627373}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ca002da428252441b92f28d83c8a65f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ProBuilder::UnityEngine.ProBuilder.Shapes.ProBuilderShape
---- !u!114 &886627379
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 886627373}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8233d90336aea43098adf6dbabd606a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ProBuilder::UnityEngine.ProBuilder.ProBuilderMesh
 --- !u!1 &1015249576
 GameObject:
   m_ObjectHideFlags: 0
@@ -2177,14 +2157,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: Base
       objectReference: {fileID: 0}
+    - target: {fileID: -5568371526223589888, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
       propertyPath: m_Name
       value: battleplatform (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7071182760956848314, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 257
       objectReference: {fileID: 0}
     - target: {fileID: 7071182760956848314, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: f9255fa4c7681884eb7680101037cc51, type: 2}
+    - target: {fileID: 7202271454713460447, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 257
+      objectReference: {fileID: 0}
     - target: {fileID: 7202271454713460447, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -2192,6 +2188,10 @@ PrefabInstance:
     - target: {fileID: 8513859187771203891, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
       propertyPath: m_Name
       value: Gear
+      objectReference: {fileID: 0}
+    - target: {fileID: 8513859187771203891, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2525,14 +2525,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: Base
       objectReference: {fileID: 0}
+    - target: {fileID: -5568371526223589888, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
       propertyPath: m_Name
       value: battleplatform
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7071182760956848314, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 257
       objectReference: {fileID: 0}
     - target: {fileID: 7071182760956848314, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: f9255fa4c7681884eb7680101037cc51, type: 2}
+    - target: {fileID: 7202271454713460447, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 257
+      objectReference: {fileID: 0}
     - target: {fileID: 7202271454713460447, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -2540,6 +2556,10 @@ PrefabInstance:
     - target: {fileID: 8513859187771203891, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
       propertyPath: m_Name
       value: Gear
+      objectReference: {fileID: 0}
+    - target: {fileID: 8513859187771203891, guid: 405b8cbbb7546c947b1bfd855b511550, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2597,7 +2617,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1542361588}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Objects
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3006,7 +3026,7 @@ GameObject:
   - component: {fileID: 1931554172}
   - component: {fileID: 1931554171}
   - component: {fileID: 1931554174}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3068,7 +3088,7 @@ Terrain:
   m_ScaleInLightmap: 0.0256
   m_LightmapParameters: {fileID: 15203, guid: 0000000000000000f000000000000000, type: 0}
   m_GroupingID: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 257
   m_AllowAutoConnect: 1
   m_EnableHeightmapRayTracing: 1
   m_EnableTreesAndDetailsRayTracing: 0
@@ -4260,6 +4280,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2609528112320447340, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: obstructionLayers.m_Bits
+      value: 567
+      objectReference: {fileID: 0}
     - target: {fileID: 6463087256270042916, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: m_Name
       value: Player

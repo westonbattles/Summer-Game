@@ -54,6 +54,7 @@ public class Player : MonoBehaviour, ICharacterController
     public AbilityLoadout HandLoadout => handLoadout;
 
     public bool IsGrounded => _motor.GroundingStatus.IsStableOnGround;
+    public bool GroundedRaycast(float rayLength) { return Physics.Raycast(transform.position, Vector3.down, rayLength, LayerMask.GetMask("Ground"));}
     public bool IgnoreEnemiesForCollision = true; // disable player colliding with enemies
     
     KinematicCharacterMotor _motor;
@@ -330,14 +331,14 @@ public class Player : MonoBehaviour, ICharacterController
         _motor.ForceUnground(.25f); // lets you dash along objects without insta stopping you   
     }
 
-    public void GroundPoundDash(Vector3 directionNormalized, float speed)
+    public void GroundPoundDash(Vector3 directionNormalized, float speed, bool forceUnground)
     {
         _dashVelocity = directionNormalized * speed;
         _shouldDash = true;
         _isDashing = true;
         //PlayRandomSound(launchSounds, launchPitchMin, launchPitchMax);
         
-        _motor.ForceUnground(.25f); // lets you dash along objects without insta stopping you   
+        if (forceUnground) _motor.ForceUnground(.25f); // lets you dash along objects without insta stopping you 
     }
 
     public void BeforeCharacterUpdate(float deltaTime) { }
