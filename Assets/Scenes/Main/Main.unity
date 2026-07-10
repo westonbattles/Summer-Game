@@ -956,6 +956,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+--- !u!114 &292685799 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4878138312973200886, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+  m_PrefabInstance: {fileID: 292685798}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 814ff83ecb425f045919a809ad0e2e19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageKills
 --- !u!1 &380926353
 GameObject:
   m_ObjectHideFlags: 0
@@ -3301,6 +3312,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1934983082}
+  - component: {fileID: 1934983083}
   m_Layer: 5
   m_Name: KillTrackerContainer
   m_TagString: Untagged
@@ -3329,6 +3341,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 40}
   m_SizeDelta: {x: 418.7, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1934983083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934983081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b95b8a2d35927af489ca66843b5e3375, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KillCountHUD
+  fillImage: {fileID: 526547785}
+  stageKills: {fileID: 292685799}
+  tweenDuration: 0.25
+  progressTarget: 50
 --- !u!1 &2082657228
 GameObject:
   m_ObjectHideFlags: 0
