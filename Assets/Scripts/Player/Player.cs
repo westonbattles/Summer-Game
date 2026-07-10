@@ -75,6 +75,9 @@ public class Player : MonoBehaviour, ICharacterController
         AbilityBehaviour ab = HandLoadout.GetAbility(AbilitySlot.Primary).Behaviour;
         if (ab is BrassKnuckles bk)  bk.DrawGizmos(transform);
 
+        ab = HandLoadout.GetAbility(AbilitySlot.Secondary).Behaviour;
+        if (ab is Whirlwind ww) ww.DrawGizmos(transform);
+        
         ab = HandLoadout.GetAbility(AbilitySlot.Movement).Behaviour;
         if (ab is GroundPound gp) gp.DrawGizmos(transform);
     }

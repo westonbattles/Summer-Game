@@ -120,7 +120,6 @@ public class GroundPound : AbilityBehaviour
             }
         }
         
-        // todo: vfx circle thing (lowkey wanna take as tab at this - Weston)
         PooledVfx vfx = VFXPoolManager.Instance.Play(groundPoundLandVFX, position, Quaternion.identity);
         if (vfx != null)
         {

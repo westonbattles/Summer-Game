@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 491c59549d1ed7d47a3dc5fd303aa482, type: 3}
+  m_Name: Whirlwind
+  m_EditorClassIdentifier: Assembly-CSharp::Ability
+  displayName: Whirlwind
+  description: 
+  icon: {fileID: 21300000, guid: 04714c61e7b7c457fac637ea71980c75, type: 3}
+  behaviour:
+    rid: 1748538190290485360
+  references:
+    version: 2
+    RefIds:
+    - rid: 1748538190290485360
+      type: {class: Whirlwind, ns: , asm: Assembly-CSharp}
+      data:
+        baseDamage: 20
+        baseDamageIncreasePerEnemy: 5
+        baseCooldownTime: 4
+        spinDamageDelay: 0.2
+        overlapSphereRadius: 3.3
+        showGizmo: 1

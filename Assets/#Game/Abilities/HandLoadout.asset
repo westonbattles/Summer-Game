@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: HandLoadout
   m_EditorClassIdentifier: Assembly-CSharp::AbilityLoadout
   primary: {fileID: 11400000, guid: 53df159c449c64e2280dcfbc8f04a381, type: 2}
-  secondary: {fileID: 0}
+  secondary: {fileID: 11400000, guid: 3e3c2870258c44a98a6f3d7806eb838e, type: 2}
   movement: {fileID: 11400000, guid: 477b45872e70f4732b00aa0166afb838, type: 2}
   special: {fileID: 0}
