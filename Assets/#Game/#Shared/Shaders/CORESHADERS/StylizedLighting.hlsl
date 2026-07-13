@@ -24,7 +24,11 @@
 // Shared ramp so main and additional lights can't drift apart.
 float StylizedRamp(float NdotL, float shadowAtten, float rampMin, float rampMax)
 {
-    return smoothstep(rampMin, rampMax, NdotL * shadowAtten);
+    float lightRamp = smoothstep(rampMin, rampMax, NdotL);
+    // Wider window for the shadow term, it eats the PCF noise
+    // instead of amplifying it. Tune 0.25/0.75 to taste.
+    float shadowRamp = smoothstep(0.25, 0.9, shadowAtten);
+    return min(lightRamp, shadowRamp);
 }
 
 void StylizedLighting_float(
