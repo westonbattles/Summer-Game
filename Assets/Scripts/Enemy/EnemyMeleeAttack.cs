@@ -48,6 +48,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttack
             LandHit();
     }
 
+    // this is for the animator and windup trigger.
     public bool TryExecute()
     {
         if (isWindingUp || cooldownRemaining > 0f)

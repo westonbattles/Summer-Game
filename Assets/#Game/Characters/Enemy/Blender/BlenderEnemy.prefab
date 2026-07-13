@@ -196,6 +196,37 @@ MonoBehaviour:
   worldOffset: {x: 0, y: 2, z: 0}
   hideWhenFull: 0
   hideWhenDead: 0
+--- !u!1 &6766310472326268022
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6173620100707118435}
+  m_Layer: 6
+  m_Name: HitOrigin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6173620100707118435
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6766310472326268022}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.19999999, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8772466276889618876}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8141397320670760110
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,6 +314,10 @@ PrefabInstance:
       propertyPath: orbPrefab
       value: 
       objectReference: {fileID: 2218006860595562089, guid: 01909df2432884541936b1cd9e7b4dc1, type: 3}
+    - target: {fileID: 211096677595199996, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+      propertyPath: <Value>k__BackingField
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 888112467468903464, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -331,6 +366,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8813151732905033648, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+      propertyPath: baseMaxHP
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       propertyPath: m_Name
       value: BlenderEnemy
@@ -352,6 +391,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 888112467468903464, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2956894107588099228}
+    - targetCorrespondingSourceObject: {fileID: 888112467468903464, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6173620100707118435}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       insertIndex: -1
@@ -449,16 +491,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bbe0abe1b341a2439b3e7d6e7cf4c9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMeleeAttack
-  damage: 10
-  cooldown: 1
-  range: 3.9
-  windup: 0.3
-  hitRadius: 2.43
-  hitOrigin: {fileID: 0}
+  damage: 3
+  cooldown: 0.7
+  range: 4.55
+  windup: 0
+  hitRadius: 1.61
+  hitOrigin: {fileID: 6173620100707118435}
   hittableLayers:
     serializedVersion: 2
     m_Bits: 384
-  applyKnockback: 0
+  applyKnockback: 1
   knockbackStrength: 4
 --- !u!114 &3786274940079891050
 MonoBehaviour:
