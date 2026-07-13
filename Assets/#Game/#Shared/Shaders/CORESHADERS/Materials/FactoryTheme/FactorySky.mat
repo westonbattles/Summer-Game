@@ -82,6 +82,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _ADDITIONAL_LIGHTS: 0
+    - _ADDITIONAL_LIGHT_SHADOWS: 0
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
@@ -106,12 +108,15 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _HorizonSharpness: 0.52
+    - _MAIN_LIGHT_SHADOWS: 0
+    - _MAIN_LIGHT_SHADOWS_CASCADE: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _SHADOWS_SOFT: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
