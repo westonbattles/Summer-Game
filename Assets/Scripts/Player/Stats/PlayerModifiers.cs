@@ -29,7 +29,6 @@ public class PlayerModifiers
     public float BrassKnucklesComboIncreaseDamageMultiplier = 1f;   // scaling of damage increase per combo level. if base increase is 25% for example (1x -> 1.25x -> 1.5x), setting this value to two would make it 50% (1x -> 1.5x -> 2x)
     // Whirlwind
     public float WhirlwindRadiusBonus = 0f;                         // additive radius for the base whirlwind damage dcircle
-    public float WhirlwindDamageIncreasePerEnemyCaughtBonus = 0f;   // how much extra damage gets added to whirlwind aoe base damage per enemy caught in it
     // Ground Pound
     public float GroundPoundRadiusBonus = 0f;                       // additive radius for the base ground pound damage circle
     public float GroundPoundDamageScalingMultiplier = 1f;           // multiplier for the base height-damage scaling function. value of 2 scales twice as fast

@@ -183,7 +183,7 @@ public class Projectile : MonoBehaviour, IPoolable
 
         // spawn the hit projectiles. Instantiate isn't great but it's fine for our V-slice
         if (impactVFXPrefab == null)
-            Debug.LogWarning("Projectile has no impactVFXPrefab assigned.");
+            Debug.LogWarning("Projectile has no impactVFXPrefab assigned.", this);
         else
             //Instantiate(impactVFXPrefab, transform.position, Quaternion.identity);
             VFXPoolManager.Instance.Play(impactVFXPrefab, impactPoint, Quaternion.identity);

@@ -9,7 +9,6 @@ public class Whirlwind : AbilityBehaviour
 {
     [Header("Properties")] 
     [SerializeField] float baseDamage = 10f;
-    [SerializeField] float baseDamageIncreasePerEnemy = 3f;
     [SerializeField] float baseCooldownTime = 4f;
 
     [Header("Spin/Animation")]
@@ -33,8 +32,13 @@ public class Whirlwind : AbilityBehaviour
     // (or any other way u want to use the modifier)
     public float Damage => baseDamage;
     public float DamageRadius => overlapSphereRadius + Player.Instance.Modifiers.WhirlwindRadiusBonus;
-    public float DamageIncreasePerEnemy => baseDamageIncreasePerEnemy + Player.Instance.Modifiers.WhirlwindDamageIncreasePerEnemyCaughtBonus;
     public float CooldownTime => baseCooldownTime;
+    
+    // damage function
+    float _sixOverLn2 = 6f / Mathf.Log(2);
+    /// in: (enemy count)
+    /// out: damage dealt to all enemies
+    float DamageFunction(int enemyCount) => Damage + _sixOverLn2 * Mathf.Log(enemyCount);
     
     class WhirlwindState : AbilityState
     {
@@ -76,8 +80,8 @@ public class Whirlwind : AbilityBehaviour
                 if (target != null) whirlwind.DamagedTargets.Add(target); // dupes won't be added to hashset
             }
 
-            float damage = Damage + whirlwind.DamagedTargets.Count * DamageIncreasePerEnemy;
-            Debug.Log($"Whirlwind hit {whirlwind.DamagedTargets.Count} enemies! ({baseDamage} + {whirlwind.DamagedTargets.Count * DamageIncreasePerEnemy} = {damage} damage)");
+            float damage = DamageFunction(whirlwind.DamagedTargets.Count);
+            Debug.Log($"Whirlwind hit {whirlwind.DamagedTargets.Count} enemies! ({damage} damage per)");
             
             // build damageInfo
             DamageInfo damageInfo = new DamageInfo(damage, whirlwind.Player.gameObject);
