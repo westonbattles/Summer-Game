@@ -88,7 +88,7 @@ public class EnemyChargedRangedAttack : MonoBehaviour, IEnemyAttack
         // re-aim at fire time. Leads ahead towards where the ttarget is now, not at charge start.
         Vector3 direction = (target.position - firePoint.position).normalized;
         Projectile proj = ProjectilePoolManager.Instance.Get(projectilePrefab);
-        proj.transform.SetPositionAndRotation(firePoint.position, Quaternion.identity);
+        proj.transform.SetPositionAndRotation(firePoint.position, Quaternion.LookRotation(direction));
         proj.Launch(direction, projectileSpeed, new DamageInfo(damage, gameObject));
 
         cooldownRemaining = cooldown;

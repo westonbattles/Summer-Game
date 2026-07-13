@@ -200,4 +200,12 @@ public class Projectile : MonoBehaviour, IPoolable
         isSpent = true;
         release?.Invoke(this);
     }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (isSpent) return;
+        Gizmos.color = Color.red;
+
+        Gizmos.DrawWireSphere(transform.position, sphereCastRadius);
+    }
 }

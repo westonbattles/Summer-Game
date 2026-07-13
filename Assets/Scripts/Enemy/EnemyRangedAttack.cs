@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(EnemyAttackController))]
 public class EnemyRangedAttack : MonoBehaviour, IEnemyAttack
 {
     [SerializeField] private Projectile projectilePrefab;
@@ -25,9 +26,18 @@ public class EnemyRangedAttack : MonoBehaviour, IEnemyAttack
 
     public bool TryExecute()
     {
-        if (cooldownRemaining > 0f) return false;
-        if (target == null) return false;
-        if (Vector3.Distance(transform.position, target.position) > maxRange) return false;
+        if (cooldownRemaining > 0f)
+        {
+            return false;
+        }
+        if (target == null)
+        {
+            return false;
+        }
+        if (Vector3.Distance(transform.position, target.position) > maxRange)
+        {
+            return false;
+        }
 
         Vector3 direction = (target.position - firePoint.position).normalized;
         Projectile proj = ProjectilePoolManager.Instance.Get(projectilePrefab);
