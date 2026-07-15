@@ -8,6 +8,7 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(XPDropper))]
+[RequireComponent(typeof(PsychicPulseHighlighter))]
 public class Enemy : MonoBehaviour
 {
     public static LayerMask LayerMask => LayerMask.GetMask("Enemy");
@@ -19,6 +20,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float killValue = 1f;  // TUNE LATER
     private Health health;
     private XPDropper xpDropper;
+    public PsychicPulseHighlighter Highlighter { get; private set; }
 
     /// <summary>Raised after death logic runs. Spawner listens and releases to pool.</summary>
     public event Action<Enemy> OnDied;
@@ -40,6 +42,8 @@ public class Enemy : MonoBehaviour
     {
         health = GetComponent<Health>();
         xpDropper = GetComponent<XPDropper>();
+        Highlighter = GetComponent<PsychicPulseHighlighter>();
+
     }
 
     private void OnEnable()
@@ -68,5 +72,11 @@ public class Enemy : MonoBehaviour
 
         // 3. Release last, after death work is done.
         OnDied?.Invoke(this);   // tells the spawner: I'm done, release me fool! :)
+    }
+
+    public Vector3 GetCenterPoint()
+    {
+        // TODO: use hit colliders in children or wtv to calculate y bounds. maybe even x/z as well (if we dont think they should be centered x/z at transform.position x/z)
+        return transform.position + Vector3.up;
     }
 }

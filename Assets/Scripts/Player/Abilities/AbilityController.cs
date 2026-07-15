@@ -65,6 +65,6 @@ public class AbilityController : MonoBehaviour
         _loadoutInstances.Add(loadout, instance); // store it in the dict of our instances
         return instance;
     }
-
+    
     public AbilityInstance GetAbilityInstance(AbilitySlot slot) => _currentLoadoutInstance?.GetAbilityInstance(slot);
 }

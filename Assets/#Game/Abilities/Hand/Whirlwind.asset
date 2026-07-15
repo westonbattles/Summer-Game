@@ -23,8 +23,8 @@ MonoBehaviour:
     - rid: 1748538190290485360
       type: {class: Whirlwind, ns: , asm: Assembly-CSharp}
       data:
-        baseDamage: 20
-        baseDamageIncreasePerEnemy: 5
+        baseDamage: 10
+        baseDamageIncreasePerEnemy: 3
         baseCooldownTime: 4
         spinDamageDelay: 0.2
         overlapSphereRadius: 3.3
