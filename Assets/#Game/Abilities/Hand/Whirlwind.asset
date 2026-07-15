@@ -28,4 +28,4 @@ MonoBehaviour:
         baseCooldownTime: 4
         spinDamageDelay: 0.2
         overlapSphereRadius: 3.3
-        showGizmo: 1
+        showGizmo: 0

@@ -17,8 +17,11 @@ public class PsychicPulse : AbilityBehaviour
     
     [Header("VFX")]
     [SerializeField] PooledVfx highlightVFXPrefab;
+
+    [Header("Gizmos")]
+    [SerializeField] bool showGizmos = false;
     
-    LayerMask TargetLayers = Enemy.LayerMask;
+    LayerMask TargetLayers => Enemy.LayerMask;
     
     
     // MODIFIERS
@@ -28,7 +31,34 @@ public class PsychicPulse : AbilityBehaviour
     // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
     // (or any other way u want to use the modifier)
     public float CooldownTime => baseCooldownTime;
-    
+
+    public void DrawGizmos()
+    {
+        if (!showGizmos) return;
+        if (Player.Instance == null || Player.Instance.Aim == null || Player.Instance.Aim.AimCamera == null) return;
+
+        Camera aimCamera = Player.Instance.Aim.AimCamera;
+        Transform cameraTransform = aimCamera.transform;
+        float depth = Mathf.Max(maxTargetDistance, 1f);
+        float halfVertical = Mathf.Tan(aimCamera.fieldOfView * 0.5f * Mathf.Deg2Rad) * depth;
+        float radius = halfVertical * maxDistanceFromCrosshair;
+
+        Vector3 center = cameraTransform.position + cameraTransform.forward * depth;
+        Vector3 right = cameraTransform.right * radius;
+        Vector3 up = cameraTransform.up * radius;
+
+        const int segments = 64;
+        Gizmos.color = Color.limeGreen;
+
+        Vector3 previousPoint = center + right;
+        for (int i = 1; i <= segments; i++)
+        {
+            float angle = i / (float)segments * Mathf.PI * 2f;
+            Vector3 nextPoint = center + right * Mathf.Cos(angle) + up * Mathf.Sin(angle);
+            Gizmos.DrawLine(previousPoint, nextPoint);
+            previousPoint = nextPoint;
+        }
+    }
 
     class PsychicPulseState : AbilityState
     {
@@ -153,15 +183,24 @@ public class PsychicPulse : AbilityBehaviour
             float tanX = localCameraToTarget.x / localCameraToTarget.z;
             float tanY = localCameraToTarget.y / localCameraToTarget.z;
 
-            float screenX = tanX / halfHorizontalTan;
+            float screenX = tanX / halfVerticalTan;
             float screenY = tanY / halfVerticalTan;
 
             float screenDistanceSquared = screenX*screenX + screenY*screenY;
             if (screenDistanceSquared > maxDistanceFromCrosshair * maxDistanceFromCrosshair) continue; // prune enemies outside of max screen dist from the center of the screen
 
-            if (screenDistanceSquared < bestScore)
+            // sort by score
+            // OLD METHOD - sort by closest to crosshair
+            // if (screenDistanceSquared < bestScore)
+            // {
+            //     bestScore = screenDistanceSquared;
+            //     target = enemy;
+            // }
+            
+            // NEW METHOD - sort by z coordinate (closest to camera)
+            if (localCameraToTarget.z < bestScore)
             {
-                bestScore = screenDistanceSquared;
+                bestScore = localCameraToTarget.z;
                 target = enemy;
             }
             
@@ -196,7 +235,6 @@ public class PsychicPulse : AbilityBehaviour
     public override float GetCooldownFraction(AbilityState state)
     {
         if (state is not PsychicPulseState pp) return 0f;
-        Debug.Log(pp.CooldownRemaining);
         if (pp.CooldownRemaining > 0f) return Mathf.Clamp01(pp.CooldownRemaining / CooldownTime);
         return 0f;
     }
