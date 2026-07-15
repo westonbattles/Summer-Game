@@ -5,8 +5,10 @@ public class PlayerAim : MonoBehaviour
 {
     [SerializeField] Camera aimCamera;
 
+    public Camera AimCamera => aimCamera;
     public Vector3 AimOrigin => aimCamera.transform.position;
     public Vector3 AimDirection => aimCamera.transform.forward;
+    public Quaternion AimRotation => aimCamera.transform.rotation;
     
     
 
