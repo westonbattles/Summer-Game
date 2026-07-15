@@ -11,9 +11,11 @@ public class PsychicPulse : AbilityBehaviour
     
     [Header("Targetting")]
     [SerializeField] float maxTargetDistance = 15f;
-    [SerializeField] float maxDistanceFromCrosshair = 0.25f; // screenspace
+    [SerializeField, Min(0.01f)] float selectionRadius = 1.25f; // world space max radius around camera forward ray enemies are allowed to be in to be targeted
+    [SerializeField] float distanceScoreWeight = 0.05f;
     [SerializeField] float targetHighlightCheckInterval = 0.12f;
     [SerializeField] int maxPossibleTargets = 32;
+    [SerializeField, Range(-20f, 0f), Tooltip("More negative values = enemies further behind the player relative to the camera are allowed to be targeted")] float backPruneThreshold = 0f;
     
     [Header("VFX")]
     [SerializeField] PooledVfx highlightVFXPrefab;
@@ -31,34 +33,6 @@ public class PsychicPulse : AbilityBehaviour
     // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
     // (or any other way u want to use the modifier)
     public float CooldownTime => baseCooldownTime;
-
-    public void DrawGizmos()
-    {
-        if (!showGizmos) return;
-        if (Player.Instance == null || Player.Instance.Aim == null || Player.Instance.Aim.AimCamera == null) return;
-
-        Camera aimCamera = Player.Instance.Aim.AimCamera;
-        Transform cameraTransform = aimCamera.transform;
-        float depth = Mathf.Max(maxTargetDistance, 1f);
-        float halfVertical = Mathf.Tan(aimCamera.fieldOfView * 0.5f * Mathf.Deg2Rad) * depth;
-        float radius = halfVertical * maxDistanceFromCrosshair;
-
-        Vector3 center = cameraTransform.position + cameraTransform.forward * depth;
-        Vector3 right = cameraTransform.right * radius;
-        Vector3 up = cameraTransform.up * radius;
-
-        const int segments = 64;
-        Gizmos.color = Color.limeGreen;
-
-        Vector3 previousPoint = center + right;
-        for (int i = 1; i <= segments; i++)
-        {
-            float angle = i / (float)segments * Mathf.PI * 2f;
-            Vector3 nextPoint = center + right * Mathf.Cos(angle) + up * Mathf.Sin(angle);
-            Gizmos.DrawLine(previousPoint, nextPoint);
-            previousPoint = nextPoint;
-        }
-    }
 
     class PsychicPulseState : AbilityState
     {
@@ -139,15 +113,10 @@ public class PsychicPulse : AbilityBehaviour
     Enemy FindBestTarget(PsychicPulseState psychicPulse)
     {
         Vector3 playerPosition = psychicPulse.Player.transform.position;
-        Vector3 playerForward = psychicPulse.Player.transform.forward;
         Vector3 cameraOrigin = psychicPulse.PlayerAim.AimOrigin;
-        Quaternion cameraRotation = psychicPulse.PlayerAim.AimRotation;
-        Quaternion inverseCameraRotation = Quaternion.Inverse(cameraRotation);
+        Vector3 cameraForward = psychicPulse.PlayerAim.AimDirection;
         
-        float fov = psychicPulse.PlayerAim.AimCamera.fieldOfView;
-        float aspect = psychicPulse.PlayerAim.AimCamera.aspect;
-        float halfVerticalTan = Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad); // up/down fov for some reason @unity
-        float halfHorizontalTan = aspect * halfVerticalTan;
+        //float halfVerticalTan = Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad); // up/down fov for some reason @unity
 
         int hitCount = Physics.OverlapSphereNonAlloc(
             playerPosition,
@@ -167,40 +136,33 @@ public class PsychicPulse : AbilityBehaviour
             Enemy enemy = collider.GetComponentInParent<Enemy>();
             if (enemy == null || !psychicPulse.Targets.Add(enemy)) continue;
             
+            
             // check if enemy is closer than current target enemy
             
             Vector3 targetPoint = enemy.GetCenterPoint();
             Vector3 cameraToTarget = targetPoint - cameraOrigin;
-            Vector3 localCameraToTarget = inverseCameraRotation * cameraToTarget; // apparently inverse quat calculations is literally just negating the xyz components
             
-            // btw localCameraToTarget just takes our cameraToTarget vector and rotates it such that the camera forward vector would now be pointing along the z axis. it undoes the camera rotation and applies it to our vector
+            // btw, the value of this dot product is just the magnitude of the cameraToTarget vector after it has been projected onto the camera forward (since cameraForward is normalized)
+            float targetDistanceAlongAimRay = Vector3.Dot(cameraForward, cameraToTarget);
             
-            // skip if our target is behind the camera or behind the player
-            if (localCameraToTarget.z <= 0) continue;
-            if (Vector3.Dot(playerForward, targetPoint - playerPosition) < 0f) continue;
+            // prune targets behind the camera
+            if (targetDistanceAlongAimRay <= 0f) continue; // || cameraForwardDotTarget > maxTargetDistance) continue; // <-- prunes targets too far from CAMERA but it's a bit redunant since we do this pruning from player position alr. prob only need that one
             
-            // convert to screenspace and make sure its within our screen radius
-            float tanX = localCameraToTarget.x / localCameraToTarget.z;
-            float tanY = localCameraToTarget.y / localCameraToTarget.z;
+            // prune targets too far behind the player body relative to the camera
+            if (Vector3.Dot(cameraForward, targetPoint - playerPosition) < backPruneThreshold) continue;
 
-            float screenX = tanX / halfVerticalTan;
-            float screenY = tanY / halfVerticalTan;
+            Vector3 targetProjectionOnCameraForward = cameraOrigin + cameraForward * targetDistanceAlongAimRay; // the closest point on the camera forward ray to our target -> its 90 deg projection
 
-            float screenDistanceSquared = screenX*screenX + screenY*screenY;
-            if (screenDistanceSquared > maxDistanceFromCrosshair * maxDistanceFromCrosshair) continue; // prune enemies outside of max screen dist from the center of the screen
-
-            // sort by score
-            // OLD METHOD - sort by closest to crosshair
-            // if (screenDistanceSquared < bestScore)
-            // {
-            //     bestScore = screenDistanceSquared;
-            //     target = enemy;
-            // }
+            float distanceFromAimRaySqr = (targetPoint - targetProjectionOnCameraForward).sqrMagnitude;
+            float selectionRadiusSqr = selectionRadius * selectionRadius;
+            if (distanceFromAimRaySqr > selectionRadiusSqr) continue;
             
-            // NEW METHOD - sort by z coordinate (closest to camera)
-            if (localCameraToTarget.z < bestScore)
+            // NEW METHOD - sort by distance to closest point in the camera forward ray
+            float normalizedSideDistanceSqr = distanceFromAimRaySqr / selectionRadiusSqr; // garunteed 0-1 value
+            float score = normalizedSideDistanceSqr + targetDistanceAlongAimRay * distanceScoreWeight; // farther away (high
+            if (score < bestScore)
             {
-                bestScore = localCameraToTarget.z;
+                bestScore = score;
                 target = enemy;
             }
             

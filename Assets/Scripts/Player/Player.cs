@@ -82,9 +82,6 @@ public class Player : MonoBehaviour, ICharacterController
         
         ab = HandLoadout.GetAbility(AbilitySlot.Movement).Behaviour;
         if (ab is GroundPound gp) gp.DrawGizmos(transform);
-
-        ab = EyeLoadout.GetAbility(AbilitySlot.Secondary).Behaviour;
-        if (ab is PsychicPulse pp) pp.DrawGizmos();
     }
 
     void Awake()
