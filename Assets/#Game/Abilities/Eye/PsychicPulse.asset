@@ -29,3 +29,4 @@ MonoBehaviour:
         targetHighlightCheckInterval: 0.12
         maxPossibleTargets: 32
         highlightVFXPrefab: {fileID: 7076799518104773974, guid: 0dfbf2b4576ef46b489258f97757a183, type: 3}
+        showGizmos: 1
