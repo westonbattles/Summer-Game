@@ -25,6 +25,8 @@ public class GroundPound : AbilityBehaviour
     [SerializeField] float windupSpeed = 10f;
 
     [Header("Target Gathering")]
+    [Tooltip("max buffer size for the overlap sphere aplying damage. more colliders than buffer allows for means some enemies won't be damaged")]
+    [SerializeField] uint overlapSphereMaxColliders = 128;
     [SerializeField] Vector3 sphereCastPositionOffset;
     [SerializeField] float sphereCastRadius = 3.3f;
     [SerializeField] bool showGizmo = true;
@@ -99,7 +101,7 @@ public class GroundPound : AbilityBehaviour
         groundPound.Player.IgnoreEnemiesForCollision = false;
         
         Vector3 position = groundPound.Player.transform.position + sphereCastPositionOffset;
-        Collider[] hits = new Collider[64];
+        Collider[] hits = new Collider[overlapSphereMaxColliders];
         int hitCount = Physics.OverlapSphereNonAlloc(position, sphereCastRadius, hits, HitLayers);
         if (hitCount > 0)
         {

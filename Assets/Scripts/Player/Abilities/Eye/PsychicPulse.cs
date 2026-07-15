@@ -14,14 +14,13 @@ public class PsychicPulse : AbilityBehaviour
     [SerializeField, Min(0.01f)] float selectionRadius = 1.25f; // world space max radius around camera forward ray enemies are allowed to be in to be targeted
     [SerializeField] float distanceScoreWeight = 0.05f;
     [SerializeField] float targetHighlightCheckInterval = 0.12f;
-    [SerializeField] int maxPossibleTargets = 32;
+    [SerializeField] int maxPossibleTargets = 128;
     [SerializeField, Range(-20f, 0f), Tooltip("More negative values = enemies further behind the player relative to the camera are allowed to be targeted")] float backPruneThreshold = 0f;
     
     [Header("VFX")]
     [SerializeField] PooledVfx highlightVFXPrefab;
 
     [Header("Gizmos")]
-    [SerializeField] bool showGizmos = false;
     
     LayerMask TargetLayers => Enemy.LayerMask;
     
@@ -124,6 +123,9 @@ public class PsychicPulse : AbilityBehaviour
             psychicPulse.CandidateBuffer,
             TargetLayers,
             QueryTriggerInteraction.Collide);
+        
+        // if the overlap sphere got an equal number of enemies as our buffer, it means more enemies than our buffer allows for was in the allocsphere haha
+        if (hitCount == psychicPulse.CandidateBuffer.Length) Debug.LogWarning("PsychicPulse candidate buffer may be full and missed out on enemies for valid highlight / targeting. Increase maxPossibleTargets if the amount of enemies causing this warning will happen in game");
         
         Enemy target = null;
         float bestScore = Mathf.Infinity;

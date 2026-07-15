@@ -147,6 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChaseNavigator
   player: {fileID: 0}
+  backupDistance: 4.3
   stopDistance: 5
   resumeDistance: 7
 --- !u!195 &277272428951445892

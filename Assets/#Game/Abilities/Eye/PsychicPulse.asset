@@ -28,7 +28,6 @@ MonoBehaviour:
         selectionRadius: 3
         distanceScoreWeight: 0.1
         targetHighlightCheckInterval: 0.12
-        maxPossibleTargets: 32
-        backPruneThreshold: 0
+        maxPossibleTargets: 128
+        backPruneThreshold: -1.8
         highlightVFXPrefab: {fileID: 7076799518104773974, guid: 0dfbf2b4576ef46b489258f97757a183, type: 3}
-        showGizmos: 1

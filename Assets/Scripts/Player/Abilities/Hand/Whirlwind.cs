@@ -17,6 +17,8 @@ public class Whirlwind : AbilityBehaviour
 
     [Header("Target Gathering")]
     [SerializeField] float overlapSphereRadius = 3.3f;
+    [Tooltip("max buffer size for the overlap sphere aplying damage. more colliders than buffer allows for means some enemies won't be damaged")]
+    [SerializeField] uint overlapSphereMaxColliders = 128;
     [SerializeField] bool showGizmo = true;
 
     //[Header("VFX")]
@@ -68,7 +70,7 @@ public class Whirlwind : AbilityBehaviour
     {
         
         Vector3 position = whirlwind.Player.transform.position;
-        Collider[] hits = new Collider[64];
+        Collider[] hits = new Collider[overlapSphereMaxColliders];
         int hitCount = Physics.OverlapSphereNonAlloc(position, overlapSphereRadius, hits, HitLayers);
         if (hitCount > 0)
         {
