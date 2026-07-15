@@ -92,11 +92,20 @@ public class PsychicPulse : AbilityBehaviour
         if (psychicPulse == null) return false;
         if (psychicPulse.CooldownRemaining > 0f) return false;
         
-        // if get enemy target thing return no enemies, return false and don't execute
-        Enemy target = FindBestTarget(psychicPulse);
-        if (target == null) return false;
+        
+        // if no enemies selected, return false and don't execute
+        Enemy target = psychicPulse.CurrentTarget;
+        if (target == null)
+        {
+            Debug.Log("No enemies selected");
+            return false;
+        }
         
         // apply knockback to target and do damage
+        
+        
+        // clear highlight and target
+        ClearTarget(psychicPulse);
 
         psychicPulse.CooldownRemaining = CooldownTime;
         return true;
