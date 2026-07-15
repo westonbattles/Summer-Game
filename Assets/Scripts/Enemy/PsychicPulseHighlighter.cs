@@ -39,6 +39,9 @@ public class PsychicPulseHighlighter : MonoBehaviour
     
     public void Unhighlight()
     {
+        
+        // TODO: FADE HIGHLIGHT SO IT DOESN'T DISSAPEAR?
+        
         if (!isHighlighted) return;
         isHighlighted = false;
 

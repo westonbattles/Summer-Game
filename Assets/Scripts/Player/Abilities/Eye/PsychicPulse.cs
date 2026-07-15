@@ -69,9 +69,11 @@ public class PsychicPulse : AbilityBehaviour
         // cooldown update
         psychicPulse.CooldownRemaining = Mathf.Max(0f, psychicPulse.CooldownRemaining - deltaTime);
         
+        // don't do highlight updates if cooldown isn't done yet
+        if (psychicPulse.CooldownRemaining > 0f) return;
+        
         // make sure eye loadout is equipped
         if (psychicPulse.Player.AbilityController.CurrentLoadout != psychicPulse.Player.EyeLoadout) return;
-        
 
         // ---------- ENEMY HIGHLIGHTING / TARGETING -------------
         // only check for highlights using our interval rate, not every frame
