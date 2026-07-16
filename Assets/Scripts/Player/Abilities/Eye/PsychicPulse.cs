@@ -104,6 +104,7 @@ public class PsychicPulse : AbilityBehaviour
         // apply knockback to target and do damage
         
         
+        
         // clear highlight and target
         ClearTarget(psychicPulse);
 

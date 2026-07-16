@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -20,7 +21,11 @@ public class ChaseNavigator : MonoBehaviour
     public float backupDistance = 0f; // the closest the enemy can be without needing to back up (for ranged enemies), default 0 is fine
     public float stopDistance = 5f;
     public float resumeDistance = 7f;
-    private NavigationState state = NavigationState.Stationary;
+    
+    NavigationState state = NavigationState.Stationary;
+    int movementLockCount;
+
+    public bool IsMovementLocked => movementLockCount > 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -38,27 +43,16 @@ public class ChaseNavigator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (IsMovementLocked) return;
         if (player == null) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
-        if (backupDistance > 0f && distance <= backupDistance)
-        {
-            state = NavigationState.Retreating;
-        }
-        else if (distance >= resumeDistance)
-        {
-            state = NavigationState.Chasing;
-        }
-        else if (state == NavigationState.Chasing && distance <= stopDistance)
-        {
-            state = NavigationState.Stationary;
-        }
-        else if (state == NavigationState.Retreating && distance >= backupDistance)
-        {
-            state = NavigationState.Stationary;
-        }
-
+        if (backupDistance > 0f && distance <= backupDistance) state = NavigationState.Retreating;
+        else if (distance >= resumeDistance) state = NavigationState.Chasing;
+        else if (state == NavigationState.Chasing && distance <= stopDistance) state = NavigationState.Stationary;
+        else if (state == NavigationState.Retreating && distance >= backupDistance) state = NavigationState.Stationary;
+        
         if (state == NavigationState.Chasing)
         {
             agent.updateRotation = true;
@@ -102,4 +96,20 @@ public class ChaseNavigator : MonoBehaviour
         Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, agent.angularSpeed * Time.deltaTime);
     }
+
+    public void AddMovementLock()
+    {
+        movementLockCount++;
+
+        if (agent == null) return;
+        
+        agent.ResetPath();
+        agent.isStopped = false;
+    }
+
+    public void RemoveMovementLock()
+    {
+        movementLockCount = Mathf.Max(0, movementLockCount - 1);
+    }
+    
 }
