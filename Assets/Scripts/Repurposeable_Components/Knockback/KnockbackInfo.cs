@@ -2,22 +2,26 @@ using UnityEngine;
 
 public struct KnockbackInfo
 {
-    const float DefaultDuration = 0.15f;
+    private const float MinDirectionSqr = 0.0001f;
     
     public Vector3 Direction;
     public float Strength;
-    public float Duration; // duration for ai pathing to be ignored for. doesn't do anything to rb or character motor
+    public float Duration; // Optional. Rigidbody-based receivers can ignore it; NavMesh receivers can use a fallback when this is 0.
     public GameObject Source;
+
+    public bool HasDirection => Direction.sqrMagnitude > MinDirectionSqr;
     
-    public KnockbackInfo(Vector3 direction, float strength, float duration = DefaultDuration, GameObject source = null)
+    public KnockbackInfo(Vector3 direction, float strength, float duration = 0f, GameObject source = null)
     {
-        Direction = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector3.zero;
-        Strength = strength;
-        Duration = duration;
+        direction.y = 0f;
+
+        Direction = direction.sqrMagnitude > MinDirectionSqr ? direction.normalized : Vector3.zero;
+        Strength = Mathf.Max(0f, strength);
+        Duration = Mathf.Max(0f, duration);
         Source = source;
     }
 
-    public static KnockbackInfo AwayFrom(Vector3 sourcePosition, Vector3 targetPosition, float strength, float duration = DefaultDuration, GameObject source = null)
+    public static KnockbackInfo AwayFrom(Vector3 sourcePosition, Vector3 targetPosition, float strength, float duration = 0f, GameObject source = null)
     {
         return new KnockbackInfo(targetPosition - sourcePosition, strength, duration, source);
     }

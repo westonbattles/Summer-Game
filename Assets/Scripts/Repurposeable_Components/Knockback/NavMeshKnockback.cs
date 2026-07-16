@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,6 +7,7 @@ public class NavMeshKnockback : MonoBehaviour, IKnockbackable
     [Tooltip("Higher values mean less knockback.")]
     [SerializeField] private float knockbackResistance = 1f;
     [SerializeField] private float knockbackImmunityDuration = 0.25f;
+    [SerializeField] private float defaultKnockbackDuration = 0.25f;
     [SerializeField] private bool decayVelocityOverDuration = true;
     private float immunityUntil;
     private float knockbackRemaining;
@@ -15,6 +15,8 @@ public class NavMeshKnockback : MonoBehaviour, IKnockbackable
     private Vector3 knockbackVelocity;
 
     private bool hasMovementLock;
+    private bool hasStoredUpdateRotation;
+    private bool previousUpdateRotation;
     private ChaseNavigator chaseNavigator;
     private NavMeshAgent agent;
 
@@ -22,8 +24,6 @@ public class NavMeshKnockback : MonoBehaviour, IKnockbackable
     {
         agent = GetComponent<NavMeshAgent>();
         chaseNavigator = GetComponent<ChaseNavigator>();
-        if (agent == null) Debug.LogError("NavMeshAgent component not found on " + gameObject.name);
-        if (chaseNavigator == null) Debug.LogError("ChaseNavigator component not found on " + gameObject.name);
     }
 
     public void Update()
@@ -42,13 +42,14 @@ public class NavMeshKnockback : MonoBehaviour, IKnockbackable
     public void ApplyKnockback(KnockbackInfo info)
     {
         if (Time.time < immunityUntil) return;
-        if (info.Direction == Vector3.zero) return;
+        if (!info.HasDirection) return;
         
         immunityUntil = Time.time + knockbackImmunityDuration;
 
         float resistance = Mathf.Max(0.001f, knockbackResistance);
+        float duration = info.Duration > 0f ? info.Duration : defaultKnockbackDuration;
 
-        knockbackDuration = Mathf.Max(0.01f, info.Duration);
+        knockbackDuration = Mathf.Max(0.01f, duration);
         knockbackRemaining = knockbackDuration;
         knockbackVelocity = info.Direction * (info.Strength / resistance);
 
@@ -57,6 +58,14 @@ public class NavMeshKnockback : MonoBehaviour, IKnockbackable
 
     private void BeginKnockback()
     {
+        if (!hasStoredUpdateRotation)
+        {
+            previousUpdateRotation = agent.updateRotation;
+            hasStoredUpdateRotation = true;
+        }
+
+        agent.updateRotation = false;
+
         if (!hasMovementLock)
         {
             chaseNavigator?.AddMovementLock();
@@ -73,6 +82,12 @@ public class NavMeshKnockback : MonoBehaviour, IKnockbackable
         knockbackVelocity = Vector3.zero;
 
         if (agent != null) agent.velocity = Vector3.zero;
+        if (agent != null && hasStoredUpdateRotation)
+        {
+            agent.updateRotation = previousUpdateRotation;
+            hasStoredUpdateRotation = false;
+        }
+
         if (hasMovementLock)
         {
             chaseNavigator?.RemoveMovementLock();

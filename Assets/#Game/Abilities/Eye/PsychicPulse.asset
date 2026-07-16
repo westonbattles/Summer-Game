@@ -31,3 +31,12 @@ MonoBehaviour:
         maxPossibleTargets: 128
         backPruneThreshold: -1.8
         highlightVFXPrefab: {fileID: 7076799518104773974, guid: 0dfbf2b4576ef46b489258f97757a183, type: 3}
+        pulseKnockbackStrength: 40
+        pulseKnockbackDuration: 0.6
+        ramContactRadius: 1
+        ramHitHeightOffset: 0.25
+        ramChipDamage: 3
+        maxRamChains: 3
+        chainKnockbackStrengthMultiplier: 0.9
+        chainDurationMultiplier: 0.85
+        chainInitialDirectionBias: 0.8

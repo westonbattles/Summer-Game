@@ -410,6 +410,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3786274940079891050}
+    - targetCorrespondingSourceObject: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -6852204193156727527}
     - targetCorrespondingSourceObject: {fileID: 6943601538615146641, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3855863462912369784}
@@ -477,6 +480,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChaseNavigator
   player: {fileID: 0}
+  backupDistance: 0
   stopDistance: 2
   resumeDistance: 3.5
 --- !u!114 &4259839572381496315
@@ -502,6 +506,7 @@ MonoBehaviour:
     m_Bits: 384
   applyKnockback: 1
   knockbackStrength: 4
+  knockbackDuration: 0.15
 --- !u!114 &3786274940079891050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -514,6 +519,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba12b5eac00fe57478a4f04fef8c0276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackController
+--- !u!114 &-6852204193156727527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 760290393894106730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 899a40c58c3abd047be0ea434c228d54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NavMeshKnockback
+  knockbackResistance: 1
+  knockbackImmunityDuration: 0.25
+  defaultKnockbackDuration: 0.25
+  decayVelocityOverDuration: 1
 --- !u!1 &1563200709544899845 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6943601538615146641, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}

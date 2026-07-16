@@ -15,6 +15,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttack
     [Header("Knockback")]
     [SerializeField] private bool applyKnockback = true;
     [SerializeField] private float knockbackStrength = 5f;
+    [SerializeField] private float knockbackDuration = 0.15f;
 
     private Transform target;
     private Animator animator;
@@ -98,7 +99,17 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttack
             if (applyKnockback)
             {
                 IKnockbackable knockbackable = hit.GetComponentInParent<IKnockbackable>();
-                knockbackable?.ApplyKnockback(transform.position, knockbackStrength);
+                if (knockbackable != null)
+                {
+                    KnockbackInfo knockbackInfo = KnockbackInfo.AwayFrom(
+                        transform.position,
+                        hit.transform.position,
+                        knockbackStrength,
+                        knockbackDuration,
+                        gameObject);
+
+                    knockbackable.ApplyKnockback(knockbackInfo);
+                }
             }
         }
     }

@@ -12,35 +12,17 @@ public class RigidbodyKnockback : MonoBehaviour, IKnockbackable
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        
-        if (rb == null)
-        {
-            Debug.LogError("Rigidbody component not found on " + gameObject.name);
-        }
-    }
-
-    public void ApplyKnockback(Vector3 source, float strength)
-    {
-        if (Time.time < immunityUntil)
-        {
-            return;
-        }
-        immunityUntil = Time.time + knockbackImmunityDuration;
-        Vector3 direction = (transform.position - source);
-        direction.y = 0;
-        direction.Normalize();
-        rb.AddForce(direction * strength / knockbackResistance, ForceMode.Impulse);
     }
 
     public void ApplyKnockback(KnockbackInfo info)
     {
         if (Time.time < immunityUntil) return;
-        if (info.Direction == Vector3.zero) return;
+        if (!info.HasDirection) return;
         
         immunityUntil = Time.time + knockbackImmunityDuration;
 
-        float resistance = Mathf.Max(0.001f, knockbackResistance); // no divide by zero
-        rb.WakeUp(); // according to the docs, rbs won't always perform physics calculations to save on cpu. for example when it isn't moving
+        float resistance = Mathf.Max(0.001f, knockbackResistance);
+        rb.WakeUp();
         rb.AddForce(info.Direction * (info.Strength / resistance), ForceMode.Impulse);
     }
 }

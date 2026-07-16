@@ -7,6 +7,7 @@ public class CharacterMotorKnockback : MonoBehaviour, IKnockbackable
     [Tooltip("Higher values mean less knockback.")]
     [SerializeField] private float knockbackResistance = 1f;
     [SerializeField] private float knockbackImmunityDuration = 0.25f;
+    [SerializeField] private float verticalLift = 3f;
     private float immunityUntil;
 
     private KinematicCharacterMotor motor;
@@ -14,37 +15,21 @@ public class CharacterMotorKnockback : MonoBehaviour, IKnockbackable
     private void Awake()
     {
         motor = GetComponent<KinematicCharacterMotor>();
-        if (motor == null)
-        {
-            Debug.LogError("KinematicCharacterMotor component not found on " + gameObject.name);
-        }
     }
-
-    public void ApplyKnockback(Vector3 source, float strength)
-    {
-        if (Time.time < immunityUntil)
-        {
-            return;
-        }
-        immunityUntil = Time.time + knockbackImmunityDuration;
-        Vector3 direction = transform.position - source;
-        direction.y = 3f;
-        direction.Normalize();
-
-        motor.ForceUnground();
-        motor.BaseVelocity += direction * (strength / knockbackResistance);
-    }
-
 
     public void ApplyKnockback(KnockbackInfo info)
     {
         if (Time.time < immunityUntil) return;
-        if (info.Direction == Vector3.zero) return;
+        if (!info.HasDirection) return;
 
         immunityUntil = Time.time + knockbackImmunityDuration;
 
+        Vector3 direction = info.Direction;
+        direction.y = verticalLift;
+        direction.Normalize();
+
         float resistance = Mathf.Max(0.001f, knockbackResistance);
         motor.ForceUnground();
-        motor.BaseVelocity += info.Direction * (info.Strength / resistance);
+        motor.BaseVelocity += direction * (info.Strength / resistance);
     }
 }

@@ -20,6 +20,19 @@ public class PsychicPulse : AbilityBehaviour
     [Header("VFX")]
     [SerializeField] PooledVfx highlightVFXPrefab;
 
+    [Header("Knockback")]
+    [SerializeField] float pulseKnockbackStrength = 18f;
+    [SerializeField] float pulseKnockbackDuration = 0.35f;
+
+    [Header("KB Chain")]
+    [SerializeField, Tooltip("how close pushed enemy can be to the next enemies to apply chain kb ")] float ramContactRadius = 0.2f;
+    [SerializeField] float ramHitHeightOffset = 0.25f;
+    [SerializeField] float ramChipDamage = 5f;
+    [SerializeField] int maxRamChains = 4;
+    [SerializeField, Range(0f, 1f)] float chainKnockbackStrengthMultiplier = 0.65f;
+    [SerializeField, Range(0f, 1f)] float chainDurationMultiplier = 0.85f;
+    [SerializeField, Range(0f, 1f)] float chainInitialDirectionBias = 0.8f; // how aligned with inital push direction the kb directions will be
+
     [Header("Gizmos")]
     
     LayerMask TargetLayers => Enemy.LayerMask;
@@ -101,9 +114,24 @@ public class PsychicPulse : AbilityBehaviour
             return false;
         }
         
-        // apply knockback to target and do damage
-        
-        
+        Vector3 pulseDirection = GetPulseDirection(psychicPulse, target);
+
+        IKnockbackable knockbackable = target.GetComponentInParent<IKnockbackable>();
+        if (knockbackable == null)
+        {
+            Debug.LogWarning($"{target.name} has no IKnockbackable component.", target);
+            return false;
+        }
+
+        GameObject source = psychicPulse.Player.gameObject;
+
+        knockbackable.ApplyKnockback(new KnockbackInfo(
+            pulseDirection,
+            pulseKnockbackStrength,
+            pulseKnockbackDuration,
+            source));
+
+        StartRamEffect(target, pulseDirection, source);
         
         // clear highlight and target
         ClearTarget(psychicPulse);
@@ -182,6 +210,48 @@ public class PsychicPulse : AbilityBehaviour
             
         }
         return target;
+    }
+
+    Vector3 GetPulseDirection(PsychicPulseState psychicPulse, Enemy target)
+    {
+        Vector3 direction = psychicPulse.PlayerAim.AimDirection;
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude <= 0.0001f)
+        {
+            direction = target.GetCenterPoint() - psychicPulse.Player.transform.position;
+            direction.y = 0f;
+        }
+
+        return direction.sqrMagnitude > 0.0001f
+            ? direction.normalized
+            : psychicPulse.Player.transform.forward;
+    }
+
+    void StartRamEffect(Enemy target, Vector3 direction, GameObject source)
+    {
+        PsychicPulseRamEffect ramEffect = target.GetComponent<PsychicPulseRamEffect>();
+        if (ramEffect == null)
+            ramEffect = target.gameObject.AddComponent<PsychicPulseRamEffect>();
+
+        ramEffect.Begin(new PsychicPulseRamEffect.RamInfo
+        {
+            Direction = direction,
+            InitialDirection = direction,
+            Duration = pulseKnockbackDuration,
+            ContactRadius = ramContactRadius,
+            HitHeightOffset = ramHitHeightOffset,
+            ChipDamage = ramChipDamage,
+            ChainKnockbackStrength = pulseKnockbackStrength * chainKnockbackStrengthMultiplier,
+            ChainKnockbackDuration = pulseKnockbackDuration * chainDurationMultiplier,
+            ChainStrengthMultiplier = chainKnockbackStrengthMultiplier,
+            ChainDurationMultiplier = chainDurationMultiplier,
+            InitialDirectionBias = chainInitialDirectionBias,
+            ChainsRemaining = maxRamChains,
+            TargetLayers = TargetLayers,
+            Source = source,
+            InitialRammer = target
+        });
     }
 
     /// sets and highlights target
