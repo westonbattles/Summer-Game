@@ -29,7 +29,7 @@ public class EnemySpawner : MonoBehaviour
     /// <returns></returns>
     private Enemy CreateEnemy()
     {
-        Enemy e = Instantiate(enemyPrefab);
+        Enemy e = Instantiate(enemyPrefab, transform);
         e.OnDied += ReleaseEnemy;   // subscribe ONCE at creation, not per-spawn please.
         return e;
     }
