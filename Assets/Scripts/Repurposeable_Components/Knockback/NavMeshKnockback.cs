@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class NavMeshKnockback : MonoBehaviour, IKnockbackable
+public class NavMeshKnockback : MonoBehaviour, IKnockbackable, IPoolable
 {
     [Tooltip("Higher values mean less knockback.")]
     [SerializeField] private float knockbackResistance = 1f;
@@ -83,7 +83,7 @@ public class NavMeshKnockback : MonoBehaviour, IKnockbackable
         knockbackRemaining = 0f;
         knockbackVelocity = Vector3.zero;
 
-        if (agent != null) agent.velocity = Vector3.zero;
+        if (agent != null && agent.isOnNavMesh) agent.velocity = Vector3.zero;
         if (agent != null && hasStoredUpdateRotation)
         {
             agent.updateRotation = previousUpdateRotation;
@@ -99,6 +99,27 @@ public class NavMeshKnockback : MonoBehaviour, IKnockbackable
 
     private void OnDisable()
     {
+        ResetKnockbackState();
+    }
+
+    public void OnSpawn()
+    {
+        ResetKnockbackState();
+    }
+
+    public void OnDespawn()
+    {
+        ResetKnockbackState();
+    }
+
+    private void ResetKnockbackState()
+    {
+        immunityUntil = 0f;
         EndKnockback();
+
+        if (agent == null || !agent.isOnNavMesh) return;
+
+        agent.ResetPath();
+        agent.velocity = Vector3.zero;
     }
 }

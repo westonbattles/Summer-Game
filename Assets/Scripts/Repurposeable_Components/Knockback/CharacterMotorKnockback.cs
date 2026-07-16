@@ -2,7 +2,7 @@ using KinematicCharacterController;
 using UnityEngine;
 
 [RequireComponent(typeof(KinematicCharacterMotor))]
-public class CharacterMotorKnockback : MonoBehaviour, IKnockbackable
+public class CharacterMotorKnockback : MonoBehaviour, IKnockbackable, IPoolable
 {
     [Tooltip("Higher values mean less knockback.")]
     [SerializeField] private float knockbackResistance = 1f;
@@ -32,5 +32,24 @@ public class CharacterMotorKnockback : MonoBehaviour, IKnockbackable
         motor.ForceUnground();
         motor.BaseVelocity += direction * (info.Strength / resistance);
         return true;
+    }
+
+    public void OnSpawn()
+    {
+        ResetKnockbackState();
+    }
+
+    public void OnDespawn()
+    {
+        ResetKnockbackState();
+    }
+
+    private void ResetKnockbackState()
+    {
+        immunityUntil = 0f;
+
+        if (motor == null) return;
+
+        motor.BaseVelocity = Vector3.zero;
     }
 }

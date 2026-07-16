@@ -23,6 +23,8 @@ MonoBehaviour:
     - rid: 1748538264225054940
       type: {class: PsychicPulse, ns: , asm: Assembly-CSharp}
       data:
+        targetDamage: 1
+        chipDamage: 5
         baseCooldownTime: 2
         maxTargetDistance: 20
         selectionRadius: 3
@@ -31,11 +33,13 @@ MonoBehaviour:
         maxPossibleTargets: 128
         backPruneThreshold: -1.8
         highlightVFXPrefab: {fileID: 7076799518104773974, guid: 0dfbf2b4576ef46b489258f97757a183, type: 3}
-        pulseKnockbackStrength: 40
-        pulseKnockbackDuration: 0.6
+        pulseKnockbackStrength: 48
+        pulseKnockbackDuration: 0.4
         ramContactRadius: 1
         ramHitHeightOffset: 0.25
-        ramChipDamage: 3
+        ramMinImpactSpeed: 3
+        ramFullStrengthImpactSpeed: 10
+        ramMinInitialDirectionDot: 0
         maxRamChains: 3
         chainKnockbackStrengthMultiplier: 0.9
         chainDurationMultiplier: 0.85

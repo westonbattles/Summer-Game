@@ -6,7 +6,8 @@ using UnityEngine;
 public class PsychicPulse : AbilityBehaviour
 {
     [Header("Properties")]
-    // dmg stuff?
+    [SerializeField, Tooltip("daamage that gets applied to psychic pulse target each collision")] float targetDamage = 2f;
+    [SerializeField, Tooltip("chip damage that gets applied to enemies collidants with psychic pulse target")] float chipDamage = 5f;
     [SerializeField] float baseCooldownTime = 2f;
     
     [Header("Targetting")]
@@ -27,7 +28,9 @@ public class PsychicPulse : AbilityBehaviour
     [Header("KB Chain")]
     [SerializeField, Tooltip("how close pushed enemy can be to the next enemies to apply chain kb ")] float ramContactRadius = 0.2f;
     [SerializeField] float ramHitHeightOffset = 0.25f;
-    [SerializeField] float ramChipDamage = 5f;
+    [SerializeField] float ramMinImpactSpeed = 3f;
+    [SerializeField] float ramFullStrengthImpactSpeed = 10f;
+    [SerializeField, Range(-1f, 1f)] float ramMinInitialDirectionDot = 0f;
     [SerializeField] int maxRamChains = 4;
     [SerializeField, Range(0f, 1f)] float chainKnockbackStrengthMultiplier = 0.65f;
     [SerializeField, Range(0f, 1f)] float chainDurationMultiplier = 0.85f;
@@ -232,8 +235,7 @@ public class PsychicPulse : AbilityBehaviour
     void StartRamEffect(Enemy target, Vector3 direction, GameObject source)
     {
         PsychicPulseRamEffect ramEffect = target.GetComponent<PsychicPulseRamEffect>();
-        if (ramEffect == null)
-            ramEffect = target.gameObject.AddComponent<PsychicPulseRamEffect>();
+        if (ramEffect == null) ramEffect = target.gameObject.AddComponent<PsychicPulseRamEffect>();
 
         ramEffect.Begin(new PsychicPulseRamEffect.RamInfo
         {
@@ -242,7 +244,11 @@ public class PsychicPulse : AbilityBehaviour
             Duration = pulseKnockbackDuration,
             ContactRadius = ramContactRadius,
             HitHeightOffset = ramHitHeightOffset,
-            ChipDamage = ramChipDamage,
+            TargetDamage = targetDamage,
+            ChipDamage = chipDamage,
+            MinImpactSpeed = ramMinImpactSpeed,
+            FullStrengthImpactSpeed = ramFullStrengthImpactSpeed,
+            MinInitialDirectionDot = ramMinInitialDirectionDot,
             ChainKnockbackStrength = pulseKnockbackStrength * chainKnockbackStrengthMultiplier,
             ChainKnockbackDuration = pulseKnockbackDuration * chainDurationMultiplier,
             ChainStrengthMultiplier = chainKnockbackStrengthMultiplier,
@@ -251,7 +257,7 @@ public class PsychicPulse : AbilityBehaviour
             ChainsRemaining = maxRamChains,
             TargetLayers = TargetLayers,
             Source = source,
-            InitialRammer = target
+            PulseTarget = target
         });
     }
 

@@ -72,6 +72,7 @@ public class EnemySpawner : MonoBehaviour
         if (enemy.TryGetComponent(out NavMeshAgent agent) && agent.Warp(position))
         {
             agent.ResetPath();
+            agent.velocity = Vector3.zero;
             agent.isStopped = false;
             return;
         }
