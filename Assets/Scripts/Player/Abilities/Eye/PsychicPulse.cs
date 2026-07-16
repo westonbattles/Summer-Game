@@ -125,11 +125,12 @@ public class PsychicPulse : AbilityBehaviour
 
         GameObject source = psychicPulse.Player.gameObject;
 
-        knockbackable.ApplyKnockback(new KnockbackInfo(
+        bool knockbackStarted = knockbackable.ApplyKnockback(new KnockbackInfo(
             pulseDirection,
             pulseKnockbackStrength,
             pulseKnockbackDuration,
             source));
+        if (!knockbackStarted) return false;
 
         StartRamEffect(target, pulseDirection, source);
         

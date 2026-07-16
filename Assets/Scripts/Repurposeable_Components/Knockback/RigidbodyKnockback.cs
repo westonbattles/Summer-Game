@@ -14,15 +14,16 @@ public class RigidbodyKnockback : MonoBehaviour, IKnockbackable
         rb = GetComponent<Rigidbody>();
     }
 
-    public void ApplyKnockback(KnockbackInfo info)
+    public bool ApplyKnockback(KnockbackInfo info)
     {
-        if (Time.time < immunityUntil) return;
-        if (!info.HasDirection) return;
+        if (Time.time < immunityUntil) return false;
+        if (!info.HasDirection) return false;
         
         immunityUntil = Time.time + knockbackImmunityDuration;
 
         float resistance = Mathf.Max(0.001f, knockbackResistance);
         rb.WakeUp();
         rb.AddForce(info.Direction * (info.Strength / resistance), ForceMode.Impulse);
+        return true;
     }
 }

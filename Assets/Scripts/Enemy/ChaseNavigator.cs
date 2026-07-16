@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -22,17 +21,31 @@ public class ChaseNavigator : MonoBehaviour
     public float stopDistance = 5f;
     public float resumeDistance = 7f;
     
-    NavigationState state = NavigationState.Stationary;
+    NavigationState state = NavigationState.Chasing;
     int movementLockCount;
 
     public bool IsMovementLocked => movementLockCount > 0;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         agent.stoppingDistance = 0f; // ChaseNavigator controls when the agent should stop
+    }
 
+    private void OnEnable()
+    {
+        movementLockCount = 0;
+        state = NavigationState.Chasing;
+    }
+
+    private void OnDisable()
+    {
+        movementLockCount = 0;
+    }
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
         if (player == null)
         {
             GameObject p = GameObject.FindGameObjectWithTag("Player");
@@ -45,6 +58,7 @@ public class ChaseNavigator : MonoBehaviour
     {
         if (IsMovementLocked) return;
         if (player == null) return;
+        if (agent == null || !agent.isOnNavMesh) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
@@ -101,7 +115,7 @@ public class ChaseNavigator : MonoBehaviour
     {
         movementLockCount++;
 
-        if (agent == null) return;
+        if (agent == null || !agent.isOnNavMesh) return;
         
         agent.ResetPath();
         agent.isStopped = false;
@@ -110,6 +124,18 @@ public class ChaseNavigator : MonoBehaviour
     public void RemoveMovementLock()
     {
         movementLockCount = Mathf.Max(0, movementLockCount - 1);
+
+        if (movementLockCount == 0)
+            ResumeAfterMovementLock();
+    }
+
+    private void ResumeAfterMovementLock()
+    {
+        if (agent == null || player == null) return;
+
+        float distance = Vector3.Distance(transform.position, player.position);
+        if (distance > stopDistance)
+            state = NavigationState.Chasing;
     }
     
 }

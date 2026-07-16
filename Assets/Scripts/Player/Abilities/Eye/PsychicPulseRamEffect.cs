@@ -171,31 +171,32 @@ public class PsychicPulseRamEffect : MonoBehaviour
                     chainKnockbackDuration,
                     source);
 
-                knockbackable.ApplyKnockback(knockbackInfo);
-
-                PsychicPulseRamEffect nextRamEffect = hitEnemy.GetComponent<PsychicPulseRamEffect>();
-                if (nextRamEffect == null)
-                    nextRamEffect = hitEnemy.gameObject.AddComponent<PsychicPulseRamEffect>();
-
-                nextRamEffect.Begin(new RamInfo
+                if (knockbackable.ApplyKnockback(knockbackInfo))
                 {
-                    Direction = knockbackInfo.Direction,
-                    InitialDirection = initialDirection,
-                    Duration = chainKnockbackDuration,
-                    ContactRadius = contactRadius,
-                    HitHeightOffset = hitHeightOffset,
-                    ChipDamage = chipDamage,
-                    ChainKnockbackStrength = chainKnockbackStrength * chainStrengthMultiplier,
-                    ChainKnockbackDuration = chainKnockbackDuration * chainDurationMultiplier,
-                    ChainStrengthMultiplier = chainStrengthMultiplier,
-                    ChainDurationMultiplier = chainDurationMultiplier,
-                    InitialDirectionBias = initialDirectionBias,
-                    ChainsRemaining = chainsRemaining - 1,
-                    TargetLayers = targetLayers,
-                    Source = source,
-                    InitialRammer = initialRammer,
-                    IgnoreEnemy = owner
-                });
+                    PsychicPulseRamEffect nextRamEffect = hitEnemy.GetComponent<PsychicPulseRamEffect>();
+                    if (nextRamEffect == null)
+                        nextRamEffect = hitEnemy.gameObject.AddComponent<PsychicPulseRamEffect>();
+
+                    nextRamEffect.Begin(new RamInfo
+                    {
+                        Direction = knockbackInfo.Direction,
+                        InitialDirection = initialDirection,
+                        Duration = chainKnockbackDuration,
+                        ContactRadius = contactRadius,
+                        HitHeightOffset = hitHeightOffset,
+                        ChipDamage = chipDamage,
+                        ChainKnockbackStrength = chainKnockbackStrength * chainStrengthMultiplier,
+                        ChainKnockbackDuration = chainKnockbackDuration * chainDurationMultiplier,
+                        ChainStrengthMultiplier = chainStrengthMultiplier,
+                        ChainDurationMultiplier = chainDurationMultiplier,
+                        InitialDirectionBias = initialDirectionBias,
+                        ChainsRemaining = chainsRemaining - 1,
+                        TargetLayers = targetLayers,
+                        Source = source,
+                        InitialRammer = initialRammer,
+                        IgnoreEnemy = owner
+                    });
+                }
             }
         }
 

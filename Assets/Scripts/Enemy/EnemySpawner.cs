@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Pool;
 
 public class EnemySpawner : MonoBehaviour
@@ -6,6 +7,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private Enemy enemyPrefab;
     [SerializeField] private Transform player;      // injected target for attacks, pew pew
     [SerializeField] private int defaultPoolSize = 32;  // needs to be larger for enemies. Change if needed, but keep base 2 for caching.
+    [SerializeField] private float navMeshSpawnSampleRadius = 2f;
 
     private ObjectPool<Enemy> pool;
 
@@ -40,9 +42,10 @@ public class EnemySpawner : MonoBehaviour
     public Enemy Spawn(Vector3 position)
     {
         Enemy enemy = pool.Get();
-        enemy.transform.position = position;
+        Vector3 spawnPosition = GetNavMeshSpawnPosition(position);
+        PlaceEnemy(enemy, spawnPosition);
 
-        // 1. (future) apply affixes here — they may raise MaxHP, add components.
+        // 1. (future) apply affixes here - they may raise MaxHP, add components.
         // TODO: affixes :)
         // 2. THEN reset all poolable state (Health.OnSpawn refills to the new MaxHP).
         foreach (var poolable in enemy.GetComponentsInChildren<IPoolable>())
@@ -53,6 +56,27 @@ public class EnemySpawner : MonoBehaviour
             attack.SetTarget(player);
 
         return enemy;
+    }
+
+    private Vector3 GetNavMeshSpawnPosition(Vector3 requestedPosition)
+    {
+        if (NavMesh.SamplePosition(requestedPosition, out NavMeshHit hit, navMeshSpawnSampleRadius, NavMesh.AllAreas))
+            return hit.position;
+
+        Debug.LogWarning($"EnemySpawner could not find a NavMesh position near {requestedPosition}. Spawning at the requested position.", this);
+        return requestedPosition;
+    }
+
+    private void PlaceEnemy(Enemy enemy, Vector3 position)
+    {
+        if (enemy.TryGetComponent(out NavMeshAgent agent) && agent.Warp(position))
+        {
+            agent.ResetPath();
+            agent.isStopped = false;
+            return;
+        }
+
+        enemy.transform.position = position;
     }
 
     /// <summary>

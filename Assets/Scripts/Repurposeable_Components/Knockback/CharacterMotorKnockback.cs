@@ -17,10 +17,10 @@ public class CharacterMotorKnockback : MonoBehaviour, IKnockbackable
         motor = GetComponent<KinematicCharacterMotor>();
     }
 
-    public void ApplyKnockback(KnockbackInfo info)
+    public bool ApplyKnockback(KnockbackInfo info)
     {
-        if (Time.time < immunityUntil) return;
-        if (!info.HasDirection) return;
+        if (Time.time < immunityUntil) return false;
+        if (!info.HasDirection) return false;
 
         immunityUntil = Time.time + knockbackImmunityDuration;
 
@@ -31,5 +31,6 @@ public class CharacterMotorKnockback : MonoBehaviour, IKnockbackable
         float resistance = Mathf.Max(0.001f, knockbackResistance);
         motor.ForceUnground();
         motor.BaseVelocity += direction * (info.Strength / resistance);
+        return true;
     }
 }

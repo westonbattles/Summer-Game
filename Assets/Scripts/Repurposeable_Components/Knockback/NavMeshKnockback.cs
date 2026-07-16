@@ -39,10 +39,11 @@ public class NavMeshKnockback : MonoBehaviour, IKnockbackable
         if (knockbackRemaining <= 0f) EndKnockback();
     }
     
-    public void ApplyKnockback(KnockbackInfo info)
+    public bool ApplyKnockback(KnockbackInfo info)
     {
-        if (Time.time < immunityUntil) return;
-        if (!info.HasDirection) return;
+        if (Time.time < immunityUntil) return false;
+        if (!info.HasDirection) return false;
+        if (agent == null || !agent.isOnNavMesh) return false;
         
         immunityUntil = Time.time + knockbackImmunityDuration;
 
@@ -54,6 +55,7 @@ public class NavMeshKnockback : MonoBehaviour, IKnockbackable
         knockbackVelocity = info.Direction * (info.Strength / resistance);
 
         BeginKnockback();
+        return true;
     }
 
     private void BeginKnockback()
