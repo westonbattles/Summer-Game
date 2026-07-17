@@ -71,7 +71,7 @@ public class Whirlwind : AbilityBehaviour
         
         Vector3 position = whirlwind.Player.transform.position;
         Collider[] hits = new Collider[overlapSphereMaxColliders];
-        int hitCount = Physics.OverlapSphereNonAlloc(position, overlapSphereRadius, hits, HitLayers);
+        int hitCount = Physics.OverlapSphereNonAlloc(position, DamageRadius, hits, HitLayers);
         if (hitCount > 0)
         {
             // de-dupe
@@ -99,7 +99,7 @@ public class Whirlwind : AbilityBehaviour
         // if (vfx != null)
         // {
         //     float increaseRatio = DamageRadius / overlapSphereRadius;
-        //     vfx.transform.localScale *= increaseRatio;
+        //     vfx.transform.localScale *= increaseRatio; // gets reset internally after being freed \dont gotta worry abt that
         // }
     }
     

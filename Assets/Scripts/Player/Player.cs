@@ -316,7 +316,7 @@ public class Player : MonoBehaviour, ICharacterController
         }
         
         // apply vertical damping
-        Dash dash = HandLoadout.GetAbility(AbilitySlot.Movement)?.Behaviour as Dash;
+        Dash dash = EyeLoadout.GetAbility(AbilitySlot.Movement)?.Behaviour as Dash;
         float damp = dash?.VerticalDashDampPercent ?? 1f;
         Vector3 squishedForwardVector = new Vector3(forwardVector.x, forwardVector.y * damp, forwardVector.z);
         Dash(squishedForwardVector, speed);

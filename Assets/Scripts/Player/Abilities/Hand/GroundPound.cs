@@ -102,7 +102,7 @@ public class GroundPound : AbilityBehaviour
         
         Vector3 position = groundPound.Player.transform.position + sphereCastPositionOffset;
         Collider[] hits = new Collider[overlapSphereMaxColliders];
-        int hitCount = Physics.OverlapSphereNonAlloc(position, sphereCastRadius, hits, HitLayers);
+        int hitCount = Physics.OverlapSphereNonAlloc(position, DamageRadius, hits, HitLayers);
         if (hitCount > 0)
         {
             float distanceFallen = groundPound.MaxHeight - groundPound.Player.transform.position.y;
