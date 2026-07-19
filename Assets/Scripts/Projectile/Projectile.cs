@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 
+// TODO: make projectile launch take in a owner combat system or owner object and have it use the combat system
+
 /// <summary>
 /// Pool-agnostic projectile. Carries a DamageInfo, flies forward, and on trigger
 /// contact deals damage once then releases itself back to whatever pool spawned it.
@@ -28,6 +30,9 @@ public class Projectile : MonoBehaviour, IPoolable
 
     public int PoolCapacity => poolCapacity;
 
+    Combat _ownerCombat;
+    DamageType _playerDamageType;
+    
     private DamageInfo damageInfo;
     private float speed;
     private Action<Projectile> release;     // injected: "Put yourself back" FORCEEE!!!
@@ -101,10 +106,12 @@ public class Projectile : MonoBehaviour, IPoolable
             return;
         }
     }
+    
 
     /// <summary>Sets this shot's flight parameters. Pool lifecycle is already handled.</summary>
-    public void Launch(Vector3 origin, Vector3 direction, float speed, DamageInfo info)
+    public void Launch(Combat ownerCombat, Vector3 origin, Vector3 direction, float speed, DamageInfo info)
     {
+        _ownerCombat = ownerCombat;
         transform.position = origin;
         this.speed = speed;
         damageInfo = info;
@@ -132,6 +139,7 @@ public class Projectile : MonoBehaviour, IPoolable
     public void OnDespawn()
     {
         damageInfo = default;
+        _ownerCombat = null;
     }
 
     private void Update()
@@ -179,14 +187,17 @@ public class Projectile : MonoBehaviour, IPoolable
 
         // allows for colliders in children of idamageable target to be damaged
         IDamageable target = other.GetComponentInParent<IDamageable>();
-        target?.TakeDamage(damageInfo);
 
-        // spawn the hit projectiles. Instantiate isn't great but it's fine for our V-slice
-        if (impactVFXPrefab == null)
-            Debug.LogWarning("Projectile has no impactVFXPrefab assigned.", this);
-        else
-            //Instantiate(impactVFXPrefab, transform.position, Quaternion.identity);
-            VFXPoolManager.Instance.Play(impactVFXPrefab, impactPoint, Quaternion.identity);
+        if (target != null)
+        {
+            if (_ownerCombat != null) _ownerCombat.TryDamage(target, damageInfo); // player projectile
+            else { Debug.LogError($"No Combat script found on target: {target}"); }
+        }
+        
+
+        // spawn the hit projectiles
+        if (impactVFXPrefab == null) Debug.LogWarning("Projectile has no impactVFXPrefab assigned.", this);
+        else VFXPoolManager.Instance.Play(impactVFXPrefab, impactPoint, Quaternion.identity);
 
         Despawn();
     }

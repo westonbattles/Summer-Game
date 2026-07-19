@@ -18,6 +18,7 @@ public class Dash : AbilityBehaviour
     // (or any other way u want to use the modifier)
     public float DashSpeed => dashSpeed;
     public float DashCooldownTime => dashCooldownTime;
+    public bool DashVerticallyEnabled => Player.Instance.Modifiers.DashVerticallyEnabled.GetCurrentValue();
     public float DashLandMomentumDecayTime => dashLandMomentumDecayTime;
     public float VerticalDashDampPercent => verticalDashDampPercent;
     
@@ -55,7 +56,7 @@ public class Dash : AbilityBehaviour
         if (dash == null) return false;                 // cant execute rip
         if (dash.CooldownRemaining > 0f) return false;  // can't dash cuz cooldown still active
 
-        if (dash.Player.Modifiers.DashVerticallyEnabled && (dash.Player.Input.Move.y > 0 || dash.Player.Input.Move == Vector2.zero)) dash.Player.DashVertically(DashSpeed);
+        if (DashVerticallyEnabled && (dash.Player.Input.Move.y > 0 || dash.Player.Input.Move == Vector2.zero)) dash.Player.DashVertically(DashSpeed);
         else dash.Player.DashAlongInputAxis(DashSpeed); //<- base dash
         
         dash.CooldownRemaining = DashCooldownTime; // update cooldown

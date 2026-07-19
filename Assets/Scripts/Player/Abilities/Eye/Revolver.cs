@@ -97,10 +97,8 @@ public class Revolver : AbilityBehaviour
 
         // shoot projectile
         Projectile projectile = ProjectilePoolManager.Instance.Get(bulletPrefab);
-
-        bool isCrit = false; // Todo: implement crit chance
-
-        DamageInfo damageInfo = new DamageInfo(Damage, Player.Instance.gameObject, isCrit);
+        
+        DamageInfo damageInfo = new DamageInfo(Damage, DamageType.Projectile, Player.Instance.gameObject);
         
         // if obstruction exists between player and muzzle, place bullet at the obstruction there (should auto-impact)
         Vector3 playerOrigin = Player.Instance.transform.position;
@@ -118,7 +116,7 @@ public class Revolver : AbilityBehaviour
         }
         
         
-        projectile.Launch(shotOrigin, aimDirection, BulletSpeed, damageInfo);
+        projectile.Launch(Player.Instance.Combat, shotOrigin, aimDirection, BulletSpeed, damageInfo);
         revolver.Ammunition -= 1;
         //Debug.Log($"Ability: Shot Revolver! ({revolver.Ammunition}/{MagazineSize})");
         

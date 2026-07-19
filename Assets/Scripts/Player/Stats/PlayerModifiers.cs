@@ -4,8 +4,30 @@
 // multiplier   -> multiplicative modifiers
 public class PlayerModifiers
 {
+
+    public class Modifier<T>
+    {
+        readonly T _baseValue;
+        T _currentValue;
+        
+        public T BaseValue => _baseValue;
+
+
+        public Modifier(T value)
+        {
+            _baseValue = value;
+            _currentValue = value;
+        }
+        
+        public T GetCurrentValue() => _currentValue;
+        /// sets the current modifier value (we can still access and use BaseValue if we want, that doesn't get modified. only CurrentValue does)
+        public void SetValue(T value) { _currentValue = value; }
+        public void ResetValue() { _currentValue = _baseValue; }
+    }
+
     
     // Base Player Stats
+    public Modifier<float> DamageMultiplier = new(1f);
     public float MaxHealthBonus = 0f;
     public float BhopMomentumCarryPercent = 0.33f; // how much horizontal velocity you keep on perfect bhops
     
@@ -16,7 +38,7 @@ public class PlayerModifiers
     
     // Revolver
     public int RevolverBulletsBonus = 0;
-    public bool DashVerticallyEnabled = true;
+    public Modifier<bool> DashVerticallyEnabled = new(false);
     
     
     

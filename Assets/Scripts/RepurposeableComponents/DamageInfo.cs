@@ -9,13 +9,15 @@ using UnityEngine;
 public struct DamageInfo
 {
     public float Amount;
+    public DamageType Type;
     public GameObject Source;   // who dealt the damage (e.g. kill credit, thorns, aggro)
     public bool IsCrit;
     // public DamageType Type;  // an enum for when we add affixes
 
-    public DamageInfo(float amount, GameObject source = null, bool isCrit = false)
+    public DamageInfo(float amount, DamageType type, GameObject source = null, bool isCrit = false)
     {
         Amount = amount;
+        Type = type;
         Source = source;
         IsCrit = isCrit;
     }

@@ -13,6 +13,7 @@ using Vector3 = UnityEngine.Vector3;
 [RequireComponent(typeof(PlayerCharacterSwitcher))]
 [RequireComponent(typeof(PlayerAim))]
 [RequireComponent(typeof(PlayerLook))]
+[RequireComponent(typeof(Combat))]
 public class Player : MonoBehaviour, ICharacterController
 {
     public static LayerMask LayerMask => LayerMask.GetMask("Player");
@@ -46,6 +47,7 @@ public class Player : MonoBehaviour, ICharacterController
     public PlayerAnimator Animator { get; private set; }
     public PlayerAim Aim { get; private set; }
     public PlayerLook Look { get; private set; }
+    public Combat Combat { get; private set; }
 
     public AbilityController AbilityController { get; private set; }
     public PlayerCharacterSwitcher CharacterSwitcher { get; private set; }
@@ -87,23 +89,21 @@ public class Player : MonoBehaviour, ICharacterController
     void Awake()
     {
         Instance = this;
-        Input = GetComponent<PlayerInputReader>();
-        Aim = GetComponent<PlayerAim>();
-        Look = GetComponentInChildren<PlayerLook>();
-        AbilityController = GetComponent<AbilityController>();
-        CharacterSwitcher = GetComponent<PlayerCharacterSwitcher>();
+        
+        Input               = GetComponent<PlayerInputReader>();
+        Aim                 = GetComponent<PlayerAim>();
+        Look                = GetComponentInChildren<PlayerLook>();
+        AbilityController   = GetComponent<AbilityController>();
+        CharacterSwitcher   = GetComponent<PlayerCharacterSwitcher>();
+        Combat              = GetComponent<Combat>();
+        
         Animator = new PlayerAnimator(CharacterSwitcher);
         
         _motor = GetComponent<KinematicCharacterMotor>();
-        Input.Configure(autoBhop);
-
         _friction = baseFriction;
         
-
-        if (autoBhop)
-        {
-            jumpBufferTime = 0.01f;
-        }
+        Input.Configure(autoBhop);
+        if (autoBhop) jumpBufferTime = 0.01f;
         
         AbilityController.SetLoadout(startingLoadout);
     }
