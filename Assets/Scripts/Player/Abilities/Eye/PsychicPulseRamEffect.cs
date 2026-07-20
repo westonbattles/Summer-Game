@@ -273,18 +273,16 @@ public class PsychicPulseRamEffect : MonoBehaviour
         if (damage <= 0f || target == null) return;
 
         IDamageable damageable = target.GetComponentInParent<IDamageable>();
-        if (damageable != null && damageable.IsAlive) damageable.TakeDamage(new DamageInfo(damage, source));
+        if (damageable != null && damageable.IsAlive) damageable.TakeDamage(new DamageInfo(damage, DamageType.Physical, source));
     }
 
     private void RegisterPushedEnemy(Enemy pushedEnemy)
     {
         if (pushedEnemy == null || pushedEnemy == pulseTarget) return;
 
-        if (chipDamagedEnemies.Add(pushedEnemy))
-            Damage(pushedEnemy, chipDamage);
+        if (chipDamagedEnemies.Add(pushedEnemy)) Damage(pushedEnemy, chipDamage);
 
-        if (pulseTarget != null && targetDamageCreditedEnemies.Add(pushedEnemy))
-            Damage(pulseTarget, targetDamage);
+        if (pulseTarget != null && targetDamageCreditedEnemies.Add(pushedEnemy)) Damage(pulseTarget, targetDamage);
     }
 
     private void OnDisable()

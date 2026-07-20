@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(EnemyAttackController))]
 public class EnemyRangedAttack : MonoBehaviour, IEnemyAttack
 {
+    [SerializeField] private DamageType damageType = DamageType.Projectile;
     [SerializeField] private Projectile projectilePrefab;
     [SerializeField] private Transform firePoint;
     [SerializeField] private float damage = 8f;
@@ -10,8 +12,15 @@ public class EnemyRangedAttack : MonoBehaviour, IEnemyAttack
     [SerializeField] private float maxRange = 12f;
     [SerializeField] private float projectileSpeed = 10f;
 
+    private Combat ownerCombat;
     private Transform target;
     private float cooldownRemaining;
+
+    void Awake()
+    {
+        ownerCombat = GetComponent<Combat>();
+        if (ownerCombat == null) Debug.LogError($"Could not find combat script on gameobject: {gameObject}");
+    }
 
     public void SetTarget(Transform newTarget)
     {
@@ -42,7 +51,7 @@ public class EnemyRangedAttack : MonoBehaviour, IEnemyAttack
         Vector3 direction = (target.position - firePoint.position).normalized;
         Projectile proj = ProjectilePoolManager.Instance.Get(projectilePrefab);
         proj.transform.SetPositionAndRotation(firePoint.position, Quaternion.identity);
-        proj.Launch(direction, projectileSpeed, new DamageInfo(damage, gameObject));
+        proj.Launch(ownerCombat, transform.position, direction, projectileSpeed, new DamageInfo(damage, damageType, gameObject));
 
         cooldownRemaining = cooldown;
         return true;

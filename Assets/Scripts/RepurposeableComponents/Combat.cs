@@ -3,10 +3,10 @@ using UnityEngine;
 
 public enum DamageType
 {
-    Physical,
-    Projectile,
-    Magic,
-    Fire,
+    Physical,   // punches and stuff
+    Projectile, // projectiles
+    Magic,      // magic like the eye special abilities
+    Fire,       // ticking burn damage
 }
 
 public struct Hit
@@ -29,7 +29,7 @@ public class Combat : MonoBehaviour
     {
         return ResolveDamage(target, info,
             notifyItems: true);
-;    }
+    }
     
 
     // doesn't allow items to apply effects / afflictions for this damage type
@@ -43,6 +43,7 @@ public class Combat : MonoBehaviour
     {
         if (target == null || !target.IsAlive) return false; // don't damage things that are dead
 
+        if (info.Source == null) info.Source = gameObject; // automatically ensures correct source
         Hit hit = new()
         {
             Target = target,

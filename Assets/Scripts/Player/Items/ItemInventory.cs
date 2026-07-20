@@ -20,7 +20,7 @@ public class ItemInventory : MonoBehaviour
     void Awake()
     {
         _player = GetComponent<Player>();
-        _player.Modifiers.Reset();
+        _player.Modifiers.ResetAll();
     }
 
     void Start()
@@ -67,7 +67,7 @@ public class ItemInventory : MonoBehaviour
         // if the item isn't alr in our inventory, we need to create it and add it
         if (!items.TryGetValue(itemDefinition, out ItemRuntime item))
         {
-            item = itemDefinition.Behaviour.CreateRuntime(_player);
+            item = itemDefinition.Behaviour?.CreateRuntime(_player) ?? new ItemRuntime();
             items.Add(itemDefinition, item);
         }
         
@@ -80,9 +80,9 @@ public class ItemInventory : MonoBehaviour
     void RecalculateModifiers()
     {
 
-        float previousDifficulty = DifficultyPoints;
+        //float previousDifficulty = DifficultyPoints;
         
-        _player.Modifiers.Reset();
+        _player.Modifiers.ResetAll();
         DifficultyPoints = 0f;
 
         foreach (KeyValuePair<ItemDefinition, ItemRuntime> pair in items)

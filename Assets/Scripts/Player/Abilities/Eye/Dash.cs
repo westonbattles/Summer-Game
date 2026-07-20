@@ -18,7 +18,7 @@ public class Dash : AbilityBehaviour
     // (or any other way u want to use the modifier)
     public float DashSpeed => dashSpeed;
     public float DashCooldownTime => dashCooldownTime;
-    public bool DashVerticallyEnabled => Player.Instance.Modifiers.DashVerticallyEnabled.GetCurrentValue();
+    public bool DashVerticallyEnabled => Player.Instance.Modifiers.DashVerticallyEnabled.GetValue();
     public float DashLandMomentumDecayTime => dashLandMomentumDecayTime;
     public float VerticalDashDampPercent => verticalDashDampPercent;
     

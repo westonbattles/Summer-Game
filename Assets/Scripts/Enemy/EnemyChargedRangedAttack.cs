@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 
 public class EnemyChargedRangedAttack : MonoBehaviour, IEnemyAttack
 {
+    [SerializeField] private DamageType damageType = DamageType.Projectile;
     [SerializeField] private Projectile projectilePrefab;
     [SerializeField] private Transform firePoint;
     [SerializeField] private float damage = 16f;
@@ -11,11 +13,18 @@ public class EnemyChargedRangedAttack : MonoBehaviour, IEnemyAttack
     [SerializeField] private float chargeDuration = 1f;
     [SerializeField] private GameObject chargeVFXPrefab;
 
+    private Combat ownerCombat;
     private Transform target;
     private float cooldownRemaining;
     private float chargeRemaining;
     private bool isCharging;
     private GameObject activeChargeVFX;
+
+    void Awake()
+    {
+        ownerCombat = GetComponent<Combat>();
+        if (ownerCombat == null) Debug.LogError($"Could not find combat script on gameobject: {gameObject}");
+    }
 
     public void SetTarget(Transform newTarget)
     {
@@ -89,7 +98,7 @@ public class EnemyChargedRangedAttack : MonoBehaviour, IEnemyAttack
         Vector3 direction = (target.position - firePoint.position).normalized;
         Projectile proj = ProjectilePoolManager.Instance.Get(projectilePrefab);
         proj.transform.SetPositionAndRotation(firePoint.position, Quaternion.LookRotation(direction));
-        proj.Launch(direction, projectileSpeed, new DamageInfo(damage, gameObject));
+        proj.Launch(ownerCombat, transform.position, direction, projectileSpeed, new DamageInfo(damage, damageType, gameObject));
 
         cooldownRemaining = cooldown;
     }

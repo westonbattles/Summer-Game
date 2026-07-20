@@ -24,7 +24,7 @@ public class Revolver : AbilityBehaviour
     // public ModifiableStat => baseStat + Player.Instance.Modifiers.StatModifierAddName
     // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
     // (or any other way u want to use the modifier)
-    public int MagazineSize => magazineSize + Player.Instance.Modifiers.RevolverBulletsBonus;
+    public int MagazineSize => magazineSize + Player.Instance.Modifiers.RevolverBulletsBonus.GetValue();
     public float ReloadDuration => reloadDuration;
     public float Damage => baseDamage;
     public float BulletSpeed => baseBulletSpeed;

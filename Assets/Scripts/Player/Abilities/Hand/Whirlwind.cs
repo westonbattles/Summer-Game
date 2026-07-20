@@ -10,6 +10,7 @@ public class Whirlwind : AbilityBehaviour
     [Header("Properties")] 
     [SerializeField] float baseDamage = 10f;
     [SerializeField] float baseCooldownTime = 4f;
+    [SerializeField] DamageType baseDamageType = DamageType.Physical;
 
     [Header("Spin/Animation")]
     [SerializeField, Header("delay for applying the tick of damage")] float spinDamageDelay = 0.5f;
@@ -33,7 +34,8 @@ public class Whirlwind : AbilityBehaviour
     // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
     // (or any other way u want to use the modifier)
     public float Damage => baseDamage;
-    public float DamageRadius => overlapSphereRadius + Player.Instance.Modifiers.WhirlwindRadiusBonus;
+    public DamageType DamageType => baseDamageType;
+    public float DamageRadius => overlapSphereRadius + Player.Instance.Modifiers.WhirlwindRadiusBonus.GetValue();
     public float CooldownTime => baseCooldownTime;
     
     // damage function
@@ -86,7 +88,7 @@ public class Whirlwind : AbilityBehaviour
             Debug.Log($"Whirlwind hit {whirlwind.DamagedTargets.Count} enemies! ({damage} damage per)");
             
             // build damageInfo
-            DamageInfo damageInfo = new DamageInfo(damage, whirlwind.Player.gameObject);
+            DamageInfo damageInfo = new DamageInfo(damage, DamageType, whirlwind.Player.gameObject);
             foreach (IDamageable target in whirlwind.DamagedTargets)
             {
                 target.TakeDamage(damageInfo);

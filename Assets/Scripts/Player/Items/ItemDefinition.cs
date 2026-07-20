@@ -46,19 +46,18 @@ public abstract class ItemBehaviour
     public virtual void ApplyModifiers(PlayerModifiers modifiers, int itemCount) { }
     
     /// for items that need to dome some fancy custom code at runtime
-    public virtual ItemRuntime CreateRuntime(Player player) { return null; }
+    public virtual ItemRuntime CreateRuntime(Player player) { return new ItemRuntime(); }
 }
 
 
-public abstract class ItemRuntime : IDisposable
+public class ItemRuntime : IDisposable
 {
     public int Count { get; private set; } // count of the item in our inventory
-
-    protected ItemRuntime(int count) { Count = count; }
+    
     public void SetCount(int count) { Count = count; } // might wanna add a call in this to an overrideable OnCountChanged function eventually
     //protected virtual void OnCountChanged() { } 
     
-    public void Tick(float deltaTime) { }
+    public virtual void Tick(float deltaTime) { }
     
     public virtual void Dispose() { } // benefit of using idisopsable, see comment in https://github.com/dotnet/dotnet/blob/b0f34d51fccc69fd334253924abd8d6853fad7aa/src/runtime/src/libraries/System.Private.CoreLib/src/System/IDisposable.cs
 }

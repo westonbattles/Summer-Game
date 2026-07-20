@@ -43,7 +43,7 @@ public class Player : MonoBehaviour, ICharacterController
 
     public static Player Instance { get; private set; }
     public PlayerInputReader Input { get; private set; }
-    public PlayerModifiers Modifiers { get; private set; } = new(); // items will change stuff from here
+    public PlayerModifiers Modifiers { get; private set; } = PlayerModifiers.CreateFresh();
     public PlayerAnimator Animator { get; private set; }
     public PlayerAim Aim { get; private set; }
     public PlayerLook Look { get; private set; }
@@ -248,7 +248,7 @@ public class Player : MonoBehaviour, ICharacterController
 
         float speed = horizontalVelocity.magnitude;
         float carry = speed;
-        if (carry > maxSpeed) carry = (speed - maxSpeed) * Modifiers.BhopMomentumCarryPercent + maxSpeed; // same as Mathf.Lerp(maxSpeed, speed, Modifiers.BhopMomentumCarryPercent); without the 0-1 clamping
+        if (carry > maxSpeed) carry = (speed - maxSpeed) * Modifiers.BhopMomentumCarryPercent.GetValue() + maxSpeed; // same as Mathf.Lerp(maxSpeed, speed, Modifiers.BhopMomentumCarryPercent); without the 0-1 clamping
         
         horizontalVelocity = (horizontalVelocity / speed) * carry;
         horizontalVelocity = MoveAir(target, horizontalVelocity, deltaTime);

@@ -14,6 +14,8 @@ public class BrassKnuckles : AbilityBehaviour
     [SerializeField] int baseComboStages = 3;
     [SerializeField] float baseCooldownTime = 0.65f;
     [SerializeField] float baseComboResetTime = 2.5f;
+    [SerializeField] DamageType baseDamageType = DamageType.Physical;
+    
     
     // MODIFIERS
     // to use a stat modifier, simply use it here! like so
@@ -22,11 +24,12 @@ public class BrassKnuckles : AbilityBehaviour
     // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
     // (or any other way u want to use the modifier)
     public float Damage => baseDamage;
-    public float ComboIncrease => baseComboIncrease * Player.Instance.Modifiers.BrassKnucklesComboIncreaseDamageMultiplier;
+    public DamageType DamageType => baseDamageType;
+    public float ComboIncrease => baseComboIncrease * Player.Instance.Modifiers.BrassKnucklesComboIncreaseDamageMultiplier.GetValue();
     public int ComboStages => baseComboStages;
     public float CooldownTime => baseCooldownTime;
     public float ComboResetTime => baseComboResetTime;
-    public int MaxCombo => ComboStages - 1 + Player.Instance.Modifiers.BrassKnucklesComboStagesBonus; // minus 1 bc 0 is our first 'combo' index
+    public int MaxCombo => ComboStages - 1 + Player.Instance.Modifiers.BrassKnucklesComboStagesBonus.GetValue(); // minus 1 bc 0 is our first 'combo' index
     
     [Header("Animation Syncing")]
     [SerializeField] float[] punchHitDelays = { 0.13f, 0.13f, 0.4f };
@@ -151,7 +154,7 @@ public class BrassKnuckles : AbilityBehaviour
             
             // build damageinfo
             float damage = Damage * brassKnuckles.GetActiveMultiplier(ComboIncrease);
-            DamageInfo damageInfo = new DamageInfo(damage, brassKnuckles.Player.gameObject, isCrit: false); // todo : implement crit chance?
+            DamageInfo damageInfo = new DamageInfo(damage, DamageType, brassKnuckles.Player.gameObject, isCrit: false); // todo : implement crit chance?
             
             // de-duplicate
             brassKnuckles.DamagedTargets.Clear();

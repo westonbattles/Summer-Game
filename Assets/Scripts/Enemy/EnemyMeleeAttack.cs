@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttack
 {
+    [SerializeField] private DamageType damageType = DamageType.Physical;
     [SerializeField] private float damage = 10f;
     [SerializeField] private float cooldown = 1f;
     [SerializeField] private float range = 1.5f;
@@ -93,7 +94,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttack
             IDamageable damageable = hit.GetComponentInParent<IDamageable>();
             if (damageable != null)
             {
-                damageable.TakeDamage(new DamageInfo(damage, gameObject));
+                damageable.TakeDamage(new DamageInfo(damage, damageType, gameObject));
             }
 
             if (applyKnockback)

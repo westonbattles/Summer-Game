@@ -19,6 +19,7 @@ public class GroundPound : AbilityBehaviour
     [SerializeField] float baseCooldownTime = 4f;
     [SerializeField] float baseDamageScalingFactor = 0.5f; // y = 1/2(x+1)
     [SerializeField] float baseDownwardSpeed = 13f;
+    [SerializeField] DamageType baseDamageType = DamageType.Physical;
 
     [Header("Windup")]
     [SerializeField] float windupTime = 0.2f;
@@ -44,8 +45,9 @@ public class GroundPound : AbilityBehaviour
     // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
     // (or any other way u want to use the modifier)
     public float Damage => baseDamage;
-    public float DamageRadius => sphereCastRadius + Player.Instance.Modifiers.GroundPoundRadiusBonus;
-    public float DamageScalingFactor => baseDamageScalingFactor * Player.Instance.Modifiers.GroundPoundDamageScalingMultiplier;
+    public DamageType DamageType => baseDamageType;
+    public float DamageRadius => sphereCastRadius + Player.Instance.Modifiers.GroundPoundRadiusBonus.GetValue();
+    public float DamageScalingFactor => baseDamageScalingFactor * Player.Instance.Modifiers.GroundPoundDamageScalingMultiplier.GetValue();
     public float CooldownTime => baseCooldownTime;
     public float DownwardSpeed => baseDownwardSpeed;
     
@@ -111,7 +113,7 @@ public class GroundPound : AbilityBehaviour
             Debug.Log($"Pounded, Distance Fallen: {distanceFallen}, Damage dealt: {scaledDamage} ({Damage} * {Mathf.Max(1f, DamageScalingFactor * (distanceFallen + 1))})");
             
             // build damageInfo
-            DamageInfo damageInfo = new DamageInfo(scaledDamage, groundPound.Player.gameObject, false);
+            DamageInfo damageInfo = new DamageInfo(scaledDamage, DamageType, groundPound.Player.gameObject);
             
             // de-dupe
             groundPound.DamagedTargets.Clear();

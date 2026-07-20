@@ -19,6 +19,7 @@ public class ThirdEyeBeam : AbilityBehaviour
     [SerializeField] float beamDuration = 1.5f;
     [SerializeField] float beamRange = 20f;
     [SerializeField] float beamRadius = 0.35f; // thickness of the capsule cast (0 would be pure hitscan raycast at cursor)
+    [SerializeField] DamageType baseDamageType = DamageType.Magic;
 
     [Header("Windup")]
     [SerializeField] float windupTime = 0.2f;
@@ -43,6 +44,7 @@ public class ThirdEyeBeam : AbilityBehaviour
     // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
     // (or any other way u want to use the modifier)
     public float Damage => baseDamagePerSecond;
+    public DamageType DamageType => baseDamageType;
     public float CooldownTime => baseCooldownTime;
     public float Range => beamRange;
     
@@ -158,7 +160,7 @@ public class ThirdEyeBeam : AbilityBehaviour
         if (hitCount > 0)
         {
             float damageThisTick = Damage * deltaTime;
-            DamageInfo damageInfo = new DamageInfo(damageThisTick, beam.Player.gameObject, false);
+            DamageInfo damageInfo = new DamageInfo(damageThisTick, DamageType, beam.Player.gameObject, false);
 
             beam.HitThisTick.Clear();
             for (int i = 0; i < hitCount; i++)

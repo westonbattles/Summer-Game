@@ -31,8 +31,6 @@ public class Projectile : MonoBehaviour, IPoolable
     public int PoolCapacity => poolCapacity;
 
     Combat _ownerCombat;
-    DamageType _playerDamageType;
-    
     private DamageInfo damageInfo;
     private float speed;
     private Action<Projectile> release;     // injected: "Put yourself back" FORCEEE!!!
@@ -120,13 +118,13 @@ public class Projectile : MonoBehaviour, IPoolable
         CheckSpawnOverlap();
     }
     
-    /// <summary>Sets this shot's flight parameters. Pool lifecycle is already handled.</summary>
-    public void Launch(Vector3 direction, float speed, DamageInfo info)
-    {
-        this.speed = speed;
-        damageInfo = info;
-        transform.forward = direction;
-    }
+    // /// <summary>Sets this shot's flight parameters. Pool lifecycle is already handled.</summary>
+    // public void Launch(Vector3 direction, float speed, DamageInfo info)
+    // {
+    //     this.speed = speed;
+    //     damageInfo = info;
+    //     transform.forward = direction;
+    // }
 
     /// <summary>Called by the pool's actionOnGet, before the projectile is fired.</summary>
     public void OnSpawn()
@@ -190,8 +188,8 @@ public class Projectile : MonoBehaviour, IPoolable
 
         if (target != null)
         {
-            if (_ownerCombat != null) _ownerCombat.TryDamage(target, damageInfo); // player projectile
-            else { Debug.LogError($"No Combat script found on target: {target}"); }
+            if (_ownerCombat != null) _ownerCombat.TryDamage(target, damageInfo);
+            else { Debug.LogError($"No Combat script found on gameobject: {_ownerCombat.gameObject}"); }
         }
         
 
