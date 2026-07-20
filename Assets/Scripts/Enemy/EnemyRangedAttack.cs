@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 
+[RequireComponent(typeof(Combat))]
 [RequireComponent(typeof(EnemyAttackController))]
 public class EnemyRangedAttack : MonoBehaviour, IEnemyAttack
 {

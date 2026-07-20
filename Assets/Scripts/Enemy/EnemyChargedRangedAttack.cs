@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 
+[RequireComponent(typeof(Combat))]
 public class EnemyChargedRangedAttack : MonoBehaviour, IEnemyAttack
 {
     [SerializeField] private DamageType damageType = DamageType.Projectile;
