@@ -7,6 +7,7 @@ using UnityEngine;
 /// component; attacks/affixes are separate components added per-enemy.
 /// </summary>
 [RequireComponent(typeof(Health))]
+[RequireComponent(typeof(Combat))]
 [RequireComponent(typeof(XPDropper))]
 [RequireComponent(typeof(PsychicPulseHighlighter))]
 public class Enemy : MonoBehaviour

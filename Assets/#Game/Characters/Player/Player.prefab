@@ -419,6 +419,7 @@ GameObject:
   - component: {fileID: 3362251599199739867}
   - component: {fileID: 4724841177392358001}
   - component: {fileID: 163600867418449274}
+  - component: {fileID: 4424898846295508060}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -535,7 +536,7 @@ MonoBehaviour:
   eyeLoadout: {fileID: 11400000, guid: 33c053e3f5b55455d8cfe4c609fb7768, type: 2}
   handLoadout: {fileID: 11400000, guid: a4915b5678ee542d995b24e9087c2968, type: 2}
   startingLoadout: {fileID: 11400000, guid: 33c053e3f5b55455d8cfe4c609fb7768, type: 2}
-  _motor: {fileID: 0}
+  IgnoreEnemiesForCollision: 1
 --- !u!114 &4855516021531199088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -647,6 +648,18 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 1, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &4424898846295508060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6463087256270042916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 941aa0b7897c466b8468ded0b0667026, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Combat
 --- !u!1 &6505037897921243107
 GameObject:
   m_ObjectHideFlags: 0
@@ -837,12 +850,11 @@ MonoBehaviour:
   minSmoothingChange: 0.005
   obstructionLayers:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 567
   obstructionSphereCastRadius: 0.2
   minFade: 0
   fadeHiddenDistance: 0.45
   fadeVisibleDistance: 1.65
-  fadeSmoothTime: 0.08
 --- !u!114 &7717037125315646937
 MonoBehaviour:
   m_ObjectHideFlags: 0

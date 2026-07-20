@@ -113,6 +113,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 457c16cb19e72324e8da55c64a75d2f6, type: 3}
       insertIndex: -1
       addedObject: {fileID: -6646251130171749099}
+    - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 457c16cb19e72324e8da55c64a75d2f6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 372314499365491868}
   m_SourcePrefab: {fileID: 100100000, guid: 457c16cb19e72324e8da55c64a75d2f6, type: 3}
 --- !u!1 &927916139300062336 stripped
 GameObject:
@@ -131,6 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd5fb80883707e944977c47c944fd86d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyRangedAttack
+  damageType: 1
   projectilePrefab: {fileID: 4534413921971201818, guid: 392ba7f34012b8344a473f36e5f67deb, type: 3}
   firePoint: {fileID: 3616635511303411221}
   damage: 8
@@ -203,6 +207,18 @@ MonoBehaviour:
   knockbackImmunityDuration: 0.25
   defaultKnockbackDuration: 0.25
   decayVelocityOverDuration: 1
+--- !u!114 &372314499365491868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 927916139300062336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 941aa0b7897c466b8468ded0b0667026, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Combat
 --- !u!4 &9210856586182875990 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6069959759757393492, guid: 457c16cb19e72324e8da55c64a75d2f6, type: 3}

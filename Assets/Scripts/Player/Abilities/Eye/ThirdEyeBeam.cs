@@ -166,7 +166,7 @@ public class ThirdEyeBeam : AbilityBehaviour
             for (int i = 0; i < hitCount; i++)
             {
                 IDamageable target = beam.HitBuffer[i].collider.GetComponentInParent<IDamageable>();
-                if (target != null && beam.HitThisTick.Add(target)) target.TakeDamage(damageInfo);
+                if (target != null && beam.HitThisTick.Add(target)) beam.Player.Combat.TryDamage(target, damageInfo);
             }
         }
 

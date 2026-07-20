@@ -163,7 +163,7 @@ public class BrassKnuckles : AbilityBehaviour
                 IDamageable target = results[i].GetComponentInParent<IDamageable>();
                 if (target != null && brassKnuckles.DamagedTargets.Add(target))
                 {
-                    target.TakeDamage(damageInfo);
+                    brassKnuckles.Player.Combat.TryDamage(target, damageInfo);
                 }
             }
             

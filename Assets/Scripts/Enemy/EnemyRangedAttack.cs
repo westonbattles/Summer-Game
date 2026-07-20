@@ -48,10 +48,9 @@ public class EnemyRangedAttack : MonoBehaviour, IEnemyAttack
             return false;
         }
 
-        Vector3 direction = (target.position - firePoint.position).normalized;
+        Vector3 direction = (target.position + Vector3.up - firePoint.position).normalized;
         Projectile proj = ProjectilePoolManager.Instance.Get(projectilePrefab);
-        proj.transform.SetPositionAndRotation(firePoint.position, Quaternion.identity);
-        proj.Launch(ownerCombat, transform.position, direction, projectileSpeed, new DamageInfo(damage, damageType, gameObject));
+        proj.Launch(ownerCombat, firePoint.position, direction, projectileSpeed, new DamageInfo(damage, damageType, gameObject));
 
         cooldownRemaining = cooldown;
         return true;

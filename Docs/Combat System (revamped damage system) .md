@@ -1,4 +1,9 @@
 CombatSystem script lives on each entity that uses it
+
+Damaging targets now works like:  
+_old_: `target.TakeDamage(damageInfo);`  
+_new_: `brassKnuckles.Player.Combat.TryDamage(target, damageInfo);` or ``
+
 ***
 Two main functions:
 

@@ -36,6 +36,7 @@ public class PsychicPulseRamEffect : MonoBehaviour
     private readonly RaycastHit[] castHits = new RaycastHit[16];
 
     private Enemy owner;
+    private Combat sourceCombat;
     private Vector3 direction;
     private Vector3 initialDirection;
     private Vector3 lastPosition;
@@ -103,6 +104,7 @@ public class PsychicPulseRamEffect : MonoBehaviour
         chainsRemaining = Mathf.Max(0, info.ChainsRemaining);
         targetLayers = info.TargetLayers;
         source = info.Source;
+        sourceCombat = source != null ? source.GetComponent<Combat>() : null;
         pulseTarget = info.PulseTarget != null ? info.PulseTarget : owner;
         chipDamagedEnemies = info.ChipDamagedEnemies ?? new HashSet<Enemy>();
         targetDamageCreditedEnemies = info.TargetDamageCreditedEnemies ?? new HashSet<Enemy>();
@@ -267,13 +269,14 @@ public class PsychicPulseRamEffect : MonoBehaviour
         Vector3 biasedDirection = Vector3.Lerp(collisionDirection.normalized, initialDirection, initialDirectionBias);
         return biasedDirection.sqrMagnitude > MinDirectionSqr ? biasedDirection.normalized : initialDirection;
     }
-
+    
+    /// apply ram damage
     private void Damage(Enemy target, float damage)
     {
         if (damage <= 0f || target == null) return;
-
+        
         IDamageable damageable = target.GetComponentInParent<IDamageable>();
-        if (damageable != null && damageable.IsAlive) damageable.TakeDamage(new DamageInfo(damage, DamageType.Physical, source));
+        if (damageable != null && sourceCombat != null) sourceCombat.TryDamage(damageable, new DamageInfo(damage, DamageType.Physical, source));
     }
 
     private void RegisterPushedEnemy(Enemy pushedEnemy)

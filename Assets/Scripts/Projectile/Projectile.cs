@@ -189,7 +189,7 @@ public class Projectile : MonoBehaviour, IPoolable
         if (target != null)
         {
             if (_ownerCombat != null) _ownerCombat.TryDamage(target, damageInfo);
-            else { Debug.LogError($"No Combat script found on gameobject: {_ownerCombat.gameObject}"); }
+            else Debug.LogError("Projectile was launched without an owner Combat.", this);
         }
         
 

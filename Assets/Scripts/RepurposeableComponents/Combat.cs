@@ -22,7 +22,13 @@ public class Combat : MonoBehaviour
     public delegate void ModifyDamageHandler(ref Hit hit);
     public event ModifyDamageHandler BeforeDamageDealt; // gets invoked before applying damage
     public event Action<Hit> AfterDamageDealt;
-    
+
+    Player ownerPlayer;
+
+    void Awake()
+    {
+        ownerPlayer = GetComponent<Player>();
+    }
 
     /// try apply damage
     public bool TryDamage(IDamageable target, DamageInfo info)
@@ -49,6 +55,9 @@ public class Combat : MonoBehaviour
             Target = target,
             Info = info 
         };
+
+        // APPLY DAMAGE MULTIPLIER
+        if (ownerPlayer != null) hit.Info.Amount *= ownerPlayer.Modifiers.DamageMultiplier.GetValue();
 
         // notifies items before damage in case an item is subscribed and needs to do something
         if (notifyItems) BeforeDamageDealt?.Invoke(ref hit);

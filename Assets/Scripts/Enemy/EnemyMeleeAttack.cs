@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Combat))]
 public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttack
 {
     [SerializeField] private DamageType damageType = DamageType.Physical;
@@ -19,6 +20,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttack
     [SerializeField] private float knockbackDuration = 0.15f;
 
     private Transform target;
+    private Combat ownerCombat;
     private Animator animator;
 
     private float cooldownRemaining;
@@ -29,6 +31,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttack
 
     private void Awake()
     {
+        ownerCombat = GetComponent<Combat>();
         animator = GetComponentInChildren<Animator>();
         if (hitOrigin == null)
             hitOrigin = transform;      // this is the fallback to root if nothing was assigned.
@@ -94,7 +97,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttack
             IDamageable damageable = hit.GetComponentInParent<IDamageable>();
             if (damageable != null)
             {
-                damageable.TakeDamage(new DamageInfo(damage, damageType, gameObject));
+                ownerCombat.TryDamage(damageable, new DamageInfo(damage, damageType, gameObject));
             }
 
             if (applyKnockback)

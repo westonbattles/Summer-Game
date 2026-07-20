@@ -120,7 +120,7 @@ public class GroundPound : AbilityBehaviour
             for (int i = 0; i < hitCount; i++)
             {
                 IDamageable target = hits[i].GetComponentInParent<IDamageable>();
-                if (target != null && groundPound.DamagedTargets.Add(target)) target.TakeDamage(damageInfo);
+                if (target != null && groundPound.DamagedTargets.Add(target)) groundPound.Player.Combat.TryDamage(target, damageInfo);
             }
         }
         

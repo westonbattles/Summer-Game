@@ -91,7 +91,7 @@ public class Whirlwind : AbilityBehaviour
             DamageInfo damageInfo = new DamageInfo(damage, DamageType, whirlwind.Player.gameObject);
             foreach (IDamageable target in whirlwind.DamagedTargets)
             {
-                target.TakeDamage(damageInfo);
+                whirlwind.Player.Combat.TryDamage(target, damageInfo);
             }
             
         }

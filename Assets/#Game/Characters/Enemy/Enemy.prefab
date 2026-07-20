@@ -15,6 +15,9 @@ GameObject:
   - component: {fileID: 1473847496666502713}
   - component: {fileID: 2459382550447613388}
   - component: {fileID: 6866691012167821880}
+  - component: {fileID: 6521800395806139264}
+  - component: {fileID: 6481305123036536528}
+  - component: {fileID: -8062647768382006870}
   m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
@@ -165,8 +168,47 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   movementSpeed: 3
-  <XPValue>k__BackingField: 5
   <AffixEligible>k__BackingField: 0
+  killValue: 1
+--- !u!114 &6521800395806139264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2814683460217299330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93dace3636fe32747afab4a153db74a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::XPDropper
+  orbPrefab: {fileID: 0}
+  spawnOffset: {x: 0, y: 0.75, z: 0}
+  <Value>k__BackingField: 10
+--- !u!114 &6481305123036536528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2814683460217299330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66d565c0f0cc449caa7588c08dab81b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PsychicPulseHighlighter
+--- !u!114 &-8062647768382006870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2814683460217299330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 941aa0b7897c466b8468ded0b0667026, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Combat
 --- !u!1 &3257289801518718384
 GameObject:
   m_ObjectHideFlags: 0
