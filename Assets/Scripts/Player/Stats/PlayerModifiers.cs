@@ -33,7 +33,9 @@ public class PlayerModifiers
     // Eye Abilities
     
     // Revolver
-    public Modifier<int> RevolverBulletsBonus = new(0);
+    public Modifier<int> RevolverBulletsBonus = new(0);                             // how many extra bullets in the chamber the revolver gets
+    public Modifier<float> RevolverLastBulletDamageMultiplier = new(1f);            // damage multiplier for the last bullet in the revolvers chamber
+    // Dash
     public Modifier<bool> DashVerticallyEnabled = new(false);
     
     
@@ -43,13 +45,13 @@ public class PlayerModifiers
     // Hand Abilities
     
     // Brass Knuckles
-    public Modifier<int> BrassKnucklesComboStagesBonus = new(0);                   // how many extra combo stages do we get (each stage gives us an extra 25% * BrassKnucklesComboDamageMultiplier damage)
-    public Modifier<float> BrassKnucklesComboIncreaseDamageMultiplier = new(1f);   // scaling of damage increase per combo level. if base increase is 25% for example (1x -> 1.25x -> 1.5x), setting this value to two would make it 50% (1x -> 1.5x -> 2x)
+    public Modifier<int> BrassKnucklesComboStagesBonus = new(0);                    // how many extra combo stages do we get (each stage gives us an extra 25% * BrassKnucklesComboDamageMultiplier damage)
+    public Modifier<float> BrassKnucklesComboIncreaseDamageMultiplier = new(1f);    // scaling of damage increase per combo level. if base increase is 25% for example (1x -> 1.25x -> 1.5x), setting this value to two would make it 50% (1x -> 1.5x -> 2x)
     // Whirlwind
-    public Modifier<float> WhirlwindRadiusBonus = new(0f);                         // additive radius for the base whirlwind damage dcircle
+    public Modifier<float> WhirlwindRadiusBonus = new(0f);                          // additive radius for the base whirlwind damage dcircle
     // Ground Pound
-    public Modifier<float> GroundPoundRadiusBonus = new(0f);                       // additive radius for the base ground pound damage circle
-    public Modifier<float> GroundPoundDamageScalingMultiplier = new(1f);           // multiplier for the base height-damage scaling function. value of 2 scales twice as fast
+    public Modifier<float> GroundPoundRadiusBonus = new(0f);                        // additive radius for the base ground pound damage circle
+    public Modifier<float> GroundPoundDamageScalingMultiplier = new(1f);            // multiplier for the base height-damage scaling function. value of 2 scales twice as fast
 
     
     
