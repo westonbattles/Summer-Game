@@ -15,8 +15,11 @@ public class ItemInventory : MonoBehaviour
     Player _player;
     
     public float DifficultyPoints { get; private set; } // each item adds to this value
-    
-    
+
+    /// <summary>Fired whenever an item's count changes. (definition, newCount)</summary>
+    public event Action<ItemDefinition, int> OnItemCountChanged;
+
+
     void Awake()
     {
         _player = GetComponent<Player>();
@@ -75,6 +78,8 @@ public class ItemInventory : MonoBehaviour
         item.SetCount(Mathf.Min(item.Count + amount, ItemDefinition.MaxStackSize));
         
         RecalculateModifiers();
+
+        OnItemCountChanged?.Invoke(itemDefinition, item.Count);
     }
 
     void RecalculateModifiers()
