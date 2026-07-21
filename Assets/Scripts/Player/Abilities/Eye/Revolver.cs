@@ -25,6 +25,7 @@ public class Revolver : AbilityBehaviour
     // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
     // (or any other way u want to use the modifier)
     public int MagazineSize => magazineSize + Player.Instance.Modifiers.RevolverBulletsBonus.GetValue();
+    public float LastBulletDamageMultiplier => Player.Instance.Modifiers.RevolverLastBulletDamageMultiplier.GetValue();
     public float ReloadDuration => reloadDuration;
     public float Damage => baseDamage;
     public float BulletSpeed => baseBulletSpeed;
@@ -97,8 +98,10 @@ public class Revolver : AbilityBehaviour
 
         // shoot projectile
         Projectile projectile = ProjectilePoolManager.Instance.Get(bulletPrefab);
-        
-        DamageInfo damageInfo = new DamageInfo(Damage, DamageType.Projectile, Player.Instance.gameObject);
+
+        float damage = Damage; // apply lucky bullet damage modifier
+        if (revolver.Ammunition == 1) damage *= LastBulletDamageMultiplier;
+        DamageInfo damageInfo = new DamageInfo(damage, DamageType.Projectile, Player.Instance.gameObject);
         
         // if obstruction exists between player and muzzle, place bullet at the obstruction there (should auto-impact)
         Vector3 playerOrigin = Player.Instance.transform.position;

@@ -13,6 +13,7 @@ using Vector3 = UnityEngine.Vector3;
 [RequireComponent(typeof(PlayerCharacterSwitcher))]
 [RequireComponent(typeof(PlayerAim))]
 [RequireComponent(typeof(PlayerLook))]
+[RequireComponent(typeof(ItemInventory))]
 [RequireComponent(typeof(Combat))]
 public class Player : MonoBehaviour, ICharacterController
 {

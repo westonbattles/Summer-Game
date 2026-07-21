@@ -5025,10 +5025,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2609528112320447340, guid: fe683168dff954b2c880253d456b7c94, type: 3}
-      propertyPath: obstructionLayers.m_Bits
-      value: 567
-      objectReference: {fileID: 0}
     - target: {fileID: 6463087256270042916, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: m_Name
       value: Player
@@ -5073,6 +5069,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8473695232717567619, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: startingItems.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8473695232717567619, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: 'startingItems.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 468adb8aeb6f84ad4a10128f2460dfff, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

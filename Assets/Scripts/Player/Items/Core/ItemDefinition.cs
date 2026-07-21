@@ -7,8 +7,8 @@ public class ItemDefinition : ScriptableObject
 {
     public const int MaxStackSize = 999; // max stack size for each item, can make instance var for per item if we want
     
-    [Header("Id")]
-    [SerializeField] string id;
+    [Header("Name/Icon")]
+    //[SerializeField] string id;
     [SerializeField] string displayName;
     [SerializeField] Sprite icon;
     
@@ -25,7 +25,7 @@ public class ItemDefinition : ScriptableObject
     [Header("Behaviour")]
     [SerializeReference, SerializeField] ItemBehaviour behaviour;
 
-    public string Id                => id;
+    //public string Id                => id;
     public string DisplayName       => displayName;
     public Sprite Icon              => icon;
 
