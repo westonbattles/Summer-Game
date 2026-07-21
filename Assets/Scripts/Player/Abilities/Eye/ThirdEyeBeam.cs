@@ -34,6 +34,7 @@ public class ThirdEyeBeam : AbilityBehaviour
     [Header("VFX")]
     [SerializeField] LineRenderer beamLineRenderer; // stretched from origin to hit point each tick
     [SerializeField] PooledVfx beamImpactVfx;
+    [SerializeField] float impactVfxInterval = 0.08f; // minimum time between impact hits on each target
     
     LayerMask HitLayers => Enemy.LayerMask | LayerMask.GetMask("Hittable");
     
@@ -64,7 +65,11 @@ public class ThirdEyeBeam : AbilityBehaviour
 
         public LineRenderer RuntimeLineRenderer; // placeholder until new vfx is made
         public LineRenderer LineRendererInstance; // instantiated once from prefab
-        
+
+        // throttle for beamImpactVfx so a stationary target doesn't spawn a new particle system every tick
+        public readonly Dictionary<IDamageable, float> ImpactVfxCooldowns = new();
+        public readonly List<IDamageable> VfxCooldownScratchKeys = new();
+
 
         public ThirdEyeBeamState(Player player, PlayerAim playerAim)
         {
@@ -127,6 +132,7 @@ public class ThirdEyeBeam : AbilityBehaviour
     {
         beam.State = BeamState.Firing;
         beam.FiringTimer = beamDuration;
+        beam.ImpactVfxCooldowns.Clear();
         GetOrCreateLineRenderer(beam).enabled = true;
     }
 
@@ -157,6 +163,17 @@ public class ThirdEyeBeam : AbilityBehaviour
             : Physics.RaycastNonAlloc(
                 origin, direction, beam.HitBuffer, maxDistance, HitLayers);
 
+        // tick down existing impact vfx cooldowns
+        if (beam.ImpactVfxCooldowns.Count > 0)
+        {
+            beam.VfxCooldownScratchKeys.Clear();
+            beam.VfxCooldownScratchKeys.AddRange(beam.ImpactVfxCooldowns.Keys);
+            foreach (IDamageable key in beam.VfxCooldownScratchKeys)
+            {
+                beam.ImpactVfxCooldowns[key] -= deltaTime;
+            }
+        }
+
         if (hitCount > 0)
         {
             float damageThisTick = Damage * deltaTime;
@@ -165,15 +182,27 @@ public class ThirdEyeBeam : AbilityBehaviour
             beam.HitThisTick.Clear();
             for (int i = 0; i < hitCount; i++)
             {
+                RaycastHit hit = beam.HitBuffer[i];
                 IDamageable target = beam.HitBuffer[i].collider.GetComponentInParent<IDamageable>();
-                if (target != null && beam.HitThisTick.Add(target)) beam.Player.Combat.TryDamage(target, damageInfo);
-            }
-        }
+                if (target != null && beam.HitThisTick.Add(target))
+                {
+                    beam.Player.Combat.TryDamage(target, damageInfo);
 
-        // beam impact vfx placeholder, test further once actual asset is made for it
-        if (beamImpactVfx != null)
-        {
-            VFXPoolManager.Instance.Play(beamImpactVfx, origin + direction * maxDistance, Quaternion.identity);
+                    if (beamImpactVfx != null)
+                    {
+                        bool onCooldown = beam.ImpactVfxCooldowns.TryGetValue(target, out float remaining) && remaining > 0f;
+
+                        if (!onCooldown)
+                        {
+                            Quaternion impactRotation = hit.normal.sqrMagnitude > 0f
+                                ? Quaternion.LookRotation(hit.normal)
+                                : Quaternion.identity;
+                            VFXPoolManager.Instance.Play(beamImpactVfx, hit.point, impactRotation);
+                            beam.ImpactVfxCooldowns[target] = impactVfxInterval;
+                        }
+                    }
+                }
+            }
         }
 
         // update VFX beam line every tick regardless of whether it hit anything
