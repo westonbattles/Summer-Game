@@ -19,8 +19,8 @@ public class PlayerItemInteractor : MonoBehaviour
 
     void Awake()
     {
-        aim = Player.Instance.Aim;
-        playerInput = Player.Instance.Input;
+        aim = GetComponent<PlayerAim>();
+        playerInput = GetComponent<PlayerInputReader>();
     }
 
     void Update()
@@ -37,7 +37,7 @@ public class PlayerItemInteractor : MonoBehaviour
     WorldItem FindLookedAtItem()
     {
         // return null if raycast fails
-        if (!Physics.Raycast(aim.AimOrigin, aim.AimDirection, out RaycastHit info, interactionRaycastDistance, sightLayerMask, QueryTriggerInteraction.Ignore)) return null;
+        if (!Physics.Raycast(aim.AimOrigin, aim.AimDirection, out RaycastHit info, interactionRaycastDistance, sightLayerMask, QueryTriggerInteraction.Collide)) return null;
 
         WorldItem item = info.collider.GetComponentInParent<WorldItem>();
         if (item == null || item.State != WorldItemState.Available || Vector3.Distance(item.transform.position, transform.position) > interactionDistanceToPlayer) return null; // only use items that are available
@@ -48,6 +48,7 @@ public class PlayerItemInteractor : MonoBehaviour
     
     void SetFocusedItem(WorldItem item)
     {
+        if (focusedItem == item) return;
         
         if (focusedItem != null) focusedItem.SetFocused(false);
         focusedItem = item;
