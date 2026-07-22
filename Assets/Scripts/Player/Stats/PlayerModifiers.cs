@@ -78,8 +78,7 @@ public class PlayerModifiers
         }
         
         public T GetValue() => _currentValue;
-        /// sets the current modifier value (we can still access and use BaseValue if we want, that doesn't get modified. only CurrentValue does)
-        
+        /// sets the current modifier value (we can still access and use BaseValue if we want, that doesn't get modified. only currentvalue does)
         public void SetValue(T value) { _currentValue = value; }
         public void ResetValue() { _currentValue = _baseValue; }
     }
