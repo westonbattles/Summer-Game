@@ -673,8 +673,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e467168cfff142baa0e22fa43b9d2612, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemInventory
-  startingItems:
-  - {fileID: 0}
+  startingItems: []
 --- !u!1 &6505037897921243107
 GameObject:
   m_ObjectHideFlags: 0

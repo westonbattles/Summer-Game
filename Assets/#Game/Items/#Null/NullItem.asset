@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d920927034d2413e919b99a4d55a92f4, type: 3}
+  m_Name: NullItem
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
+  displayName: Null Item
+  icon: {fileID: 0}
+  shortDescription: 
+  longDescription: 
+  notes: 
+  rarity: 0
+  isDuoItem: 0
+  difficultyCost: 1
+  worldModelPrefab: {fileID: 2874779153525773236, guid: 549dff1b6b6a8495bacfd88af67dae80, type: 3}
+  behaviour:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

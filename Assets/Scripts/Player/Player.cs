@@ -13,7 +13,7 @@ using Vector3 = UnityEngine.Vector3;
 [RequireComponent(typeof(PlayerCharacterSwitcher))]
 [RequireComponent(typeof(PlayerAim))]
 [RequireComponent(typeof(PlayerLook))]
-[RequireComponent(typeof(ItemInventory))]
+[RequireComponent(typeof(ItemInventory),typeof(PlayerItemInteractor))]
 [RequireComponent(typeof(Combat))]
 public class Player : MonoBehaviour, ICharacterController
 {
@@ -49,6 +49,7 @@ public class Player : MonoBehaviour, ICharacterController
     public PlayerAim Aim { get; private set; }
     public PlayerLook Look { get; private set; }
     public Combat Combat { get; private set; }
+    public ItemInventory Inventory { get; private set; }
 
     public AbilityController AbilityController { get; private set; }
     public PlayerCharacterSwitcher CharacterSwitcher { get; private set; }
@@ -56,6 +57,7 @@ public class Player : MonoBehaviour, ICharacterController
     public AbilityLoadout EyeLoadout => eyeLoadout;
     public AbilityLoadout HandLoadout => handLoadout;
 
+    public KinematicCharacterMotor Motor => _motor;
     public bool IsGrounded => _motor.GroundingStatus.IsStableOnGround;
     public bool GroundedRaycast(float rayLength) { return Physics.Raycast(transform.position, Vector3.down, rayLength, LayerMask.GetMask("Ground"));}
     public bool IgnoreEnemiesForCollision = true; // disable player colliding with enemies
@@ -97,6 +99,7 @@ public class Player : MonoBehaviour, ICharacterController
         AbilityController   = GetComponent<AbilityController>();
         CharacterSwitcher   = GetComponent<PlayerCharacterSwitcher>();
         Combat              = GetComponent<Combat>();
+        Inventory           = GetComponent<ItemInventory>();
         
         Animator = new PlayerAnimator(CharacterSwitcher);
         
@@ -137,6 +140,14 @@ public class Player : MonoBehaviour, ICharacterController
 
     void HandleInput()
     {
+        // DEBUG
+        if (Input.SwapPressed)
+        {
+            //ItemSpawner.Instance.Spawn(RANDOM ITEM, transform.position, Vector3.up); // TODO: get RANDOM ITEM using an item list somewhere (maybe auto generated at compile time? gotta look into that)
+            ItemSpawner.Instance.Spawn(ItemSpawner.Instance.testItem, transform.position+Vector3.up, Vector3.up * 13);
+        }
+        
+        
         // handle ability input
         if (Input.PrimaryAbilityPressed)
         {

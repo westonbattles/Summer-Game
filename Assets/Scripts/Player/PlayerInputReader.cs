@@ -15,6 +15,7 @@ public class PlayerInputReader : MonoBehaviour
     public bool SecondaryAbilityPressed { get; private set; }
     public bool MovementAbilityPressed { get; private set; }
     public bool SpecialAbilityPressed { get; private set; }
+    public bool InteractPressed { get; private set; }
 
     InputAction _moveAction;
     InputAction _lookAction;
@@ -24,6 +25,7 @@ public class PlayerInputReader : MonoBehaviour
     InputAction _secondaryAbilityAction;
     InputAction _movementAbilityAction;
     InputAction _specialAbilityAction;
+    InputAction _interactAction;
 
     void Awake()
     {
@@ -35,6 +37,7 @@ public class PlayerInputReader : MonoBehaviour
         _secondaryAbilityAction = FindInputAction("SecondaryAbility");
         _movementAbilityAction = FindInputAction("MovementAbility");
         _specialAbilityAction = FindInputAction("SpecialAbility");
+        _interactAction = FindInputAction("Interact");
         SetCursorLocked(true);
     }
 
@@ -53,6 +56,7 @@ public class PlayerInputReader : MonoBehaviour
         SecondaryAbilityPressed = _secondaryAbilityAction != null && _secondaryAbilityAction.IsPressed(); // ispressed = hold to fire
         MovementAbilityPressed = _movementAbilityAction != null && _movementAbilityAction.IsPressed(); // ispressed = hold to fire
         SpecialAbilityPressed = _specialAbilityAction != null && _specialAbilityAction.IsPressed(); // ispressed = hold to fire
+        InteractPressed = _interactAction != null && _interactAction.WasPressedThisFrame();
     }
 
     public void Configure(bool useAutoBhop)

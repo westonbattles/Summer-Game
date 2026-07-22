@@ -5,8 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Item", menuName = "Items/Item")]
 public class ItemDefinition : ScriptableObject
 {
-    public const int MaxStackSize = 999; // max stack size for each item, can make instance var for per item if we want
-    
     [Header("Name/Icon")]
     //[SerializeField] string id;
     [SerializeField] string displayName;
@@ -22,21 +20,26 @@ public class ItemDefinition : ScriptableObject
     [SerializeField] bool isDuoItem;
     [SerializeField] float difficultyCost = 1f;           // scaling cost, if we ever want it to be different for a given item for whatever reason
 
+    [Header("Model")]
+    [Tooltip("the model for when it is dropped on the ground (will be shown in the logbook thing eventually too)")]
+    [SerializeField] GameObject worldModelPrefab;
+    
     [Header("Behaviour")]
     [SerializeReference, SerializeField] ItemBehaviour behaviour;
+    
+    //public string Id                  => id;
+    public string DisplayName           => displayName;
+    public Sprite Icon                  => icon;
 
-    //public string Id                => id;
-    public string DisplayName       => displayName;
-    public Sprite Icon              => icon;
+    public string ShortDescription      => shortDescription;
+    public string LongDescription       => longDescription;
+    public string Notes                 => notes;
 
-    public string ShortDescription  => shortDescription;
-    public string LongDescription   => longDescription;
-    public string Notes             => notes;
-
-    public ItemRarity Rarity        => rarity;
-    public bool IsDuoItem           => isDuoItem;
-    public float DifficultyCost     => difficultyCost;
-    public ItemBehaviour Behaviour  => behaviour;
+    public ItemRarity Rarity            => rarity;
+    public bool IsDuoItem               => isDuoItem;
+    public float DifficultyCost         => difficultyCost;
+    public GameObject WorldModelPrefab  => worldModelPrefab;
+    public ItemBehaviour Behaviour      => behaviour;
 }
 
 [Serializable]
