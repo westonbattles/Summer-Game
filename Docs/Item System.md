@@ -32,7 +32,7 @@ items shoot out like in ror2 as a lil ball and turn into items on collision with
 - parameters are obvious i hope
 ***
 _Item Catalog_
-- The Item Catalog is an Asset that lives in the root of `Asset/#Game/Items`. I coded a tiny editor script for it that essentially uses the big refresh button to automatically update the catalog's `definitions` array to include every `ItemDefinition` asset in the /Items folder. You do not need and can not modify this list in the inspector. The point of this asset is to have a truth table list for every item asset we have, if we want to prevent a player from getting one that should be handled programitaccly elswhere
+- The Item Catalog is an Asset that lives in `Asset/#Game/Items/#Core`. I coded a tiny editor script for it that essentially uses the big refresh button to automatically update the catalog's `definitions` array to include every `ItemDefinition` asset in the /Items folder. You do not need and can not modify this list in the inspector. The point of this asset is to have a truth table list for every item asset we have, if we want to prevent a player from getting one that should be handled programitaccly elswhere
 - ### **_IMPORTANT!!!!!_**
   - Connected via Serialization to ItemSpawner instance. to access use `ItemSpawner.Instance.ItemCatalog`
   - `ItemDefinition GetItemFromId(string id)` returns the itemdefinition for the given id value, null if id isn't valid
@@ -56,4 +56,5 @@ _Item Inventory_
 
 
 
-a
+***
+also, `Assets/#Game/Items/#Core` has the prefab for the world items as well (this prefab gets instantiated and hotloaded with the item's model attatched to it, it handles model swapping and physics and interaction colliders and stuff)
