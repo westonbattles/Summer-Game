@@ -5,11 +5,11 @@ using UnityEngine;
 public class ExampleItem : ItemBehaviour
 {
     // modifier example
-    [SerializeField, Min(0f)] float damageMultiplierBonusPerItem = 0.1f;
+    [SerializeField] float damageMultiplierBonusPerItem = 0.1f;
 
     // runtime examples
-    [SerializeField, Min(0f)] float healingPerStack = 1f;
-    [SerializeField, Min(0.01f)] float healingInterval = 5f;
+    [SerializeField] float healingPerStack = 1f;
+    [SerializeField] float healingInterval = 5f;
 
     public override void ApplyModifiers(PlayerModifiers modifiers, int itemCount)
     {
