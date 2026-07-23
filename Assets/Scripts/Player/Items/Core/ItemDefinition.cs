@@ -18,6 +18,9 @@ public class ItemDefinition : ScriptableObject
     [Header("Properties")]
     [SerializeField] ItemRarity rarity;
     [SerializeField] bool isDuoItem;
+    [SerializeField] bool canDropRandomly = true;
+    [Tooltip("Relative drop weight vs all other items of the same rarity. Base is one")]
+    [SerializeField] float dropWeight = 1f;               // if one item has 2 drop weight and every other item of that rarity has 1, the first item will be twice as likely
     [SerializeField] float difficultyCost = 1f;           // scaling cost, if we ever want it to be different for a given item for whatever reason
 
     [Header("Model")]

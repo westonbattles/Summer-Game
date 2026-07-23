@@ -16,6 +16,12 @@ _Id_
 - Naming convention imo should just be `snake_case` of whatever the asset name is (LuckyBullet -> lucky_bullet)
 - Important so if we need an itemdefition quickly for a specific item, we can just run ItemCatalog.GetItemFromId(string id)
 
+_dropWeight_  
+
+- Determines probability weight compared to every other item with the same rarirty. 
+- base value by convention should be one
+- if every item of one rarity has dropweight of 1 and one item has 2, that item is twice as likely to drop as any other item
+
 \
 **Creating the Behaviour**  
 _PLEASE READ THRU SCRIPT IN `Scripts/Player/Items/Example`_
