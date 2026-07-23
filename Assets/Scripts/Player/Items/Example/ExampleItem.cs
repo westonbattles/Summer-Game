@@ -5,7 +5,7 @@ using UnityEngine;
 public class ExampleItem : ItemBehaviour
 {
     // modifier example
-    [SerializeField, Min(0f)] float damageMultiplierBonusPerStack = 0.1f;
+    [SerializeField, Min(0f)] float damageMultiplierBonusPerItem = 0.1f;
 
     // runtime examples
     [SerializeField, Min(0f)] float healingPerStack = 1f;
@@ -15,7 +15,7 @@ public class ExampleItem : ItemBehaviour
     {
         // applyModifiers is called whenever the inventory recalculates its
         // modifiers, so this line adds the configured damage bonus for every item in our inventory (itemCount is the amount in our inventory)
-        modifiers.DamageMultiplier.AddValue(damageMultiplierBonusPerStack * itemCount);
+        modifiers.DamageMultiplier.AddValue(damageMultiplierBonusPerItem * itemCount);
         
         // this function allows us to do custom stat scaling based on itemCount (like how in ror2, some items have different changes when u get more than 1
     }
