@@ -18,7 +18,7 @@ _Id_
 
 \
 **Creating the Behaviour**  
-_PLEASE READ THRU SCRIPT IN `Assets/#Game/Items/Example`_
+_PLEASE READ THRU SCRIPT IN `Scripts/Player/Items/Example`_
 
 basically, behaviours have two overridable functions, one to apply modifiers (gets runs once on inventory recalculation), and one to create a ItemRuntim instance (which you need to define yourself if the item should have custom behaviour at runtime that isn't just applying a modifier or changing a value once. for example, items that heal you over time. or do other things over time)
 
