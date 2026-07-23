@@ -171,6 +171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de20d18fe89145faaedb9de2c69d0ab4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemSpawner
+  itemCatalog: {fileID: 11400000, guid: d5b894c7496fa4c0d8bbd118a32a98ef, type: 2}
   worldItemPrefab: {fileID: 1509475967646051853, guid: cc095aa2b0db04651b50c04daeb3920f, type: 3}
   spawnedItemsRoot: {fileID: 3776421891346396205}
   nullItemModelPrefab: {fileID: 2874779153525773236, guid: 549dff1b6b6a8495bacfd88af67dae80, type: 3}

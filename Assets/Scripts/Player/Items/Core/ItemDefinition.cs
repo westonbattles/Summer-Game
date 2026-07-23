@@ -5,8 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Item", menuName = "Items/Item")]
 public class ItemDefinition : ScriptableObject
 {
-    [Header("Name/Icon")]
-    //[SerializeField] string id;
+    [Header("ID/Name/Icon")]
+    [SerializeField] string id;
     [SerializeField] string displayName;
     [SerializeField] Sprite icon;
     
@@ -27,7 +27,7 @@ public class ItemDefinition : ScriptableObject
     [Header("Behaviour")]
     [SerializeReference, SerializeField] ItemBehaviour behaviour;
     
-    //public string Id                  => id;
+    public string Id                  => id;
     public string DisplayName           => displayName;
     public Sprite Icon                  => icon;
 
@@ -56,9 +56,8 @@ public abstract class ItemBehaviour
 public class ItemRuntime : IDisposable
 {
     public int Count { get; private set; } // count of the item in our inventory
-    
-    public void SetCount(int count) { Count = count; } // might wanna add a call in this to an overrideable OnCountChanged function eventually
-    //protected virtual void OnCountChanged() { } 
+
+    public void SetCount(int count) { Count = count; } 
     
     public virtual void Tick(float deltaTime) { }
     

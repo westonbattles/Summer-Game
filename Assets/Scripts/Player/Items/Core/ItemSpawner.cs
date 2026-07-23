@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ItemSpawner : MonoBehaviour
 {
-    [SerializeField] public ItemDefinition testItem; // DEBUGING
+
+    [SerializeField] ItemCatalog itemCatalog;
     
     [SerializeField] WorldItem worldItemPrefab;
     [SerializeField] Transform spawnedItemsRoot;
@@ -13,6 +14,7 @@ public class ItemSpawner : MonoBehaviour
     public static GameObject NullItemModelPrefab;
 
     public static ItemSpawner Instance { get; private set; }
+    public ItemCatalog ItemCatalog => itemCatalog;
     
     void Awake()
     {

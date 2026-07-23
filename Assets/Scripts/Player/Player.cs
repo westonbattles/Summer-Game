@@ -144,7 +144,7 @@ public class Player : MonoBehaviour, ICharacterController
         if (Input.SwapPressed)
         {
             //ItemSpawner.Instance.Spawn(RANDOM ITEM, transform.position, Vector3.up); // TODO: get RANDOM ITEM using an item list somewhere (maybe auto generated at compile time? gotta look into that)
-            ItemSpawner.Instance.Spawn(ItemSpawner.Instance.testItem, transform.position+Vector3.up, Vector3.up * 13);
+            ItemSpawner.Instance.Spawn(ItemSpawner.Instance.ItemCatalog.GetRandomItem(), transform.position+Vector3.up, Vector3.up * 13);
         }
         
         

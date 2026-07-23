@@ -86,7 +86,6 @@ public class ItemInventory : MonoBehaviour
 
     void RecalculateModifiers()
     {
-
         //float previousDifficulty = DifficultyPoints;
         
         _player.Modifiers.ResetAll();

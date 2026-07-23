@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d920927034d2413e919b99a4d55a92f4, type: 3}
   m_Name: RockStar
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
+  id: rock_star
   displayName: Rock Star
   icon: {fileID: 21300000, guid: 0ca7172cb66034348a7e2629289a50c6, type: 3}
   shortDescription: Physical attacks set the enemy ablaze.
@@ -21,6 +22,7 @@ MonoBehaviour:
   rarity: 0
   isDuoItem: 0
   difficultyCost: 1
+  worldModelPrefab: {fileID: 0}
   behaviour:
     rid: 1931023289308414021
   references:
