@@ -8,8 +8,6 @@ public class ItemSpawner : MonoBehaviour
     [SerializeField] ItemCatalog itemCatalog;
     
     [SerializeField] WorldItem worldItemPrefab;
-    [SerializeField] Transform spawnedItemsRoot;
-    
     [SerializeField] GameObject nullItemModelPrefab;
     public static GameObject NullItemModelPrefab;
 
@@ -34,7 +32,7 @@ public class ItemSpawner : MonoBehaviour
         if (definition == null) throw new ArgumentNullException(nameof(definition));
         if (worldItemPrefab == null) throw new NoNullAllowedException("world item prefab can't be null");
 
-        WorldItem item = Instantiate(worldItemPrefab, position, Quaternion.identity, spawnedItemsRoot);
+        WorldItem item = Instantiate(worldItemPrefab, position, Quaternion.identity, transform);
         item.Initialize(definition, initialVelocity);
         return item;
     }
