@@ -6,6 +6,8 @@ using UnityEngine;
 public class ItemInventory : MonoBehaviour
 {
     
+    public const int MaxStackSize = 999; // max stack size for each item, can make instance var for per item if we want
+    
     // for debugging
     [SerializeField] List<ItemDefinition> startingItems = new();
     
@@ -75,7 +77,7 @@ public class ItemInventory : MonoBehaviour
         }
         
         // for new items, item.Count is initialized to 0 so we're just setting it to be 'amount'
-        item.SetCount(Mathf.Min(item.Count + amount, ItemDefinition.MaxStackSize));
+        item.SetCount(Mathf.Min(item.Count + amount, MaxStackSize));
         
         RecalculateModifiers();
 
@@ -84,7 +86,6 @@ public class ItemInventory : MonoBehaviour
 
     void RecalculateModifiers()
     {
-
         //float previousDifficulty = DifficultyPoints;
         
         _player.Modifiers.ResetAll();

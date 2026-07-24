@@ -10,21 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d920927034d2413e919b99a4d55a92f4, type: 3}
-  m_Name: LuckyBullet
+  m_Name: CelestialStarboard
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
-  displayName: Lucky Bullet
+  id: celestial_starboard
+  displayName: Celestial Starboard
   icon: {fileID: 0}
-  shortDescription: 
+  shortDescription: Dashing while holding forward (or no movement keys) executes
+    a Vertical Dash
   longDescription: 
   notes: 
-  rarity: 0
+  rarity: 2
   isDuoItem: 0
+  canDropRandomly: 1
+  dropWeight: 1
   difficultyCost: 1
+  worldModelPrefab: {fileID: 0}
   behaviour:
-    rid: 1748538330459668744
+    rid: 1748538452539343196
   references:
     version: 2
     RefIds:
-    - rid: 1748538330459668744
-      type: {class: LuckyBullet, ns: , asm: Assembly-CSharp}
+    - rid: 1748538452539343196
+      type: {class: CelestialStarboard, ns: , asm: Assembly-CSharp}
       data: 

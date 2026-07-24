@@ -5,10 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Item", menuName = "Items/Item")]
 public class ItemDefinition : ScriptableObject
 {
-    public const int MaxStackSize = 999; // max stack size for each item, can make instance var for per item if we want
-    
-    [Header("Name/Icon")]
-    //[SerializeField] string id;
+    [Header("ID/Name/Icon")]
+    [SerializeField] string id;
     [SerializeField] string displayName;
     [SerializeField] Sprite icon;
     
@@ -20,23 +18,33 @@ public class ItemDefinition : ScriptableObject
     [Header("Properties")]
     [SerializeField] ItemRarity rarity;
     [SerializeField] bool isDuoItem;
+    [SerializeField] bool canDropRandomly = true;
+    [Tooltip("Relative drop weight vs all other items of the same rarity. Base is one")]
+    [SerializeField] float dropWeight = 1f;               // if one item has 2 drop weight and every other item of that rarity has 1, the first item will be twice as likely
     [SerializeField] float difficultyCost = 1f;           // scaling cost, if we ever want it to be different for a given item for whatever reason
 
+    [Header("Model")]
+    [Tooltip("the model for when it is dropped on the ground (will be shown in the logbook thing eventually too)")]
+    [SerializeField] GameObject worldModelPrefab;
+    
     [Header("Behaviour")]
     [SerializeReference, SerializeField] ItemBehaviour behaviour;
+    
+    public string Id                  => id;
+    public string DisplayName           => displayName;
+    public Sprite Icon                  => icon;
 
-    //public string Id                => id;
-    public string DisplayName       => displayName;
-    public Sprite Icon              => icon;
+    public string ShortDescription      => shortDescription;
+    public string LongDescription       => longDescription;
+    public string Notes                 => notes;
 
-    public string ShortDescription  => shortDescription;
-    public string LongDescription   => longDescription;
-    public string Notes             => notes;
-
-    public ItemRarity Rarity        => rarity;
-    public bool IsDuoItem           => isDuoItem;
-    public float DifficultyCost     => difficultyCost;
-    public ItemBehaviour Behaviour  => behaviour;
+    public ItemRarity Rarity            => rarity;
+    public bool IsDuoItem               => isDuoItem;
+    public bool CanDropRandomly         => canDropRandomly;
+    public float DropWeight             => dropWeight;
+    public float DifficultyCost         => difficultyCost;
+    public GameObject WorldModelPrefab  => worldModelPrefab;
+    public ItemBehaviour Behaviour      => behaviour;
 }
 
 [Serializable]
@@ -53,9 +61,8 @@ public abstract class ItemBehaviour
 public class ItemRuntime : IDisposable
 {
     public int Count { get; private set; } // count of the item in our inventory
-    
-    public void SetCount(int count) { Count = count; } // might wanna add a call in this to an overrideable OnCountChanged function eventually
-    //protected virtual void OnCountChanged() { } 
+
+    public void SetCount(int count) { Count = count; } 
     
     public virtual void Tick(float deltaTime) { }
     
