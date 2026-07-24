@@ -40,6 +40,8 @@ public class ItemDefinition : ScriptableObject
 
     public ItemRarity Rarity            => rarity;
     public bool IsDuoItem               => isDuoItem;
+    public bool CanDropRandomly         => canDropRandomly;
+    public float DropWeight             => dropWeight;
     public float DifficultyCost         => difficultyCost;
     public GameObject WorldModelPrefab  => worldModelPrefab;
     public ItemBehaviour Behaviour      => behaviour;

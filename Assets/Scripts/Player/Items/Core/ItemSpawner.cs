@@ -6,6 +6,7 @@ public class ItemSpawner : MonoBehaviour
 {
 
     [SerializeField] ItemCatalog itemCatalog;
+    [SerializeField] float duoItemSpawnChance = 0.08f; // chance to spawn duo item when just randomly spawning an item
     
     [SerializeField] WorldItem worldItemPrefab;
     [SerializeField] GameObject nullItemModelPrefab;
@@ -13,6 +14,7 @@ public class ItemSpawner : MonoBehaviour
 
     public static ItemSpawner Instance { get; private set; }
     public ItemCatalog ItemCatalog => itemCatalog;
+    public float DuoItemSpawnChance => duoItemSpawnChance;
     
     void Awake()
     {

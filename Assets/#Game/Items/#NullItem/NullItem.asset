@@ -20,6 +20,8 @@ MonoBehaviour:
   notes: 
   rarity: 0
   isDuoItem: 0
+  canDropRandomly: 1
+  dropWeight: 1
   difficultyCost: 1
   worldModelPrefab: {fileID: 2874779153525773236, guid: 549dff1b6b6a8495bacfd88af67dae80, type: 3}
   behaviour:

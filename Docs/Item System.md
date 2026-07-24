@@ -4,6 +4,8 @@ _ADDING ITEMS:_
 \
 **Creating the Asset**
 
+
+
 Create a folder in `Assets/#Game/Items` using the item name (`#Game/Items/LuckyBullet/` for example).  
 
 In this folder, create an ItemDefinition using `Create->Items->Item`
@@ -42,8 +44,9 @@ _Item Catalog_
 - ### **_IMPORTANT!!!!!_**
   - Connected via Serialization to ItemSpawner instance. to access use `ItemSpawner.Instance.ItemCatalog`
   - `ItemDefinition GetItemFromId(string id)` returns the itemdefinition for the given id value, null if id isn't valid
-  - `ItemDefinition GetRandomItem()` returns a random item
-    - My next task will be to hook up blancing this with rarities, and then have a GetRandomDuoItem() function as well
+  - `ItemDefinition GetRandomItem(ItemRarityWeightDistribution distribution)` returns a random item according to `distribution` (handles distribution of item rarities. this is for if we want item spawns that are more likely to spawn  better items teirs for example)
+    - `ItemRarityWeightDistribution` stores weights for every rarity, and will have static variables for different distributions we might need (only one so far, `ItemRarityWeightDistribution.Default`)
+    - `ItemDefinition GetRandomDuoItem(ItemRarityWeightDistribution distribution)` is implemented as well, (returns null if no duo items have been defined yet / are in availble pool)
   - THIS WILL BE THE PRIMARY WAY TO SPAWN ITEMS (using them to get the defintion to pass into Itemspawner spawn function)
 ***
 
