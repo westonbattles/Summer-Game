@@ -10,10 +10,10 @@ public enum ItemRarity
 
 public class ItemRarityWeightDistribution
 {
-    public float Common;
-    public float Uncommon;
-    public float Rare;
-    public float Legendary;
+    public readonly float Common;
+    public readonly float Uncommon;
+    public readonly float Rare;
+    public readonly float Legendary;
 
     public float WeightSum => Common + Uncommon + Rare + Legendary;
 

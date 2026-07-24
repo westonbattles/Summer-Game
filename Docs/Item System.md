@@ -48,6 +48,22 @@ _Item Catalog_
     - `ItemRarityWeightDistribution` stores weights for every rarity, and will have static variables for different distributions we might need (only one so far, `ItemRarityWeightDistribution.Default`)
     - `ItemDefinition GetRandomDuoItem(ItemRarityWeightDistribution distribution)` is implemented as well, (returns null if no duo items have been defined yet / are in availble pool)
   - THIS WILL BE THE PRIMARY WAY TO SPAWN ITEMS (using them to get the defintion to pass into Itemspawner spawn function)
+
+_ItemRarityWeightDistribution_
+
+- keeps variable weight for each rarity type in its instance (as well as a function to get a random rarity using the weight distribution)
+  - ` public static ItemRarity GetRandomRarity(ItemRarityWeightDistribution weights)`
+- the flow for item spawning is -> get duo/regular item list -> get rarity using rarity weight, get item (of that rarity) using item weight
+- static member variable (we can add more if we need different distributions)
+- ```c#
+  public static readonly ItemRarityWeightDistribution Default = new(
+        common:     80,
+        uncommon:   30,
+        rare:       12,
+        legendary:  5
+    );
+  ```
+
 ***
 
 _Item Inventory_
