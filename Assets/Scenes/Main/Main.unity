@@ -5443,6 +5443,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4724841177392358001, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: sound
+      value: 
+      objectReference: {fileID: 11400000, guid: 014392569f96b6b4c8950941247f59fe, type: 2}
+    - target: {fileID: 4724841177392358001, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: soundDelay
+      value: 0.15
+      objectReference: {fileID: 0}
     - target: {fileID: 6463087256270042916, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: m_Name
       value: Player

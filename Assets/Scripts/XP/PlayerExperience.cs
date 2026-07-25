@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 /// <summary>
 /// The XP sink. Lives on the player, owns current XP / level / the requirement curve,
@@ -23,6 +24,11 @@ public class PlayerExperience : MonoBehaviour
     [Tooltip("Where orbs fly to and are collected. Usually chest height; falls back to the root transform.")]
     [SerializeField] private Transform collectPoint;
 
+    [Header("SFX")]
+    [SerializeField] SoundEvent sound;
+    SoundHandle soundHandle;
+    [SerializeField] float soundDelay = 0.05f;
+
     public int Level { get; private set; } = 1;
     public float CurrentXP { get; private set; }
     public float RequiredXP { get; private set; }
@@ -36,6 +42,12 @@ public class PlayerExperience : MonoBehaviour
     {
         Instance = this;
         RequiredXP = RequirementForLevel(Level);
+
+        if (sound == null)
+        {
+            Debug.LogWarning($"[Player Experience]: SoundEvent not assigned.", this);
+            return;
+        }
     }
 
     private void Start()
@@ -66,6 +78,43 @@ public class PlayerExperience : MonoBehaviour
         }
 
         OnXPChanged?.Invoke(CurrentXP, RequiredXP);
+    }
+    
+    // adds the sound if its an orb.
+    public void CollectOrb(float amount, int soundCount = 1)
+    {
+        if (soundCount > 1)
+        {
+            StartCoroutine(PlayStaggeredSounds(soundCount));
+        }
+        else
+        {
+            PlayCollectSoundSingle();
+        }
+
+        AddXP(amount);
+    }
+
+    private void PlayCollectSoundSingle()
+    {
+        if (sound != null)
+        {
+            soundHandle = sound.Play(transform.position);
+        }
+    }
+
+    private IEnumerator PlayStaggeredSounds(int count)
+    {
+        if (sound == null) yield break;
+
+        // Small delay between plays to make individual hits audible
+        WaitForSeconds delay = new WaitForSeconds(soundDelay);
+
+        for (int i = 0; i < count; i++)
+        {
+            soundHandle = sound.Play(transform.position);
+            yield return delay;
+        }
     }
 
     private float RequirementForLevel(int level) => baseRequirement * Mathf.Pow(growthFactor, level - 1);

@@ -30,10 +30,18 @@ public class XPOrb : MonoBehaviour, IPoolable
     private bool launched;
     private bool releaseToPoolOnDespawn;
     private PooledVfx pooledVfx;
+    private ParticleSystem orbParticleSystem;
+
+    private int cachedParticleCount = 1;
 
     private void Awake()
     {
         pooledVfx = GetComponent<PooledVfx>();
+
+        if (transform.childCount > 0)
+        {
+            orbParticleSystem = transform.GetChild(0).GetComponent<ParticleSystem>();
+        }
     }
 
     /// <summary>Called by XPDropper immediately after spawn. Stamps the value and arms the pursuit.</summary>
@@ -44,6 +52,18 @@ public class XPOrb : MonoBehaviour, IPoolable
         speed = startSpeed;
         releaseToPoolOnDespawn = releaseToPool;
         launched = true;
+
+        if (orbParticleSystem != null)
+        {
+            orbParticleSystem.Clear();
+            orbParticleSystem.Play();
+
+            cachedParticleCount = Mathf.Max(1, orbParticleSystem.main.maxParticles);
+        }
+        else
+        {
+            cachedParticleCount = 1;
+        }
     }
 
     private void Update()
@@ -71,7 +91,7 @@ public class XPOrb : MonoBehaviour, IPoolable
         // MoveTowards clamps exactly onto the target on the final step.
         if ((transform.position - target).sqrMagnitude < 0.0001f)
         {
-            player.AddXP(value);
+            player.CollectOrb(value, cachedParticleCount);
             Despawn();
         }
     }
