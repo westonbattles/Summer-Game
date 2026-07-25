@@ -126,7 +126,7 @@ public class WorldItem : MonoBehaviour
     void StartPhysics(Vector3 velocity)
     {
         rb.isKinematic = false;
-        rb.useGravity = true;
+        rb.useGravity = false;      // if its true, the AddForce would have another order of magnitude
         rb.linearVelocity = velocity;
         rb.angularVelocity = Vector3.zero;
         rb.WakeUp();
@@ -162,6 +162,6 @@ public class WorldItem : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.AddForce(Physics.gravity * 3f, ForceMode.Acceleration); // triple gravity
+        rb.AddForce(Physics.gravity * 3f, ForceMode.Acceleration); // triple gravity (note it was 3x before since rb.gravity is weird and adds one).
     }
 }

@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Unity;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -89,11 +90,31 @@ public class ItemCatalog : ScriptableObject
 
         foreach (ItemDefinition definition in definitions)
         {
-            // populate definitions by id dict
-            _definitionsById.Add(definition.Id, definition);
+            if (definition == null)
+            {
+                Debug.LogWarning($"[Item Catalog - BuildRuntimeDictionaries]: Null entry in item catalog, an asset was probably deleted. Refresh the catalog.", this);
+                continue;
+            }
+
+            if (string.IsNullOrEmpty(definition.Id))
+            {
+                Debug.LogError($"[Item Catalog - BuildRuntimeDictionaries]: Item '{definition.name}' has no id set. Skipping Id.", definition);
+                continue;
+            }
+
+            // NOTE: When you Ctrl/Cmd + D, be careful of duplicate Id!
+            if (!_definitionsById.TryAdd(definition.Id, definition))
+            {
+                Debug.LogError($"[Item Catalog - BuildRuntimeDictionaries]: Duplicate item Id '{definition.Id}' on '{definition.name}' " +
+                               $"(already used by '{_definitionsById[definition.Id].name}'). Skipping Id.", definition);
+                continue;
+            }
 
             if (!definition.CanDropRandomly) continue; // skip items that can't be dropped randomly
-            
+
+            // populate definitions by id dict
+            //_definitionsById.Add(definition.Id, definition);
+
             // populate duo/regular item dictionaries
             if (definition.IsDuoItem) _duoItems.GetValueOrDefault(definition.Rarity)?.Add(definition);
             else _regularItems.GetValueOrDefault(definition.Rarity)?.Add(definition);
@@ -140,8 +161,8 @@ public class ItemCatalog : ScriptableObject
         ItemRarity rarity = ItemRarityWeightDistribution.GetRandomRarity(newDistribution);
         return groupings[rarity].GetRandom();
     }
-    
-    
+
+#if UNITY_EDITOR        // prevents build runtime issues cause this is meant for editor to compile with AssetDatabase
     /// gets references to all ItemDefinition assets in Assets/#Game/Items (ignoring /Examples folder), and populates a list with them all
     public void UpdateItemCatalogFromAssets()
     {
@@ -168,5 +189,5 @@ public class ItemCatalog : ScriptableObject
         
         EditorUtility.SetDirty(this); // tell the catalog editor that it needs to save this asset since it's been changed
     }
-    
+#endif
 }

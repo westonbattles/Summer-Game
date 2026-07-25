@@ -318,6 +318,10 @@ PrefabInstance:
       propertyPath: <Value>k__BackingField
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 514679952066752580, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+      propertyPath: killValue
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 888112467468903464, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -495,6 +499,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bbe0abe1b341a2439b3e7d6e7cf4c9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMeleeAttack
+  damageType: 0
   damage: 3
   cooldown: 0.7
   range: 4.55
