@@ -310,6 +310,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 116487772874097836, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+      propertyPath: rimMaterial
+      value: 
+      objectReference: {fileID: -876546973899608171, guid: 431996d3c5e74ae488e03e75adb58c82, type: 3}
     - target: {fileID: 211096677595199996, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       propertyPath: orbPrefab
       value: 

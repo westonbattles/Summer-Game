@@ -8,7 +8,7 @@ public class PsychicPulseHighlighter : MonoBehaviour
     PooledVfx activeVFX;
     Transform cameraTransform;
     bool isHighlighted;
-    
+
 
     void Awake()
     {
@@ -32,16 +32,16 @@ public class PsychicPulseHighlighter : MonoBehaviour
     {
         if (isHighlighted) return;
         isHighlighted = true;
-        
+
         Vector3 transformPosition = enemyOwner != null ? enemyOwner.GetCenterPoint() : owner.transform.position;
         activeVFX = VFXPoolManager.Instance.Play(highlightVFXPrefab, transformPosition, Quaternion.identity);
     }
-    
+
     public void Unhighlight()
     {
-        
+
         // TODO: FADE HIGHLIGHT SO IT DOESN'T DISSAPEAR?
-        
+
         if (!isHighlighted) return;
         isHighlighted = false;
 

@@ -17,7 +17,7 @@ public class PsychicPulse : AbilityBehaviour
     [SerializeField] float targetHighlightCheckInterval = 0.12f;
     [SerializeField] int maxPossibleTargets = 128;
     [SerializeField, Range(-20f, 0f), Tooltip("More negative values = enemies further behind the player relative to the camera are allowed to be targeted")] float backPruneThreshold = 0f;
-    
+
     [Header("VFX")]
     [SerializeField] PooledVfx highlightVFXPrefab;
 
@@ -270,7 +270,7 @@ public class PsychicPulse : AbilityBehaviour
         psychicPulse.CurrentTarget = target;
         
         if (target == null) return;
-        
+
         // HIGHLIGHT
         target.Highlighter.Highlight(highlightVFXPrefab);
     }
