@@ -12,3 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87fde6d023f942caaf83334b9f1fbae2, type: 3}
   m_Name: Maze Enemies
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnGrouping
+  _entries:
+  - card: {fileID: 11400000, guid: 9d4b1fec399324125bf0034dc8edc80a, type: 2}
+    weight: 1
