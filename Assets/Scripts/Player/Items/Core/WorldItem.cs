@@ -22,6 +22,10 @@ public class WorldItem : MonoBehaviour
     [SerializeField] Transform modelSocket;         // parent transform for entire model
     [SerializeField] Vector3 spawnOffset;
     [SerializeField] float spinDegreesPerSecond = 75f;
+
+    [Header("Outline")]
+    [SerializeField] Material outlineMaterial;
+    [SerializeField] ItemRarityPalette rarityPalette;
     
     public ItemDefinition Definition { get; private set; }
     public WorldItemState State { get; private set; }
@@ -90,7 +94,7 @@ public class WorldItem : MonoBehaviour
         
         worldModel.transform.position += spawnOffset;
         
-        // todo: get renderes for outline stuff like ror2 has (eventually): worldModel.GetComponentsInChildren<Renderer>(true);
+        WorldItemOutline.AddTo(worldModel, outlineMaterial, rarityPalette.GetColor(Definition.Rarity));
 
         modelRestPosition = modelSocket.localPosition;
         modelRestRotation = modelSocket.localRotation;
