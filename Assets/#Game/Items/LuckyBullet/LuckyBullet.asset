@@ -23,7 +23,7 @@ MonoBehaviour:
   canDropRandomly: 1
   dropWeight: 1
   difficultyCost: 1
-  worldModelPrefab: {fileID: 7963010908020450142, guid: b0a686f5e2556f14997c421c48833f69, type: 3}
+  worldModelPrefab: {fileID: 0}
   behaviour:
     rid: 1748538330459668744
   references:

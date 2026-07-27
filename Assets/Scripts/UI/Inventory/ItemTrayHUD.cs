@@ -8,12 +8,8 @@ public class ItemTrayHUD : MonoBehaviour
     [SerializeField] ItemSlot slotPrefab;
     [SerializeField] RectTransform slotContainer;
 
-    [Header("Rarity Colors")]
-    [SerializeField] Color commonColor      = Color.white;
-    [SerializeField] Color uncommonColor    = Color.green;
-    [SerializeField] Color rareColor        = Color.blue;
-    [SerializeField] Color legendaryColor   = Color.red;
-    // TODO: promote to a shared RarityPalette ScriptableObject once pickup VFX / droplets need the same colors
+    [Header("Rarity Palette")]
+    [SerializeField] ItemRarityPalette rarityPalette;
 
     private readonly Dictionary<ItemDefinition, ItemSlot> slots = new();
 
@@ -56,11 +52,5 @@ public class ItemTrayHUD : MonoBehaviour
         slot.SetCount(newCount);
     }
 
-    private Color GetRarityColor(ItemRarity rarity) => rarity switch
-    {
-        ItemRarity.Uncommon     => uncommonColor,
-        ItemRarity.Rare         => rareColor,
-        ItemRarity.Legendary    => legendaryColor,
-        _                       => commonColor,
-    };
+    Color GetRarityColor(ItemRarity rarity) => rarityPalette.GetColor(rarity);
 }

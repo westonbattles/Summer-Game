@@ -187,10 +187,7 @@ MonoBehaviour:
   inventory: {fileID: 6804361139888241999}
   slotPrefab: {fileID: 2879987569991428820}
   slotContainer: {fileID: 6071256}
-  commonColor: {r: 1, g: 1, b: 1, a: 1}
-  uncommonColor: {r: 0, g: 1, b: 0, a: 1}
-  rareColor: {r: 0, g: 0, b: 1, a: 1}
-  legendaryColor: {r: 1, g: 0, b: 0, a: 1}
+  rarityPalette: {fileID: 11400000, guid: 65b96ce2ecb79432694165ffa3ed68f7, type: 2}
 --- !u!114 &6071260
 MonoBehaviour:
   m_ObjectHideFlags: 0

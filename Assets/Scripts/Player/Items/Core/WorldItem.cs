@@ -20,6 +20,7 @@ public class WorldItem : MonoBehaviour
     [Header("Available (Ground) Item")]
     [SerializeField] Collider interactionCollider;  // different colliders since it will be flying thru the air as a dot like in ror2 (also fortnite) and won't be pickupable then
     [SerializeField] Transform modelSocket;         // parent transform for entire model
+    [SerializeField] Vector3 spawnOffset;
     [SerializeField] float spinDegreesPerSecond = 75f;
     
     public ItemDefinition Definition { get; private set; }
@@ -43,7 +44,8 @@ public class WorldItem : MonoBehaviour
     {
         if (State != WorldItemState.Available) return;
         
-        // todo: rotation
+        // rotation
+        modelSocket.Rotate(Vector3.up, spinDegreesPerSecond * Time.deltaTime, Space.World);
     }
 
     void Land()
@@ -85,7 +87,9 @@ public class WorldItem : MonoBehaviour
             worldModel = Instantiate(ItemSpawner.NullItemModelPrefab, modelSocket,false);
         }
         else worldModel = Instantiate(Definition.WorldModelPrefab, modelSocket,false);
-
+        
+        worldModel.transform.position += spawnOffset;
+        
         // todo: get renderes for outline stuff like ror2 has (eventually): worldModel.GetComponentsInChildren<Renderer>(true);
 
         modelRestPosition = modelSocket.localPosition;
