@@ -23,7 +23,7 @@ public class BrassKnuckles : AbilityBehaviour
     // public ModifiableStat => baseStat + Player.Instance.Modifiers.StatModifierAddName
     // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
     // (or any other way u want to use the modifier)
-    public float Damage => baseDamage;
+    public float Damage => baseDamage * Player.Instance.Modifiers.BrassKnucklesBaseDamageMultiplier.GetValue();
     public DamageType DamageType => baseDamageType;
     public float ComboIncrease => baseComboIncrease * Player.Instance.Modifiers.BrassKnucklesComboIncreaseDamageMultiplier.GetValue();
     public int ComboStages => baseComboStages;

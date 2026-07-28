@@ -45,6 +45,7 @@ public class PlayerModifiers
     // Hand Abilities
     
     // Brass Knuckles
+    public Modifier<float> BrassKnucklesBaseDamageMultiplier = new(1f);             // simply just the base damage mutliplier for brass knuckles. this gets compounded multiplicatively with BrassKnucklesComboIncreaseDamageMultiplier
     public Modifier<int> BrassKnucklesComboStagesBonus = new(0);                    // how many extra combo stages do we get (each stage gives us an extra 25% * BrassKnucklesComboDamageMultiplier damage)
     public Modifier<float> BrassKnucklesComboIncreaseDamageMultiplier = new(1f);    // scaling of damage increase per combo level. if base increase is 25% for example (1x -> 1.25x -> 1.5x), setting this value to two would make it 50% (1x -> 1.5x -> 2x)
     // Whirlwind
