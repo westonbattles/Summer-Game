@@ -7,6 +7,21 @@ using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
+[Serializable]
+class MovementSettings
+{
+    [SerializeField] float groundAccel;
+    [SerializeField] float maxSpeed;
+    [SerializeField] float airAccel;
+    [SerializeField] float airSpeed;
+    [SerializeField] float jumpHeight;
+    public float GroundAccel => groundAccel;
+    public float MaxSpeed => maxSpeed;
+    public float AirAccel => airAccel;
+    public float AirSpeed => airSpeed;
+    public float JumpHeight => jumpHeight;
+}
+
 [RequireComponent(typeof(KinematicCharacterMotor))]
 [RequireComponent(typeof(AbilityController))]
 [RequireComponent(typeof(PlayerInputReader))]
@@ -22,15 +37,19 @@ public class Player : MonoBehaviour, ICharacterController
     [Header("Input")]
     [SerializeField] bool autoBhop;
 
+    [Header("Movement Settings")]
+    [SerializeField] MovementSettings handMovementSettings;
+    [SerializeField] MovementSettings eyeMovementSettings; 
+    
     [Header("Movement")]
     [SerializeField] float gravity = 31f;
     [SerializeField] float gravityMultiplier = 1f;
-    [SerializeField] float groundAccel = 140f;
-    [SerializeField] float maxSpeed = 8f;
-    [SerializeField] float airAccel = 50f;
-    [SerializeField] float airSpeed = 1f;
+    //[SerializeField] float groundAccel = 140f;
+    //[SerializeField] float maxSpeed = 8f;
+    //[SerializeField] float airAccel = 50f;
+    //[SerializeField] float airSpeed = 1f;
     [SerializeField] float baseFriction = 12f;
-    [SerializeField] float jumpHeight = 10f;
+    //[SerializeField] float jumpHeight = 10f;
     [SerializeField] float jumpBufferTime = 0.05f;
 
     //[SerializeField] float dashFriction = 6f;
@@ -246,7 +265,7 @@ public class Player : MonoBehaviour, ICharacterController
         else
         {
             horizontalVelocity = MoveGround(target, horizontalVelocity, deltaTime);
-            if (_dashLandMomentumDecayTimer <= 0f) horizontalVelocity = Vector2.ClampMagnitude(horizontalVelocity, maxSpeed);
+            if (_dashLandMomentumDecayTimer <= 0f) horizontalVelocity = Vector2.ClampMagnitude(horizontalVelocity, GetCurrentMaxSpeed());
         }
 
         currentVelocity = new Vector3(horizontalVelocity.x, currentVelocity.y, horizontalVelocity.y);
@@ -257,13 +276,13 @@ public class Player : MonoBehaviour, ICharacterController
         _motor.ForceUnground(0.2f);
         _jumpBufferCounter = 0f;
         currentVelocity = currentVelocity - Vector3.Project(currentVelocity, _motor.CharacterUp);
-        currentVelocity += _motor.CharacterUp * jumpHeight;
+        currentVelocity += _motor.CharacterUp * GetCurrentJumpHeight();
 
         float speed = horizontalVelocity.magnitude;
         float carry = speed;
-        if (carry > maxSpeed) carry = (speed - maxSpeed) * Modifiers.BhopMomentumCarryPercent.GetValue() + maxSpeed; // same as Mathf.Lerp(maxSpeed, speed, Modifiers.BhopMomentumCarryPercent); without the 0-1 clamping
+        if (carry > GetCurrentMaxSpeed()) carry = (speed - GetCurrentMaxSpeed()) * Modifiers.BhopMomentumCarryPercent.GetValue() + GetCurrentMaxSpeed(); // same as Mathf.Lerp(maxSpeed, speed, Modifiers.BhopMomentumCarryPercent); without the 0-1 clamping
         
-        horizontalVelocity = (horizontalVelocity / speed) * carry;
+        if (speed > Mathf.Epsilon) horizontalVelocity = (horizontalVelocity / speed) * carry;
         horizontalVelocity = MoveAir(target, horizontalVelocity, deltaTime);
     }
 
@@ -286,23 +305,75 @@ public class Player : MonoBehaviour, ICharacterController
             horizontalVelocity *= Mathf.Max(speed - drop, 0f) / speed;
         }
 
-        return Accelerate(target, horizontalVelocity, groundAccel, deltaTime);
+        return Accelerate(target, horizontalVelocity, GetCurrentGroundAccel(), deltaTime);
     }
 
     Vector2 MoveAir(Vector2 target, Vector2 horizontalVelocity, float deltaTime)
     {
-        return Accelerate(target, horizontalVelocity, airAccel, deltaTime);
+        return Accelerate(target, horizontalVelocity, GetCurrentAirAccel(), deltaTime);
     }
 
     Vector2 Accelerate(Vector2 target, Vector2 horizontalVelocity, float acceleration, float deltaTime)
     {
         float projectedVelocity = Vector2.Dot(target, horizontalVelocity);
-        if (!_motor.GroundingStatus.IsStableOnGround && projectedVelocity >= airSpeed)
+        if (!_motor.GroundingStatus.IsStableOnGround && projectedVelocity >= GetCurrentAirSpeed())
         {
             return horizontalVelocity;
         }
 
         return horizontalVelocity + acceleration * deltaTime * target; // floats before vector
+    }
+
+    
+    /*
+     MOVEMENT SETTINGS -
+     
+     movement player modifiers will be applied here
+     */
+    
+    float GetCurrentGroundAccel()
+    {
+        if (CharacterSwitcher.CurrentCharacter == PlayerCharacter.Hand)
+        {
+            return handMovementSettings.GroundAccel;
+        }
+        return eyeMovementSettings.GroundAccel;
+    }
+
+    float GetCurrentMaxSpeed()
+    {
+        if (CharacterSwitcher.CurrentCharacter == PlayerCharacter.Hand)
+        {
+            return handMovementSettings.MaxSpeed;
+        }
+        return eyeMovementSettings.MaxSpeed;
+    }
+    
+    float GetCurrentAirAccel()
+    {
+        if (CharacterSwitcher.CurrentCharacter == PlayerCharacter.Hand)
+        {
+            return handMovementSettings.AirAccel;
+        }
+        return eyeMovementSettings.AirAccel;
+    }
+
+    float GetCurrentAirSpeed()
+    {
+        if (CharacterSwitcher.CurrentCharacter == PlayerCharacter.Hand)
+        {
+            return handMovementSettings.AirSpeed;
+        }
+        return eyeMovementSettings.AirSpeed;
+    }
+    
+    float GetCurrentJumpHeight()
+    {
+        if (CharacterSwitcher.CurrentCharacter == PlayerCharacter.Hand)
+        {
+            return handMovementSettings.JumpHeight;
+        }
+        return eyeMovementSettings.JumpHeight;
     }
     
     /// Dashes in move input direction only, no up/down

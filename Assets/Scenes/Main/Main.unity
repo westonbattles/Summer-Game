@@ -5440,6 +5440,46 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: eyeMovementSettings.airAccel
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: eyeMovementSettings.airSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: eyeMovementSettings.maxSpeed
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: handMovementSettings.airAccel
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: handMovementSettings.airSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: handMovementSettings.maxSpeed
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: eyeMovementSettings.jumpHeight
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: eyeMovementSettings.groundAccel
+      value: 140
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: handMovementSettings.jumpHeight
+      value: 8.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593231636947593448, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: handMovementSettings.groundAccel
+      value: 140
+      objectReference: {fileID: 0}
     - target: {fileID: 4724841177392358001, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: sound
       value: 
