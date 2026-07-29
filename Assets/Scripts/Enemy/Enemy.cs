@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour
     private Health health;
     private XPDropper xpDropper;
     public PsychicPulseHighlighter Highlighter { get; private set; }
+    private Collider[] cachedHitboxColliders;
 
     /// <summary>Raised after death logic runs. Spawner listens and releases to pool.</summary>
     public event Action<Enemy> OnDied;
@@ -44,7 +45,7 @@ public class Enemy : MonoBehaviour
         health = GetComponent<Health>();
         xpDropper = GetComponent<XPDropper>();
         Highlighter = GetComponent<PsychicPulseHighlighter>();
-
+        cachedHitboxColliders = GetComponentsInChildren<Collider>();
     }
 
     private void OnEnable()
@@ -75,9 +76,57 @@ public class Enemy : MonoBehaviour
         OnDied?.Invoke(this);   // tells the spawner: I'm done, release me fool! :)
     }
 
+    // OLD FUNCTION!!!!
+    //public Vector3 GetCenterPoint()
+    //{
+    //    // TODO: use hit colliders in children or wtv to calculate y bounds. maybe even x/z as well (if we dont think they should be centered x/z at transform.position x/z)
+    //    return transform.position + Vector3.up;
+    //}
+
+    /// <summary>
+    /// Combines the hitboxes of the enemy on awake.
+    /// </summary>
+    /// <returns>Returns the location as a Vector3.</returns>
+    /// 
+    // Possible TODO: Depending on needs, we might need an override to allow us to search a "Hitboxes" container gameobject instead of all the children of the root.
     public Vector3 GetCenterPoint()
     {
-        // TODO: use hit colliders in children or wtv to calculate y bounds. maybe even x/z as well (if we dont think they should be centered x/z at transform.position x/z)
-        return transform.position + Vector3.up;
+        // failsafe incase it doesn't have a collider or breaks.
+        if (cachedHitboxColliders == null || cachedHitboxColliders.Length == 0)
+        {
+            Debug.LogWarning($"[Enemy] - GetCenterPoint: {name} is missing a hitbox or the cache failed to allocate. Using failsafe function. This may cause inconsistent collisions.", this);
+            return transform.position + Vector3.up;
+        }
+
+        Bounds combinedBounds = default;
+        bool init = false;
+
+        for (int i = 0; i < cachedHitboxColliders.Length; i++)
+        {
+            Collider col = cachedHitboxColliders[i];
+
+            if (col == null || !col.enabled)
+            {
+                continue;
+            }
+
+            // Ignores non hitbox trigger colliders (e.g. aggro radius or wtv)
+            if (((1 << col.gameObject.layer) & LayerMask.value) == 0)
+            {
+                continue;
+            }
+            
+            if (!init)
+            {
+                combinedBounds = col.bounds;
+                init = true;
+            }
+            else
+            {
+                combinedBounds.Encapsulate(col.bounds);
+            }
+        }
+
+        return init ? combinedBounds.center : (transform.position + Vector3.up);
     }
 }
