@@ -1695,7 +1695,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b86f00a302f6c140866468d376aadd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundEventTester
-  sound: {fileID: 11400000, guid: e2244ce676d51464ebbc384ad767c53e, type: 2}
+  sound: {fileID: 11400000, guid: 93ceb3df5fcce934cbe7c1deda5d5507, type: 2}
   cam: {fileID: 1855519041}
 --- !u!4 &759916461
 Transform:
@@ -5493,7 +5493,7 @@ PrefabInstance:
     - target: {fileID: 4724841177392358001, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: sound
       value: 
-      objectReference: {fileID: 11400000, guid: 014392569f96b6b4c8950941247f59fe, type: 2}
+      objectReference: {fileID: 11400000, guid: 93ceb3df5fcce934cbe7c1deda5d5507, type: 2}
     - target: {fileID: 4724841177392358001, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: soundDelay
       value: 0.15
