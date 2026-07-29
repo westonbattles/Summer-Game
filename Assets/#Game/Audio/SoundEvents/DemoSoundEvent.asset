@@ -21,6 +21,34 @@ MonoBehaviour:
   mixerGroup: {fileID: 6667805234795937086, guid: fcad413ba708c6541a1df63f55f47a79, type: 2}
   spatialBlend: 0.127
   dopplerLevel: 1.03
-  burstCount: 15
-  staggerDelay: 0.15
+  burstCount: 3
+  staggerDelay: 0.2
+  maxBurstCount: 7
   minInterval: 0.01
+  minDistance: 1
+  maxDistance: 50
+  rolloffMode: 1
+  customRolloff:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

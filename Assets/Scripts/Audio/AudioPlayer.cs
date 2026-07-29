@@ -35,6 +35,59 @@ public readonly struct SoundHandle
 }
 
 /// <summary>
+/// Settings for the voice that do NOT get changed after domain reloads.
+/// </summary>
+public readonly struct VoiceSettings
+{
+    public readonly float Volume;
+    public readonly float SpatialBlend;
+    public readonly float DopplerLevel;
+    public readonly AudioMixerGroup MixerGroup;
+    public readonly float MinDistance;
+    public readonly float MaxDistance;
+    public readonly AudioRolloffMode Rolloff;
+    public readonly AnimationCurve CustomRolloff;
+
+    public VoiceSettings(float volume, float spatialBlend, float dopplerLevel,
+                         AudioMixerGroup mixerGroup, float minDistance, float maxDistance,
+                         AudioRolloffMode rolloff, AnimationCurve customRolloff)
+    {
+        Volume = volume;
+        SpatialBlend = spatialBlend;
+        DopplerLevel = dopplerLevel;
+        MixerGroup = mixerGroup;
+        MinDistance = minDistance;
+        MaxDistance = maxDistance;
+        Rolloff = rolloff;
+        CustomRolloff = rolloff == AudioRolloffMode.Custom ? customRolloff : null;
+    }
+
+    /// <summary>
+    /// Applies every audible property to a source. This is mostly to cleanup AudioPlayer.Play().
+    /// </summary>
+    /// <param name="src"></param>
+    public void ApplyTo(AudioSource src)
+    {
+        src.volume = Volume;
+        src.spatialBlend = SpatialBlend;
+        src.dopplerLevel = DopplerLevel;
+        src.outputAudioMixerGroup = MixerGroup;
+        src.minDistance = MinDistance;
+        src.maxDistance = MaxDistance;
+        if (Rolloff == AudioRolloffMode.Custom && CustomRolloff != null)
+        {
+            // SetCustomCurve flips rolloffMode to Custom itself; setting the mode
+            // AFTER this call would discard the curve. Order matters.
+            src.SetCustomCurve(AudioSourceCurveType.CustomRolloff, CustomRolloff);
+        }
+        else
+        {
+            src.rolloffMode = Rolloff;
+        }
+    }
+}
+
+/// <summary>
 /// Pooled AudioSource host. SoundEvent assets call into this; gameplay code should
 /// never touch it directly except via the handles it returns.
 /// One-shots are reclaimed automatically when they finish; loops live until Stop().
@@ -45,6 +98,15 @@ public class AudioPlayer : MonoBehaviour
 
     [SerializeField] int prewarmCount = 16;
     [SerializeField] int maxVoices = 64;
+
+    /// <summary>Editor-only voice traffic logging. Flip on when hunting audio bugs.</summary>
+    [SerializeField] bool logVoices = false;
+
+    [System.Diagnostics.Conditional("UNITY_EDITOR")]
+    private void LogVoice(string message)
+    {
+        if (logVoices) Debug.Log($"[AudioPlayer] {message}", this);
+    }
 
     private class Voice
     {
@@ -96,15 +158,12 @@ public class AudioPlayer : MonoBehaviour
     /// <param name="clip">The audioclip that will get played.</param>
     /// <param name="position">The location where the audioclip will play from.</param>
     /// <param name="follow">The target the audioclip will follow. E.g. enemy.</param>
-    /// <param name="volume">Volume, duh.</param>
     /// <param name="pitch">Configure the pitch with your own function if you want it to be wonky.</param>
     /// <param name="loop">Whether or not the clip will loop.</param>
-    /// <param name="spatialBlend">Mixer stuff.</param>
-    /// <param name="group">Check the mixer for more info.</param>
+    /// <param name="s">VoiceSettings is baked at runtime.</param>
     /// <returns></returns>
     internal SoundHandle Play(AudioClip clip, Vector3 position, Transform follow,
-                              float volume, float pitch, bool loop,
-                              float spatialBlend, float dopplerLevel, AudioMixerGroup group)
+                              float pitch, bool loop, in VoiceSettings s)
     {
         int index;
         if (free.Count > 0)
@@ -114,10 +173,11 @@ public class AudioPlayer : MonoBehaviour
         else if (voices.Count < maxVoices)
         {
             index = CreateVoice();
+            LogVoice($"Pool grew to {voices.Count}/{maxVoices}");
         }
         else
         {
-            Debug.LogWarning($"AudioPlayer: out of voices, dropping sound.");
+            Debug.LogWarning($"AudioPlayer: out of voices ({maxVoices}), dropping '{clip.name}'.", this);
             return SoundHandle.Invalid;
         }
 
@@ -130,53 +190,37 @@ public class AudioPlayer : MonoBehaviour
         var src = v.Source;
         src.transform.position = position;
         src.clip = clip;
-        src.volume = volume;
         src.pitch = pitch;
         src.loop = loop;
-        src.spatialBlend = spatialBlend;
-        src.dopplerLevel = dopplerLevel;
-        src.outputAudioMixerGroup = group;
+        s.ApplyTo(src);
+
         src.Play();
+
+        LogVoice($"'{clip.name}' voice {index} v{v.Version} " +
+                 $"(pitch {pitch:F2}, loop {loop}, free {free.Count}/{voices.Count})");
 
         return new SoundHandle(index, v.Version);
     }
 
-    //internal SoundHandle PlayBurst(AudioClip[] clips, Vector3 position, Transform follow,
-    //                               float volume, Vector2 pitchRange, int burstCount,
-    //                               float staggerDelay, float spatialBlend, float dopplerLevel,
-    //                               AudioMixerGroup group)
-    //{
-    //    if (burstCount <= 1 || staggerDelay <= 0f)
-    //    {
-    //        var clip = clips[Random.Range(0, clips.Length)];
-    //        float pitch = Random.Range(pitchRange.x, pitchRange.y);
-    //        return Play(clip, position, follow, volume, pitch, false, spatialBlend, dopplerLevel, group);
-    //    }
-
-    //    StartCoroutine(PlayBurstRoutine(clips, position, follow, volume, pitchRange,
-    //                                    burstCount, staggerDelay, spatialBlend, dopplerLevel, group));
-    //    return SoundHandle.Invalid;
-    //}
     internal SoundHandle PlayBurst(SoundEvent evt, Vector3 position, Transform follow,
-                               float volume, Vector2 pitchRange, int burstCount,
-                               float staggerDelay, float spatialBlend, float dopplerLevel,
-                               AudioMixerGroup group)
+                               Vector2 pitchRange, int burstCount, float staggerDelay,
+                               in VoiceSettings settings)
     {
         if (burstCount <= 1 || staggerDelay <= 0f)
         {
             var clip = evt.GetRandomClip();
             float pitch = Random.Range(pitchRange.x, pitchRange.y);
-            return Play(clip, position, follow, volume, pitch, false, spatialBlend, dopplerLevel, group);
+            return Play(clip, position, follow, pitch, false, settings);
         }
 
-        StartCoroutine(PlayBurstRoutine(evt, position, follow, volume, pitchRange,
-                                        burstCount, staggerDelay, spatialBlend, dopplerLevel, group));
+        StartCoroutine(PlayBurstRoutine(evt, position, follow, pitchRange,
+                                        burstCount, staggerDelay, settings));
         return SoundHandle.Invalid;
     }
+
     private IEnumerator PlayBurstRoutine(SoundEvent evt, Vector3 position, Transform follow,
-                                     float volume, Vector2 pitchRange, int burstCount,
-                                     float staggerDelay, float spatialBlend, float dopplerLevel,
-                                     AudioMixerGroup group)
+                                     Vector2 pitchRange, int burstCount, float staggerDelay,
+                                     VoiceSettings settings)
     {
         var wait = new WaitForSeconds(staggerDelay);
         for (int i = 0; i < burstCount; i++)
@@ -194,7 +238,7 @@ public class AudioPlayer : MonoBehaviour
             if (clip != null)
             {
                 float pitch = Random.Range(pitchRange.x, pitchRange.y);
-                Play(clip, position, follow, volume, pitch, false, spatialBlend, dopplerLevel, group);
+                Play(clip, position, follow, pitch, false, settings);
             }
 
             if (i < burstCount - 1) yield return wait;
@@ -235,6 +279,7 @@ public class AudioPlayer : MonoBehaviour
         else
         {
             v.FadePerSecond = v.Source.volume / fadeSeconds;
+            if (v.FadePerSecond <= 0f) Release(h.Index);
         }
     }
 
@@ -245,6 +290,7 @@ public class AudioPlayer : MonoBehaviour
     private void Release(int index)
     {
         var v = voices[index];
+        LogVoice($"voice {index} v{v.Version} released ('{(v.Source.clip ? v.Source.clip.name : "null")}', free {free.Count + 1}/{voices.Count})");
         v.Source.Stop();
         v.Source.clip = null;
         v.Follow = null;
@@ -287,10 +333,13 @@ public class AudioPlayer : MonoBehaviour
             }
 
             // One-shots reclaim themselves when its over
-            if (!v.Source.isPlaying && !AudioListener.pause)
+            if (!v.Looping && !v.Source.isPlaying && !AudioListener.pause)
             {
                 Release(i);
             }
         }
     }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => Instance = null;      // had a case where I had domain reload off and it broke since its a singleton.
 }

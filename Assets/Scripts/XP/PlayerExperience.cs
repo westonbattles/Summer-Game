@@ -27,7 +27,6 @@ public class PlayerExperience : MonoBehaviour
     [Header("SFX")]
     [SerializeField] SoundEvent sound;
     SoundHandle soundHandle;
-    [SerializeField] float soundDelay = 0.05f;
 
     public int Level { get; private set; } = 1;
     public float CurrentXP { get; private set; }
@@ -83,38 +82,12 @@ public class PlayerExperience : MonoBehaviour
     // adds the sound if its an orb.
     public void CollectOrb(float amount, int soundCount = 1)
     {
-        if (soundCount > 1)
+        if (sound != null)
         {
-            StartCoroutine(PlayStaggeredSounds(soundCount));
-        }
-        else
-        {
-            PlayCollectSoundSingle();
+            sound.Play(transform.position, soundCount);
         }
 
         AddXP(amount);
-    }
-
-    private void PlayCollectSoundSingle()
-    {
-        if (sound != null)
-        {
-            soundHandle = sound.Play(transform.position);
-        }
-    }
-
-    private IEnumerator PlayStaggeredSounds(int count)
-    {
-        if (sound == null) yield break;
-
-        // Small delay between plays to make individual hits audible
-        WaitForSeconds delay = new WaitForSeconds(soundDelay);
-
-        for (int i = 0; i < count; i++)
-        {
-            soundHandle = sound.Play(transform.position);
-            yield return delay;
-        }
     }
 
     private float RequirementForLevel(int level) => baseRequirement * Mathf.Pow(growthFactor, level - 1);
