@@ -144,7 +144,7 @@ public class ThirdEyeBeam : AbilityBehaviour
 
     void FireTick(ThirdEyeBeamState beam, float deltaTime)
     {
-        Debug.Log(beam.Player.transform.position);
+        //Debug.Log(beam.Player.transform.position);
         Vector3 origin = beam.Player.transform.position + castPositionOffset;
         Vector3 targetPoint = beam.PlayerAim.GetTargetPoint(beamRange, HitLayers);
         Vector3 direction = beam.PlayerAim.GetShotDirection(origin, targetPoint);

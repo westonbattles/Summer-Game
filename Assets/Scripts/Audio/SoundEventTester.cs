@@ -5,6 +5,7 @@ public class SoundEventTester : MonoBehaviour
 {
     [SerializeField] SoundEvent sound;
     SoundHandle handle;
+    [SerializeField] Transform cam;
 
     private void Update()
     {
@@ -13,5 +14,8 @@ public class SoundEventTester : MonoBehaviour
 
         if (Keyboard.current.yKey.wasPressedThisFrame)
             handle.Stop(0.25f);   // for testing loops + fade
+
+        if (Keyboard.current.fKey.wasPressedThisFrame)
+            handle = sound.PlayAttached(cam);
     }
 }

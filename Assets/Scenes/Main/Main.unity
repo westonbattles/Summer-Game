@@ -1692,6 +1692,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundEventTester
   sound: {fileID: 11400000, guid: e2244ce676d51464ebbc384ad767c53e, type: 2}
+  cam: {fileID: 1855519041}
 --- !u!4 &759916461
 Transform:
   m_ObjectHideFlags: 0
@@ -3685,6 +3686,11 @@ Transform:
   - {fileID: 1724447106}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1855519041 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 153811360960836323, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+  m_PrefabInstance: {fileID: 6804361139888241997}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1869633433
 Mesh:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections.Generic;
+using System.Collections;
 
 /// <summary>
 /// Handle to a playing sound. Version-stamped so a stale handle (whose voice was
@@ -103,7 +104,7 @@ public class AudioPlayer : MonoBehaviour
     /// <returns></returns>
     internal SoundHandle Play(AudioClip clip, Vector3 position, Transform follow,
                               float volume, float pitch, bool loop,
-                              float spatialBlend, AudioMixerGroup group)
+                              float spatialBlend, float dopplerLevel, AudioMixerGroup group)
     {
         int index;
         if (free.Count > 0)
@@ -133,10 +134,71 @@ public class AudioPlayer : MonoBehaviour
         src.pitch = pitch;
         src.loop = loop;
         src.spatialBlend = spatialBlend;
+        src.dopplerLevel = dopplerLevel;
         src.outputAudioMixerGroup = group;
         src.Play();
 
         return new SoundHandle(index, v.Version);
+    }
+
+    //internal SoundHandle PlayBurst(AudioClip[] clips, Vector3 position, Transform follow,
+    //                               float volume, Vector2 pitchRange, int burstCount,
+    //                               float staggerDelay, float spatialBlend, float dopplerLevel,
+    //                               AudioMixerGroup group)
+    //{
+    //    if (burstCount <= 1 || staggerDelay <= 0f)
+    //    {
+    //        var clip = clips[Random.Range(0, clips.Length)];
+    //        float pitch = Random.Range(pitchRange.x, pitchRange.y);
+    //        return Play(clip, position, follow, volume, pitch, false, spatialBlend, dopplerLevel, group);
+    //    }
+
+    //    StartCoroutine(PlayBurstRoutine(clips, position, follow, volume, pitchRange,
+    //                                    burstCount, staggerDelay, spatialBlend, dopplerLevel, group));
+    //    return SoundHandle.Invalid;
+    //}
+    internal SoundHandle PlayBurst(SoundEvent evt, Vector3 position, Transform follow,
+                               float volume, Vector2 pitchRange, int burstCount,
+                               float staggerDelay, float spatialBlend, float dopplerLevel,
+                               AudioMixerGroup group)
+    {
+        if (burstCount <= 1 || staggerDelay <= 0f)
+        {
+            var clip = evt.GetRandomClip();
+            float pitch = Random.Range(pitchRange.x, pitchRange.y);
+            return Play(clip, position, follow, volume, pitch, false, spatialBlend, dopplerLevel, group);
+        }
+
+        StartCoroutine(PlayBurstRoutine(evt, position, follow, volume, pitchRange,
+                                        burstCount, staggerDelay, spatialBlend, dopplerLevel, group));
+        return SoundHandle.Invalid;
+    }
+    private IEnumerator PlayBurstRoutine(SoundEvent evt, Vector3 position, Transform follow,
+                                     float volume, Vector2 pitchRange, int burstCount,
+                                     float staggerDelay, float spatialBlend, float dopplerLevel,
+                                     AudioMixerGroup group)
+    {
+        var wait = new WaitForSeconds(staggerDelay);
+        for (int i = 0; i < burstCount; i++)
+        {
+            if (follow != null)
+            {
+                position = follow.position;
+            }
+            else if (follow is not null)
+            {
+                follow = null;      // target is destroyed
+            }
+
+            var clip = evt.GetRandomClip();
+            if (clip != null)
+            {
+                float pitch = Random.Range(pitchRange.x, pitchRange.y);
+                Play(clip, position, follow, volume, pitch, false, spatialBlend, dopplerLevel, group);
+            }
+
+            if (i < burstCount - 1) yield return wait;
+        }
     }
 
     /// <summary>
@@ -225,7 +287,7 @@ public class AudioPlayer : MonoBehaviour
             }
 
             // One-shots reclaim themselves when its over
-            if (!v.Looping && !v.Source.isPlaying)
+            if (!v.Source.isPlaying && !AudioListener.pause)
             {
                 Release(i);
             }
