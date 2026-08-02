@@ -8,7 +8,9 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private Transform player;      // injected target for attacks, pew pew
     [SerializeField] private int defaultPoolSize = 32;  // needs to be larger for enemies. Change if needed, but keep base 2 for caching.
     [SerializeField] private float navMeshSpawnSampleRadius = 2f;
-
+    [SerializeField] private int maxCap = 32;
+    public int MaxCap => maxCap;
+    private int currentEnemies = 0; // that tracks the amount of active enemies that should count towards the entity cap
     private ObjectPool<Enemy> pool;
 
     private void Awake()
