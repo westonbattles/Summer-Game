@@ -5,8 +5,9 @@ using UnityEngine;
 public class EnemySpawnCard : ScriptableObject
 {
         [SerializeField] Enemy prefab;
+        [SerializeField] int creditCost = 1;    
         
-        // todo: orion use if you wanna steal the ror2 method (director uses creditcost to determine if it can spawn this enemy)
-        // int creditCost = 1;
+        // todo: enemy type enum
+        
         public Enemy Prefab => prefab;
 }

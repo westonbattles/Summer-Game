@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+// entries for the grouping
 [Serializable]
 public class EnemySpawnEntry
 {
     [SerializeField] EnemySpawnCard card;
     [SerializeField, Min(0f)] float weight = 1f;
+    // use these?
+    //[SerializeField, Min(0f)] float minSpawnDistance = 1f;
+    //[SerializeField, Min(0f)] float maxSpawnDistance = 1f;
 
     public EnemySpawnCard Card => card;
     public float Weight => weight;
