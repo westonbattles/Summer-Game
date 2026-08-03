@@ -24,6 +24,8 @@ public class Enemy : MonoBehaviour
     public PsychicPulseHighlighter Highlighter { get; private set; }
     private Collider[] cachedHitboxColliders;
 
+    public bool CountsTowardSpawnCap { get; set; }
+
     /// <summary>Raised after death logic runs. Spawner listens and releases to pool.</summary>
     public event Action<Enemy> OnDied;
 

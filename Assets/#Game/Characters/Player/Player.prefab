@@ -526,14 +526,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   autoBhop: 0
+  handMovementSettings:
+    groundAccel: 140
+    maxSpeed: 6
+    airAccel: 30
+    airSpeed: 1
+    jumpHeight: 8.5
+  eyeMovementSettings:
+    groundAccel: 140
+    maxSpeed: 8
+    airAccel: 50
+    airSpeed: 1
+    jumpHeight: 10
   gravity: 31
   gravityMultiplier: 1
-  groundAccel: 140
-  maxSpeed: 8
-  airAccel: 50
-  airSpeed: 1
   baseFriction: 12
-  jumpHeight: 10
   jumpBufferTime: 0.05
   eyeLoadout: {fileID: 11400000, guid: 33c053e3f5b55455d8cfe4c609fb7768, type: 2}
   handLoadout: {fileID: 11400000, guid: a4915b5678ee542d995b24e9087c2968, type: 2}
@@ -634,6 +641,7 @@ MonoBehaviour:
   baseRequirement: 100
   growthFactor: 1.5
   collectPoint: {fileID: 6979452157414585628}
+  sound: {fileID: 11400000, guid: 93ceb3df5fcce934cbe7c1deda5d5507, type: 2}
 --- !u!208 &163600867418449274
 NavMeshObstacle:
   m_ObjectHideFlags: 0

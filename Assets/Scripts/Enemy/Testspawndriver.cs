@@ -3,21 +3,22 @@ using UnityEngine.InputSystem;
 
 /// <summary>
 /// THROWAWAY test driver for the enemy spawn system. Drives the REAL EnemySpawner,
-/// so it exercises pooling, reset, and target injection — not just raw Instantiate.
+/// so it exercises pooling, reset, and target injection - not just raw Instantiate.
 ///
 /// Setup:
 ///   1. Put this on an empty GameObject in the scene.
 ///   2. Assign the EnemySpawner reference.
-///   3. Drop a few empty GameObjects in the scene as spawn points, assign them.
-///   4. Press Play.
+///   3. Assign the EnemySpawnCard to test.
+///   4. Drop a few empty GameObjects in the scene as spawn points, assign them.
+///   5. Press Play.
 ///
-/// Controls (legacy Input — works on Unity's default/Both input setup):
+/// Controls (legacy Input - works on Unity's default/Both input setup):
 ///   [Space] spawn one at a random spawn point
 ///   [B]     spawn a burst (burstCount at once)
 ///   auto    if autoSpawn is on, also spawns every 'interval' seconds
 ///
 /// Uses the new Input System (UnityEngine.InputSystem). Reads Keyboard.current
-/// directly — no Input Actions asset needed for a throwaway tester.
+/// directly - no Input Actions asset needed for a throwaway tester.
 ///
 /// Delete this once the spawn loop is proven.
 /// </summary>
@@ -25,6 +26,7 @@ public class TestSpawnDriver : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private EnemySpawner spawner;
+    [SerializeField] private EnemySpawnCard spawnCard;
     [SerializeField] private Transform[] spawnPoints;
 
     [Header("Auto spawn")]
@@ -72,6 +74,11 @@ public class TestSpawnDriver : MonoBehaviour
             Debug.LogWarning("[TestSpawnDriver] No EnemySpawner assigned.", this);
             return;
         }
+        if (spawnCard == null)
+        {
+            Debug.LogWarning("[TestSpawnDriver] No EnemySpawnCard assigned.", this);
+            return;
+        }
         if (spawnPoints == null || spawnPoints.Length == 0)
         {
             Debug.LogWarning("[TestSpawnDriver] No spawn points assigned.", this);
@@ -84,7 +91,7 @@ public class TestSpawnDriver : MonoBehaviour
         Vector2 jitter = Random.insideUnitCircle * scatterRadius;
         Vector3 pos = point.position + new Vector3(jitter.x, 0f, jitter.y);
 
-        spawner.Spawn(pos);
+        spawner.Spawn(spawnCard, pos);
     }
 
     // Visualize spawn points + scatter radius in the Scene view.
