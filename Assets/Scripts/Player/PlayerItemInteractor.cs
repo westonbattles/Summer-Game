@@ -56,11 +56,11 @@ public class PlayerItemInteractor : MonoBehaviour
         if (focusedItem != null)
         {
             focusedItem.SetFocused(true);
-            // todo: ui show
+            InteractionPromptHUD.Instance.Show("Press E to pick up");
         }
         else
         {
-            // todo: ui hide
+            InteractionPromptHUD.Instance.Hide();
         }
     }
 }
