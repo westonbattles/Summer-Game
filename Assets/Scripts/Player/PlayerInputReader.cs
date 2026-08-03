@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 
 [DefaultExecutionOrder(-100)]
 public class PlayerInputReader : MonoBehaviour
@@ -26,6 +27,16 @@ public class PlayerInputReader : MonoBehaviour
     InputAction _movementAbilityAction;
     InputAction _specialAbilityAction;
     InputAction _interactAction;
+    
+    public InputAction MoveAction => _moveAction;
+    public InputAction JumpAction => _lookAction;
+    public InputAction SwapAction => _jumpAction;
+    public InputAction LookAction => _swapAction;
+    public InputAction PrimaryAbilityAction => _primaryAbilityAction;
+    public InputAction SecondaryAbilityAction => _secondaryAbilityAction;
+    public InputAction MovementAbilityAction => _movementAbilityAction;
+    public InputAction SpecialAbilityAction => _specialAbilityAction;
+    public InputAction InteractAction => _interactAction;
 
     void Awake()
     {
@@ -73,5 +84,11 @@ public class PlayerInputReader : MonoBehaviour
     {
         Cursor.visible = !locked;
         Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
+    }
+
+    public string GetDisplayName(InputAction action)
+    {
+        ReadOnlyArray<InputControl> interactionControls = action.controls;
+        return interactionControls[0].displayName; // only works when keymap has one key bound to it, more robust measures in place eventually to use the last used keymap instead. (so keyboard controls show, or controllers if it was last used, etc). 
     }
 }

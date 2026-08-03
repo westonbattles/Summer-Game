@@ -56,7 +56,9 @@ public class PlayerItemInteractor : MonoBehaviour
         if (focusedItem != null)
         {
             focusedItem.SetFocused(true);
-            InteractionPromptHUD.Instance.Show("Press E to pick up");
+
+            string displayName = playerInput.GetDisplayName(playerInput.InteractAction);
+            InteractionPromptHUD.Instance.Show($"Press [{displayName}] to pick up");
         }
         else
         {
