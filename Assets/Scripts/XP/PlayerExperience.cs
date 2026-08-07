@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using NaughtyAttributes;
 
 /// <summary>
 /// The XP sink. Lives on the player, owns current XP / level / the requirement curve,
@@ -91,4 +92,25 @@ public class PlayerExperience : MonoBehaviour
     }
 
     private float RequirementForLevel(int level) => baseRequirement * Mathf.Pow(growthFactor, level - 1);
+
+
+#if UNITY_EDITOR
+    #region DEBUGGING
+    [Header("Debug Settings")]
+#pragma warning disable CS0414
+    [SerializeField] private bool showDebugButtons = false;
+#pragma warning restore CS0414
+
+    [ShowNativeProperty] private int DebugLevel => Level;
+    [ShowNativeProperty] private float DebugCurrentXP => CurrentXP;
+    [ShowNativeProperty] private float DebugRequiredXP => RequiredXP;
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Add XP", EButtonEnableMode.Playmode)]
+    private void TestAddXP()
+    {
+        AddXP(50f);
+    }
+    #endregion
+#endif
 }

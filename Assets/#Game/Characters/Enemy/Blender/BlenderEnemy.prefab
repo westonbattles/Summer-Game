@@ -107,6 +107,10 @@ PrefabInstance:
       propertyPath: baseMaxHP
       value: 25
       objectReference: {fileID: 0}
+    - target: {fileID: 8813151732905033648, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+      propertyPath: showDebugButtons
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       propertyPath: m_Name
       value: BlenderEnemy

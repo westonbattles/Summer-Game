@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections.Generic;
 using System.Collections;
+using NaughtyAttributes;
 
 /// <summary>
 /// Handle to a playing sound. Version-stamped so a stale handle (whose voice was
@@ -342,4 +343,78 @@ public class AudioPlayer : MonoBehaviour
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics() => Instance = null;      // had a case where I had domain reload off and it broke since its a singleton.
+
+#if UNITY_EDITOR
+    #region DEBUGGING
+    [Header("Debug Settings")]
+#pragma warning disable CS0414
+    [SerializeField] private bool showDebugButtons = false;
+#pragma warning restore CS0414
+
+    [ShowNativeProperty] private int DebugTotalVoices => voices.Count;
+    [ShowNativeProperty] private int DebugActiveVoices => voices.Count - free.Count;
+    [ShowNativeProperty]
+    private int DebugLoopingVoices
+    {
+        get
+        {
+            int n = 0;
+            for (int i = 0; i < voices.Count; i++)
+            {
+                if (voices[i].InUse && voices[i].Looping)
+                {
+                    n++;
+                }
+            }
+            return n;
+        }
+    }
+
+    [ShowIf(nameof(showDebugButtons))]
+    [SerializeField] private SoundEvent debugSoundEvent;
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Play Debug Sound", EButtonEnableMode.Playmode)]
+    private void TestPlay()
+    {
+        if (debugSoundEvent == null)
+        {
+            Debug.LogWarning("[AudioPlayer - Debug]: Assign a debug sound event first.", this);
+            return;
+        }
+        debugSoundEvent.Play(transform.position);
+    }
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Flood Voices To Max (RIP ears)", EButtonEnableMode.Playmode)]
+    private void TestFloodVoices()
+    {
+        if (debugSoundEvent == null) return;
+
+        var settings = new VoiceSettings(0.05f, 0f, 0f, null, 1f, 50f,
+                                         AudioRolloffMode.Logarithmic, null);
+
+        int toPlay = maxVoices - (voices.Count - free.Count) + 5;
+        for (int i = 0; i < toPlay; i++)
+        {
+            var clip = debugSoundEvent.GetRandomClip();
+            if (clip != null)
+                Play(clip, transform.position, null, 1f, false, settings);
+        }
+    }
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Stop All Voices", EButtonEnableMode.Playmode)]
+    private void TestStopAll()
+    {
+        for (int i = 0; i < voices.Count; i++)
+        {
+            if (voices[i].InUse)
+            {
+                Release(i);
+            }
+        }
+    }
+    #endregion
+#endif
 }

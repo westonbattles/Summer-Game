@@ -93,4 +93,28 @@ public class PooledVfx : MonoBehaviour
         _isRented = false;
         gameObject.SetActive(false);
     }
+
+#if UNITY_EDITOR
+    private void Reset()
+    {
+        var ps = GetComponent<ParticleSystem>();
+        if (ps == null)
+        {
+            ps = gameObject.AddComponent<ParticleSystem>();
+        }
+
+        var main = ps.main;
+        main.playOnAwake = false;
+        main.loop = false;
+
+        var emission = ps.emission;
+        emission.enabled = false;
+
+        var shape = ps.shape;
+        shape.enabled = false;
+
+        if (TryGetComponent<ParticleSystemRenderer>(out var r))
+            r.enabled = false;
+    }
+#endif
 }

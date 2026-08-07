@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using NaughtyAttributes;
 
 public class ItemSpawner : MonoBehaviour
 {
@@ -37,5 +38,36 @@ public class ItemSpawner : MonoBehaviour
         item.Initialize(definition, initialVelocity);
         return item;
     }
-    
+
+#if UNITY_EDITOR
+    #region DEBUGGING
+    [Header("Debug Settings")]
+#pragma warning disable CS0414
+    [SerializeField] private bool showDebugButtons = false;
+#pragma warning restore CS0414
+
+    [ShowIf(nameof(showDebugButtons))]
+    [SerializeField] private ItemDefinition debugItemDefinition;
+
+    [ShowIf(nameof(showDebugButtons))]
+    [SerializeField] private float debugSpawnDistance = 5f;
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Spawn Debug Item", EButtonEnableMode.Playmode)]
+    private void TestSpawn()
+    {
+        if (debugItemDefinition == null)
+        {
+            Debug.LogWarning("[ItemSpawner - Debug]: Assign a debug item definition first.", this);
+            return;
+        }
+
+        Vector3 pos = Player.Instance != null
+            ? Player.Instance.transform.position + Player.Instance.transform.forward * debugSpawnDistance
+            : transform.position;
+
+        Spawn(debugItemDefinition, pos, Vector3.zero);
+    }
+    #endregion
+#endif
 }

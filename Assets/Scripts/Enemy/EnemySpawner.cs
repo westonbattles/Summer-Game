@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -98,7 +99,7 @@ public class EnemySpawner : MonoBehaviour
         enemy.CountsTowardSpawnCap = countTowardSpawnCap;
 
         if (enemy.CountsTowardSpawnCap) currentEnemies += 1;
-        
+
         Vector3 spawnPosition = GetNavMeshSpawnPosition(position);
         PlaceEnemy(enemy, spawnPosition);
 
@@ -163,7 +164,7 @@ public class EnemySpawner : MonoBehaviour
             currentEnemies = Mathf.Max(0, currentEnemies - 1);
             enemy.CountsTowardSpawnCap = false; // reset state just in case
         }
-        
+
         foreach (var poolable in enemy.GetComponentsInChildren<IPoolable>())
             poolable.OnDespawn();
 
@@ -180,4 +181,68 @@ public class EnemySpawner : MonoBehaviour
 
         owningPool.Release(enemy);
     }
+
+#if UNITY_EDITOR
+    #region DEBUGGING
+    [Header("Debug Settings")]
+#pragma warning disable CS0414
+    [SerializeField] private bool showDebugButtons = false;
+#pragma warning restore CS0414
+
+    [ShowIf(nameof(showDebugButtons))]
+    [SerializeField] private Enemy debugEnemyPrefab;
+
+    [ShowIf(nameof(showDebugButtons))]
+    [SerializeField] private float debugSpawnDistance = 5f;
+
+    [ShowNativeProperty] private int DebugActiveEnemyCount => currentEnemies;
+    [ShowNativeProperty] private int DebugPoolCount => poolsByPrefab.Count;
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Spawn Debug Enemy", EButtonEnableMode.Playmode)]
+    private void TestSpawn()
+    {
+        if (debugEnemyPrefab == null)
+        {
+            Debug.LogWarning("[EnemySpawner - Debug]: Assign a debug enemy prefab first.", this);
+            return;
+        }
+
+        Vector3 pos = Player.Instance != null
+            ? Player.Instance.transform.position + Player.Instance.transform.forward * debugSpawnDistance
+            : transform.position;
+
+        Spawn(debugEnemyPrefab, pos);
+    }
+
+    [ShowIf(nameof(debugEnemyPrefab))]
+    [Button("Spawn Debug Enemy (Ignore Cap)", EButtonEnableMode.Playmode)]
+    private void TestSpawnIgnoreCap()
+    {
+        if (debugEnemyPrefab == null) return;
+        Vector3 pos = Player.Instance != null
+            ? Player.Instance.transform.position + Player.Instance.transform.forward * debugSpawnDistance
+            : transform.position;
+        Spawn(debugEnemyPrefab, pos, countTowardSpawnCap: false);
+    }
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Fill to Spawn Cap", EButtonEnableMode.Playmode)]
+    private void TestFillToCap()
+    {
+        if (debugEnemyPrefab == null) return;
+        while (currentEnemies < maxEntitySpawnCap)
+        {
+            Vector3 offset = UnityEngine.Random.insideUnitSphere * debugSpawnDistance;
+            offset.y = 0f;
+            Vector3 pos = (Player.Instance != null ? Player.Instance.transform.position : transform.position) + offset;
+            if (Spawn(debugEnemyPrefab, pos) == null)
+            {
+                Debug.LogWarning("[EnemySpawner - Debug]: Could not spawn more enemies. Possibly hit the spawn cap or no valid NavMesh position.", this);
+                break;
+            }
+        }
+    }
+    #endregion
+#endif
 }

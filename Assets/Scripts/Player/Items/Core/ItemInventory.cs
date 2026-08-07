@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -100,4 +101,32 @@ public class ItemInventory : MonoBehaviour
             DifficultyPoints += definition.DifficultyCost * runtime.Count;
         }
     }
+
+
+#if UNITY_EDITOR
+    #region DEBUGGING
+    [Header("Debug Settings")]
+#pragma warning disable CS0414
+    [SerializeField] private bool showDebugButtons = false;
+#pragma warning restore CS0414
+
+    [ShowNativeProperty] private int DebugItemCount => items.Count;
+    [ShowNativeProperty] private float DebugDifficultyPoints => DifficultyPoints;
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Add Item", EButtonEnableMode.Playmode)]
+    private void TestAddItem()
+    {
+        if (startingItems.Count > 0)
+        {
+            AddItem(startingItems[UnityEngine.Random.Range(0, startingItems.Count)]);
+        }
+        else
+        {
+            Debug.LogWarning("[ItemInventory - Debug]: No starting items assigned to test adding.", this);
+        }
+    }
+
+    #endregion
+#endif
 }

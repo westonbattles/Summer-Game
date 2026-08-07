@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using NaughtyAttributes;
 
 public enum PlayerCharacter
 {
@@ -53,5 +54,23 @@ public class PlayerCharacterSwitcher : MonoBehaviour
         PlayerCharacter next = CurrentCharacter == PlayerCharacter.Eye ? PlayerCharacter.Hand : PlayerCharacter.Eye;
         SetCharacter(next);
     }
-    
+
+
+#if UNITY_EDITOR
+    #region DEBUGGING
+    [Header("Debug Settings")]
+#pragma warning disable CS0414
+    [SerializeField] private bool showDebugButtons = false;
+#pragma warning restore CS0414
+
+    [ShowNativeProperty] private PlayerCharacter DebugCurrentCharacter => CurrentCharacter;
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Force Swap Character", EButtonEnableMode.Playmode)]
+    private void TestSwap()
+    {
+        Swap();
+    }
+    #endregion
+#endif
 }

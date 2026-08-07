@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -168,4 +169,61 @@ public class VFXPoolManager : MonoBehaviour
     {
         if (Instance == this) Instance = null;
     }
+#if UNITY_EDITOR
+    #region DEBUGGING
+    [Header("Debug Settings")]
+#pragma warning disable CS0414
+    [SerializeField] private bool showDebugButtons = false;
+#pragma warning restore CS0414
+
+    [ShowIf(nameof(showDebugButtons))]
+    [SerializeField] private PooledVfx debugVfxPrefab;
+
+    [ShowNativeProperty] private int DebugActiveCount => _active.Count;
+    [ShowNativeProperty] private int DebugPoolCount => _pools.Count;
+    [ShowNativeProperty] private int DebugDroppedEffects => DroppedEffects;
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Play Debug VFX", EButtonEnableMode.Playmode)]
+    private void TestPlay()
+    {
+        if (debugVfxPrefab == null)
+        {
+            Debug.LogWarning("[VFXPoolManager - Debug]: Assign a debug vfx prefab first.", this);
+            return;
+        }
+        Vector3 pos = transform.position + UnityEngine.Random.insideUnitSphere * 3f;
+        Play(debugVfxPrefab, pos, Quaternion.identity);
+    }
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Flood to Global Max", EButtonEnableMode.Playmode)]
+    private void TestFlood()
+    {
+        if (debugVfxPrefab == null) return;
+        int before = DroppedEffects;
+        for (int i = 0; i < globalMaxActive + 5; i++)
+        {
+            Vector3 pos = transform.position + UnityEngine.Random.insideUnitSphere * 5f;
+            Play(debugVfxPrefab, pos, Quaternion.identity);
+        }
+        Debug.Log($"[VFXPoolManager - Debug]: Flood done. Active: {_active.Count}, dropped this flood: {DroppedEffects - before}", this);
+    }
+
+    [Button("Release All", EButtonEnableMode.Playmode)]
+    private void ReleaseAll()
+    {
+        for (int i = _active.Count - 1; i >= 0; i--)
+        {
+            if (_active[i] == null)
+            {
+                SwapToBackAndRemove(i);
+                continue;
+            }
+            ReleaseAt(i);
+        }
+    }
+    #endregion
+#endif
+
 }
