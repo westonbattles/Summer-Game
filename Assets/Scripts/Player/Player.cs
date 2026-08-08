@@ -28,7 +28,7 @@ class MovementSettings
 [RequireComponent(typeof(PlayerCharacterSwitcher))]
 [RequireComponent(typeof(PlayerAim))]
 [RequireComponent(typeof(PlayerLook))]
-[RequireComponent(typeof(ItemInventory),typeof(PlayerItemInteractor))]
+[RequireComponent(typeof(ItemInventory),typeof(PlayerInteractor))]
 [RequireComponent(typeof(Combat))]
 public class Player : MonoBehaviour, ICharacterController
 {

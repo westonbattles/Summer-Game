@@ -291,6 +291,7 @@ MonoBehaviour:
   spinDegreesPerSecond: 75
   outlineMaterial: {fileID: 2100000, guid: b33ef5eb1f5f46f2884f612839ed412c, type: 2}
   rarityPalette: {fileID: 11400000, guid: 65b96ce2ecb79432694165ffa3ed68f7, type: 2}
+  showDebugButtons: 0
 --- !u!54 &4479371348341567085
 Rigidbody:
   m_ObjectHideFlags: 0
