@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using System;
 using UnityEngine;
 
@@ -8,9 +9,8 @@ public enum WorldItemState
     Collected
 }
 
-public class WorldItem : MonoBehaviour
+public class WorldItem : MonoBehaviour, IInteractable
 {
-    
     [Header("Flight")]
     [SerializeField] Rigidbody rb;
     [SerializeField] Collider flightCollider;
@@ -34,6 +34,29 @@ public class WorldItem : MonoBehaviour
     Vector3 modelRestPosition;
     Quaternion modelRestRotation;
     bool isFocused;
+
+    public string InteractionPrompt => "pick up";
+
+    public bool CanInteract(GameObject interactor)
+    {
+        if (State != WorldItemState.Available) return false;
+
+        // if its a full stack, it won't show the prompt.
+        ItemInventory inventory = interactor.GetComponent<Player>().Inventory;
+        return inventory.GetCurrentCount(Definition) < ItemInventory.MaxStackSize;
+    }
+
+    public bool TryInteract(GameObject interactor)
+    {
+        if (!CanInteract(interactor)) return false;
+
+        State = WorldItemState.Collected;
+
+        ItemInventory inventory = interactor.GetComponent<Player>().Inventory;
+        inventory.AddItem(Definition);
+        Destroy(gameObject);
+        return true;
+    }
 
     public void Initialize(ItemDefinition definition, Vector3 velocity)
     {
@@ -64,23 +87,6 @@ public class WorldItem : MonoBehaviour
         if (isFocused == focused) return;
 
         isFocused = focused;
-    }
-
-    public bool TryCollect(ItemInventory inventory)
-    {
-        if (State != WorldItemState.Available) return false;
-        if (inventory.GetCurrentCount(Definition) >= ItemInventory.MaxStackSize) return false;
-
-        State = WorldItemState.Collected;
-        
-        flightDot.SetActive(false);
-        flightCollider.enabled = false;
-        worldModel.SetActive(false);
-        interactionCollider.enabled = false;
-
-        inventory.AddItem(Definition);
-        Destroy(gameObject);
-        return true;
     }
     
     void CreateWorldModel()
@@ -172,4 +178,27 @@ public class WorldItem : MonoBehaviour
     {
         rb.AddForce(Physics.gravity * 3f, ForceMode.Acceleration); // triple gravity (note it was 3x before since rb.gravity is weird and adds one).
     }
+
+
+#if UNITY_EDITOR
+    #region DEBUGGING
+    [Header("Debug Settings")]
+#pragma warning disable CS0414
+    [SerializeField] private bool showDebugButtons = false;
+#pragma warning restore CS0414
+
+    [ShowNativeProperty] WorldItemState CurrentState => State;
+    [ShowNativeProperty] string ItemName => Definition != null ? Definition.DisplayName : "(uninitialized)";
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Force Land")]
+    void TestForceLand()
+    {
+        if (State == WorldItemState.Airborne)
+        {
+            Land();
+        }
+    }
+    #endregion
+#endif
 }

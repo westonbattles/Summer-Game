@@ -421,7 +421,7 @@ GameObject:
   - component: {fileID: 163600867418449274}
   - component: {fileID: 4424898846295508060}
   - component: {fileID: 8473695232717567619}
-  - component: {fileID: 7070049473674813234}
+  - component: {fileID: 3743264238371457764}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -613,6 +613,7 @@ MonoBehaviour:
   eyeModel: {fileID: 7036096850195796178}
   handAnimator: {fileID: 495669280607004535}
   eyeAnimator: {fileID: 7728646305316583233}
+  showDebugButtons: 0
 --- !u!114 &3362251599199739867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -626,6 +627,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   baseMaxHP: 100
+  <CurrentHP>k__BackingField: 0
+  showDebugButtons: 0
 --- !u!114 &4724841177392358001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -642,6 +645,7 @@ MonoBehaviour:
   growthFactor: 1.5
   collectPoint: {fileID: 6979452157414585628}
   sound: {fileID: 11400000, guid: 93ceb3df5fcce934cbe7c1deda5d5507, type: 2}
+  showDebugButtons: 0
 --- !u!208 &163600867418449274
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -683,7 +687,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemInventory
   startingItems: []
---- !u!114 &7070049473674813234
+  showDebugButtons: 0
+--- !u!114 &3743264238371457764
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -692,9 +697,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6463087256270042916}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72985764a78f4b87bd59843ae39880e5, type: 3}
+  m_Script: {fileID: 11500000, guid: 88c042cd7863b2046806f2f98781ad38, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerItemInteractor
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
   interactionDistanceToPlayer: 4
   interactionRaycastDistance: 30
   sightLayerMask:
