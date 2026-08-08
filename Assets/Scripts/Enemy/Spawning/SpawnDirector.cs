@@ -217,15 +217,8 @@ public class SpawnDirector : MonoBehaviour
     {
         spawnPosition = default;
 
-        if (Player.Instance == null || spawnCard == null || spawnCard.Prefab == null)
-        {
-            return false;
-        }
-
-        if (!spawnCard.Prefab.TryGetComponent(out NavMeshAgent agent))
-        {
-            return false;
-        }
+        if (Player.Instance == null || spawnCard == null || spawnCard.Prefab == null) return false;
+        if (!spawnCard.Prefab.TryGetComponent(out NavMeshAgent agent)) return false;
 
         NavMeshQueryFilter filter = new NavMeshQueryFilter
         {
@@ -250,23 +243,15 @@ public class SpawnDirector : MonoBehaviour
                 0f,
                 Mathf.Sin(angle) * distance);
 
-            if (!NavMesh.SamplePosition(candidate, out NavMeshHit spawnHit, navMeshSampleRadius, filter))
-            {
-                continue;
-            }
+            // only spawn enemy if theres a navmesh position navMeshSampleRadius away from our candidate
+            if (!NavMesh.SamplePosition(candidate, out NavMeshHit spawnHit, navMeshSampleRadius, filter)) continue;
 
             float projectedDistanceSquared = (spawnHit.position - playerPosition).sqrMagnitude;
+            if (projectedDistanceSquared < minDistanceSquared || projectedDistanceSquared > maxDistanceSquared) continue;
 
-            if (projectedDistanceSquared < minDistanceSquared || projectedDistanceSquared > maxDistanceSquared)
-            {
-                continue;
-            }
-
-            if (!HasSpawnRoom(agent, spawnHit.position))
-            {
-                continue;
-            }
-
+            // ensure navmesh enemy actually has room to spawn (so we dont try to spawn it in like a micro gap or something)
+            if (!HasSpawnRoom(agent, spawnHit.position)) continue;
+            
             spawnPosition = spawnHit.position;
             return true;
         }
