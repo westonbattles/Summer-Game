@@ -1308,7 +1308,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4513342026305316520, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 719735182}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
 --- !u!114 &292685799 stripped
@@ -1322,6 +1325,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814ff83ecb425f045919a809ad0e2e19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageKills
+--- !u!4 &292685800 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4513342026305316520, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+  m_PrefabInstance: {fileID: 292685798}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &333069088
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1716,6 +1724,75 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 592758614}
   m_CullTransparentMesh: 1
+--- !u!1 &719735181
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 719735182}
+  - component: {fileID: 719735183}
+  m_Layer: 0
+  m_Name: SpawnDirector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &719735182
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 719735181}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 292685800}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &719735183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 719735181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b00b8e59156c132468dfca271bd9db91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpawnDirector
+  spawnCap: 32
+  slowIncome: 1
+  slowMinPurchase: 100
+  slowFailChance: 0.1
+  fastIncome: 10
+  fastMinPurchase: 10
+  fastFailChance: 0.6
+  spawnGrouping: {fileID: 11400000, guid: 660bde6014d65490c8fa827a3b0ad9d1, type: 2}
+  minSpawnDistance: 12
+  maxSpawnDistance: 30
+  navMeshSampleRadius: 2
+  spawnAttemptInterval: 0.25
+  maxSpawnAttempts: 12
+  spawnCapsuleGroundOffset: 0.05
+  spawnBlockingLayers:
+    serializedVersion: 2
+    m_Bits: 1527
+  slowGrowthType: 0
+  fastGrowthType: 0
+  linearRatePerSecond: 0
+  exponentialGrowthRate: 0
+  logisticMaxIncome: 0
+  logisticSteepness: 0
+  logisticMidpointTime: 0
+  showDebugButtons: 0
 --- !u!1 &729309365
 GameObject:
   m_ObjectHideFlags: 0

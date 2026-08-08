@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.AI;
 using NaughtyAttributes;
 
 public enum GrowthType
@@ -21,6 +22,7 @@ struct Director
     public float credits;
     public float minPurchase;
     public float elapsedTime;
+    public float nextSpawnAttemptTime;
 
     public Director(bool active, float baseIncome, float credits, float minPurchase)
     {
@@ -30,6 +32,7 @@ struct Director
         this.credits = credits;
         this.minPurchase = minPurchase;
         this.elapsedTime = 0f;
+        nextSpawnAttemptTime = 0f;
     }
 }
 
@@ -45,13 +48,22 @@ public class SpawnDirector : MonoBehaviour
     [SerializeField, Range(0f, 1f)] float fastFailChance = .6f;
     [SerializeField] private EnemySpawnGrouping spawnGrouping;
 
+    [Header("Spawn Placement")]
+    [SerializeField, Min(0f)] float minSpawnDistance = 12f;
+    [SerializeField, Min(0f)] float maxSpawnDistance = 30f;
+    [SerializeField, Min(0f)] float navMeshSampleRadius = 2f; // how far a random candidate may be projected onto the navmesh
+    [SerializeField, Min(0f)] float spawnAttemptInterval = .25f;
+    [SerializeField, Min(1)] int maxSpawnAttempts = 12;
+    [SerializeField, Min(0f)] float spawnCapsuleGroundOffset = .05f;
+    [SerializeField] LayerMask spawnBlockingLayers;
+
     [Header("Growth")]
     [SerializeField] private GrowthType slowGrowthType = GrowthType.Linear;
     [SerializeField] private GrowthType fastGrowthType = GrowthType.Logistic;
 
     [Header("Growth Tuning")]
     [ShowIf(nameof(UsesLinear))]
-    [SerializeField] float linearRatePerSecond = 0.1f;
+    [SerializeField] float linearRatePerSecond = 0.1f;  
     [ShowIf(nameof(UsesExponential))]
     [SerializeField] float exponentialGrowthRate = 1.02f;
     [ShowIf(nameof(UsesLogistic))]
@@ -65,7 +77,7 @@ public class SpawnDirector : MonoBehaviour
     bool UsesExponential => slowGrowthType == GrowthType.Exponential || fastGrowthType == GrowthType.Exponential;
     bool UsesLogistic => slowGrowthType == GrowthType.Logistic || fastGrowthType == GrowthType.Logistic;
 
-    public HashSet<IDamageable> spawnedEnemies {  get; private set; }
+    public HashSet<Enemy> spawnedEnemies {  get; private set; }
 
     // created in start
     Director slowDirector;
@@ -77,6 +89,8 @@ public class SpawnDirector : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (spawnBlockingLayers.value == 0) spawnBlockingLayers = ~LayerMask.GetMask("Ground");
+
         slowDirector = new Director(true, slowIncome, 0, slowMinPurchase);
         fastDirector = new Director(true, fastIncome, 0, fastMinPurchase);
 
@@ -131,6 +145,8 @@ public class SpawnDirector : MonoBehaviour
     {
         if (!slowDirector.active) return;
         Grow(ref slowDirector, slowGrowthFn);
+        if (Time.time < slowDirector.nextSpawnAttemptTime) return;
+        slowDirector.nextSpawnAttemptTime = Time.time + spawnAttemptInterval;
 
         if (slowDirector.credits >= slowDirector.minPurchase && UnityEngine.Random.value >= slowFailChance) // enough credits and spawn chance rolls
         {
@@ -144,12 +160,7 @@ public class SpawnDirector : MonoBehaviour
 
                 foreach(var spawn in purchase)
                 {
-                    // find suitable spawn location
-
-                    // perform the spawn
-
-                    // add the enemy instance to spawnedEnemies
-                    // UnityEngine.Debug.Log("Spawning Enemy from Slow Director");
+                    TrySpawn(ref slowDirector, spawn);
                 }
             }
         }
@@ -159,6 +170,8 @@ public class SpawnDirector : MonoBehaviour
     {
         if (!fastDirector.active) return;
         Grow(ref fastDirector, fastGrowthFn);
+        if (Time.time < fastDirector.nextSpawnAttemptTime) return;
+        fastDirector.nextSpawnAttemptTime = Time.time + spawnAttemptInterval;
 
         if (fastDirector.credits >= fastDirector.minPurchase && UnityEngine.Random.value >= fastFailChance) // enough credits and spawn chance rolls
         {
@@ -172,13 +185,127 @@ public class SpawnDirector : MonoBehaviour
 
                 foreach (var spawn in purchase)
                 {
-                    // find suitable spawn location
-
-                    // perform the spawn
-
-                    // add the enemy instance to spawnedEnemies
-                    // UnityEngine.Debug.Log("Spawning Enemy from Fast Director");
+                    TrySpawn(ref fastDirector, spawn);
                 }
+            }
+        }
+    }
+
+    void TrySpawn(ref Director director, EnemySpawnCard spawnCard)
+    {
+        if (!TryGetSpawnPosition(spawnCard, out Vector3 spawnPosition) || EnemySpawner.Instance == null)
+        {
+            director.credits += spawnCard.creditCost;
+            return;
+        }
+
+        Enemy enemy = EnemySpawner.Instance.Spawn(spawnCard, spawnPosition);
+
+        if (enemy == null)
+        {
+            director.credits += spawnCard.creditCost;
+            return;
+        }
+
+        if (spawnedEnemies.Add(enemy))
+        {
+            enemy.OnDied += RemoveSpawnedEnemy;
+        }
+    }
+
+    bool TryGetSpawnPosition(EnemySpawnCard spawnCard, out Vector3 spawnPosition)
+    {
+        spawnPosition = default;
+
+        if (Player.Instance == null || spawnCard == null || spawnCard.Prefab == null)
+        {
+            return false;
+        }
+
+        if (!spawnCard.Prefab.TryGetComponent(out NavMeshAgent agent))
+        {
+            return false;
+        }
+
+        NavMeshQueryFilter filter = new NavMeshQueryFilter
+        {
+            agentTypeID = agent.agentTypeID,
+            areaMask = agent.areaMask
+        };
+
+        Vector3 playerPosition = Player.Instance.transform.position;
+
+        float minDistance = Mathf.Max(0f, minSpawnDistance);
+        float maxDistance = Mathf.Max(minDistance, maxSpawnDistance);
+        float minDistanceSquared = minDistance * minDistance;
+        float maxDistanceSquared = maxDistance * maxDistance;
+
+        for (int attempt = 0; attempt < maxSpawnAttempts; attempt++)
+        {
+            float distance = Mathf.Sqrt(UnityEngine.Random.Range(minDistanceSquared, maxDistanceSquared));
+            float angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
+
+            Vector3 candidate = playerPosition + new Vector3(
+                Mathf.Cos(angle) * distance,
+                0f,
+                Mathf.Sin(angle) * distance);
+
+            if (!NavMesh.SamplePosition(candidate, out NavMeshHit spawnHit, navMeshSampleRadius, filter))
+            {
+                continue;
+            }
+
+            float projectedDistanceSquared = (spawnHit.position - playerPosition).sqrMagnitude;
+
+            if (projectedDistanceSquared < minDistanceSquared || projectedDistanceSquared > maxDistanceSquared)
+            {
+                continue;
+            }
+
+            if (!HasSpawnRoom(agent, spawnHit.position))
+            {
+                continue;
+            }
+
+            spawnPosition = spawnHit.position;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool HasSpawnRoom(NavMeshAgent agent, Vector3 spawnPosition)
+    {
+        float radius = agent.radius;
+        float height = Mathf.Max(agent.height, radius * 2f);
+        float halfLineLength = height * .5f - radius;
+        Vector3 center = spawnPosition + Vector3.up * (agent.baseOffset + spawnCapsuleGroundOffset);
+        Vector3 bottom = center - Vector3.up * halfLineLength;
+        Vector3 top = center + Vector3.up * halfLineLength;
+
+        return !Physics.CheckCapsule(
+            bottom,
+            top,
+            radius,
+            spawnBlockingLayers,
+            QueryTriggerInteraction.Ignore);
+    }
+
+    void RemoveSpawnedEnemy(Enemy enemy)
+    {
+        enemy.OnDied -= RemoveSpawnedEnemy;
+        spawnedEnemies.Remove(enemy);
+    }
+
+    void OnDestroy()
+    {
+        if (spawnedEnemies == null) return;
+
+        foreach (Enemy enemy in spawnedEnemies)
+        {
+            if (enemy != null)
+            {
+                enemy.OnDied -= RemoveSpawnedEnemy;
             }
         }
     }
