@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemySpawnCard : ScriptableObject
 {
         [SerializeField] Enemy prefab;
-        [SerializeField] int creditCost = 1;    
+        [SerializeField] public int creditCost = 1;    
         
         // todo: enemy type enum
         
