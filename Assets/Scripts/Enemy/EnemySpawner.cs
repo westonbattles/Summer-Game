@@ -46,7 +46,7 @@ public class EnemySpawner : MonoBehaviour
 
         ObjectPool<Enemy> newPool = new ObjectPool<Enemy>(
             createFunc: () => CreateEnemy(enemyPrefab),
-            actionOnGet: e => e.gameObject.SetActive(true),
+            actionOnGet: null,
             actionOnRelease: e => e.gameObject.SetActive(false),
             actionOnDestroy: DestroyEnemy,
             collectionCheck: true,
@@ -64,7 +64,8 @@ public class EnemySpawner : MonoBehaviour
     /// <param name="enemyPrefab">The prefab owned by the pool requesting a new instance.</param>
     private Enemy CreateEnemy(Enemy enemyPrefab)
     {
-        Enemy e = Instantiate(enemyPrefab, transform);
+        Enemy e = Instantiate(enemyPrefab, pendingSpawnPosition, enemyPrefab.transform.rotation, transform);
+        e.gameObject.SetActive(false);
         prefabByInstance.Add(e, enemyPrefab);
         e.OnDied += ReleaseEnemy;   // subscribe ONCE at creation, not per-spawn please.
         return e;
@@ -95,13 +96,21 @@ public class EnemySpawner : MonoBehaviour
 
         if (countTowardSpawnCap && currentEnemies >= maxEntitySpawnCap) return null;
 
-        Enemy enemy = GetOrCreatePool(enemyPrefab).Get();
+        if (!TryGetNavMeshSpawnPosition(enemyPrefab, position, out Vector3 spawnPosition)) return null;
+
+        ObjectPool<Enemy> owningPool = GetOrCreatePool(enemyPrefab);
+        pendingSpawnPosition = spawnPosition;
+        Enemy enemy = owningPool.Get();
+
+        if (!PlaceEnemy(enemy, spawnPosition))
+        {
+            owningPool.Release(enemy);
+            return null;
+        }
+
         enemy.CountsTowardSpawnCap = countTowardSpawnCap;
 
         if (enemy.CountsTowardSpawnCap) currentEnemies += 1;
-
-        Vector3 spawnPosition = GetNavMeshSpawnPosition(position);
-        PlaceEnemy(enemy, spawnPosition);
 
         // 1. (future) apply affixes here - they may raise MaxHP, add components.
         // TODO: affixes :)
@@ -131,26 +140,48 @@ public class EnemySpawner : MonoBehaviour
         return Spawn(spawnCard.Prefab, position, countTowardSpawnCap);
     }
 
-    private Vector3 GetNavMeshSpawnPosition(Vector3 requestedPosition)
-    {
-        if (NavMesh.SamplePosition(requestedPosition, out NavMeshHit hit, navMeshSpawnSampleRadius, NavMesh.AllAreas))
-            return hit.position;
+    private Vector3 pendingSpawnPosition;
 
-        Debug.LogWarning($"EnemySpawner could not find a NavMesh position near {requestedPosition}. Spawning at the requested position.", this);
-        return requestedPosition;
+    private bool TryGetNavMeshSpawnPosition(Enemy enemyPrefab, Vector3 requestedPosition, out Vector3 spawnPosition)
+    {
+        spawnPosition = requestedPosition;
+
+        if (!enemyPrefab.TryGetComponent(out NavMeshAgent agent)) return true;
+
+        NavMeshQueryFilter filter = new NavMeshQueryFilter
+        {
+            agentTypeID = agent.agentTypeID,
+            areaMask = agent.areaMask
+        };
+
+        if (NavMesh.SamplePosition(requestedPosition, out NavMeshHit hit, navMeshSpawnSampleRadius, filter))
+        {
+            spawnPosition = hit.position;
+            return true;
+        }
+
+        Debug.LogWarning($"EnemySpawner could not find a NavMesh position near {requestedPosition}. Spawn cancelled.", this);
+        return false;
     }
 
-    private void PlaceEnemy(Enemy enemy, Vector3 position)
+    private bool PlaceEnemy(Enemy enemy, Vector3 position)
     {
-        if (enemy.TryGetComponent(out NavMeshAgent agent) && agent.Warp(position))
+        enemy.transform.position = position;
+        enemy.gameObject.SetActive(true);
+
+        if (!enemy.TryGetComponent(out NavMeshAgent agent)) return true;
+
+        if (agent.isOnNavMesh && agent.Warp(position))
         {
             agent.ResetPath();
             agent.velocity = Vector3.zero;
             agent.isStopped = false;
-            return;
+            return true;
         }
 
-        enemy.transform.position = position;
+        Debug.LogWarning($"EnemySpawner could not place {enemy.name} on the NavMesh at {position}. Spawn cancelled.", enemy);
+        enemy.gameObject.SetActive(false);
+        return false;
     }
 
     /// <summary>
