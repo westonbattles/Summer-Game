@@ -5557,6 +5557,10 @@ PrefabInstance:
       propertyPath: showDebugButtons
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4032942381568221474, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: showDebugButtons
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4724841177392358001, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: showDebugButtons
       value: 0

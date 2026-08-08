@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
+using NaughtyAttributes;
 
 public enum GrowthType
 {
@@ -38,10 +39,10 @@ public class SpawnDirector : MonoBehaviour
     [SerializeField] int spawnCap = 32;
     [SerializeField] float slowIncome = 1f;
     [SerializeField] float slowMinPurchase = 100f;
-    [SerializeField] float slowFailChance = 0.1f;
+    [SerializeField, Range(0f, 1f)] float slowFailChance = 0.1f;
     [SerializeField] float fastIncome = 10f;
     [SerializeField] float fastMinPurchase = 10f;
-    [SerializeField] float fastFailChance = .6f;
+    [SerializeField, Range(0f, 1f)] float fastFailChance = .6f;
     [SerializeField] private EnemySpawnGrouping spawnGrouping;
 
     [Header("Growth")]
@@ -49,11 +50,20 @@ public class SpawnDirector : MonoBehaviour
     [SerializeField] private GrowthType fastGrowthType = GrowthType.Logistic;
 
     [Header("Growth Tuning")]
+    [ShowIf(nameof(UsesLinear))]
     [SerializeField] float linearRatePerSecond = 0.1f;
+    [ShowIf(nameof(UsesExponential))]
     [SerializeField] float exponentialGrowthRate = 1.02f;
+    [ShowIf(nameof(UsesLogistic))]
     [SerializeField] float logisticMaxIncome = 20f;
+    [ShowIf(nameof(UsesLogistic))]
     [SerializeField] float logisticSteepness = 0.05f;
+    [ShowIf(nameof(UsesLogistic))]
     [SerializeField] float logisticMidpointTime = 120f;
+
+    bool UsesLinear => slowGrowthType == GrowthType.Linear || fastGrowthType == GrowthType.Linear;
+    bool UsesExponential => slowGrowthType == GrowthType.Exponential || fastGrowthType == GrowthType.Exponential;
+    bool UsesLogistic => slowGrowthType == GrowthType.Logistic || fastGrowthType == GrowthType.Logistic;
 
     public HashSet<IDamageable> spawnedEnemies {  get; private set; }
 
@@ -213,4 +223,75 @@ public class SpawnDirector : MonoBehaviour
         float sigmoid = 1f / (1f + Mathf.Exp(-logisticSteepness * (d.elapsedTime - logisticMidpointTime))); // I'm a sigmoid male. super rare. you haven't heard of it I bet
         return d.baseIncome + (logisticMaxIncome - d.baseIncome) * sigmoid;
     }
+
+
+#if UNITY_EDITOR
+    #region DEBUGGING
+    [Header("Debug Settings")]
+#pragma warning disable CS0414
+    [SerializeField] private bool showDebugButtons = false;
+#pragma warning restore CS0414
+
+    [ShowNativeProperty] float SlowCredits => slowDirector.credits;
+    [ShowNativeProperty] float SlowIncome => slowDirector.income;
+    [ShowNativeProperty] float FastCredits => fastDirector.credits;
+    [ShowNativeProperty] float FastIncome => fastDirector.income;
+    [ShowNativeProperty] int SpawnedCount => spawnedEnemies?.Count ?? 0;
+    [ShowNativeProperty] float SlowElapsed => slowDirector.elapsedTime;
+    [ShowNativeProperty] float FastElapsed => fastDirector.elapsedTime;
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Give Slow Director 500 Credits", EButtonEnableMode.Playmode)]
+    private void TestGrantSlowCredits()
+    {
+        slowDirector.credits += 500f;
+    }
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Give Fast Director 500 Credits", EButtonEnableMode.Playmode)]
+    private void TestGrantFastCredits()
+    {
+        fastDirector.credits += 500f;
+    }
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Force Slow Director Purchase", EButtonEnableMode.Playmode)]
+    private void TestForceSlowPurchase()
+    {
+        var purchase = SelectSlowPurchase(ref slowDirector, spawnGrouping, spawnCap - spawnedEnemies.Count);
+        UnityEngine.Debug.Log($"[SpawnDirector - Debug]: Purchased {purchase.Count} cards, credits left {slowDirector.credits}.");
+    }
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Force Fast Director Purchase", EButtonEnableMode.Playmode)]
+    private void TestForceFastPurchase()
+    {
+        var purchase = SelectFastPurchase(ref fastDirector, spawnGrouping, spawnCap - spawnedEnemies.Count);
+        UnityEngine.Debug.Log($"[SpawnDirector - Debug]: Purchased {purchase.Count} cards, credits left {fastDirector.credits}.");
+    }
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Reset Directors", EButtonEnableMode.Playmode)]
+    private void TestResetDirectors()
+    {
+        slowDirector = new Director(true, slowIncome, 0, slowMinPurchase);
+        fastDirector = new Director(true, fastIncome, 0, fastMinPurchase);
+        UnityEngine.Debug.Log("[SpawnDirector - Debug]: Directors reset.");
+    }
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Toggle Slow Active", EButtonEnableMode.Playmode)]
+    private void TestToggleSlow()
+    {
+        slowDirector.active = !slowDirector.active;
+    }
+
+    [ShowIf(nameof(showDebugButtons))]
+    [Button("Toggle Fast Active", EButtonEnableMode.Playmode)]
+    private void TestToggleFast()
+    {
+        fastDirector.active = !fastDirector.active;
+    }
+    #endregion
+#endif
 }
