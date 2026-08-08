@@ -215,7 +215,7 @@ public class SpawnDirector : MonoBehaviour
 
     bool TryGetSpawnPosition(EnemySpawnCard spawnCard, out Vector3 spawnPosition)
     {
-        spawnPosition = default;
+        spawnPosition = Vector3.zero;
 
         if (Player.Instance == null || spawnCard == null || spawnCard.Prefab == null) return false;
         if (!spawnCard.Prefab.TryGetComponent(out NavMeshAgent agent)) return false;
