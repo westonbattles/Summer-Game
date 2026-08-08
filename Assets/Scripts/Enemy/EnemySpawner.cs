@@ -215,7 +215,7 @@ public class EnemySpawner : MonoBehaviour
         Spawn(debugEnemyPrefab, pos);
     }
 
-    [ShowIf(nameof(debugEnemyPrefab))]
+    [ShowIf(nameof(showDebugButtons))]
     [Button("Spawn Debug Enemy (Ignore Cap)", EButtonEnableMode.Playmode)]
     private void TestSpawnIgnoreCap()
     {

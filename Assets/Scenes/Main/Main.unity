@@ -591,7 +591,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &172351749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1299,8 +1299,12 @@ PrefabInstance:
       value: GameSystems
       objectReference: {fileID: 0}
     - target: {fileID: 6691805847724944139, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+      propertyPath: debugEnemyPrefab
+      value: 
+      objectReference: {fileID: 8271345309812604368, guid: f599b8334c9b4a6408683de7f616f862, type: 3}
+    - target: {fileID: 6691805847724944139, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
       propertyPath: showDebugButtons
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4172,7 +4176,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2015305173
 MonoBehaviour:
   m_ObjectHideFlags: 0
