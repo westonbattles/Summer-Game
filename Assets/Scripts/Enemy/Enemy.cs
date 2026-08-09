@@ -23,6 +23,7 @@ public class Enemy : MonoBehaviour
     private XPDropper xpDropper;
     public PsychicPulseHighlighter Highlighter { get; private set; }
     private Collider[] cachedHitboxColliders;
+    private Animator animator;
 
     public bool CountsTowardSpawnCap { get; set; }
 
@@ -48,6 +49,7 @@ public class Enemy : MonoBehaviour
         xpDropper = GetComponent<XPDropper>();
         Highlighter = GetComponent<PsychicPulseHighlighter>();
         cachedHitboxColliders = GetComponentsInChildren<Collider>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     private void OnEnable()
@@ -63,6 +65,8 @@ public class Enemy : MonoBehaviour
     private void HandleDeath(DamageInfo killingBlow)
     {
         // Enemy-specific death work happens here, BEFORE we hand back to the pool:
+        // added by orion: death animation feel free to move this
+        animator?.SetTrigger("Dead");
 
         // 1. XP spawn the orb.
         xpDropper.Drop();
