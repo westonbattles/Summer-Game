@@ -41,6 +41,11 @@ public class StageKills : MonoBehaviour
 {
     public static StageKills Instance {  get; private set; }
     public KillTracker Tracker { get; } = new KillTracker();
+    public OverfillGate Gate { get; private set; }
+
+    [SerializeField] float[] stageTargets;
+    [SerializeField] float overfillDuration;
+    [SerializeField] float expiryDecay;
 
     private void Awake()
     {
@@ -51,6 +56,12 @@ public class StageKills : MonoBehaviour
             return;
         }
         Instance = this;
+        Gate = new OverfillGate(Tracker, stageTargets, overfillDuration, expiryDecay);
+    }
+
+    private void Update()
+    {
+        Gate.Tick();
     }
 
     private void OnDestroy()
@@ -58,6 +69,13 @@ public class StageKills : MonoBehaviour
         if (Instance == this)
         {
             Instance = null;
+            Gate.Dispose();
         }
+    }
+
+    public void ResetStage()
+    {
+        Tracker.ResetProgress();
+        Gate.ResetState();
     }
 }

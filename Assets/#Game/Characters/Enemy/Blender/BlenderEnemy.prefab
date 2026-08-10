@@ -221,7 +221,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 514679952066752580, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       propertyPath: killValue
-      value: 50
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 888112467468903464, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       propertyPath: m_LocalPosition.x
