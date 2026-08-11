@@ -1230,6 +1230,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1401973675182712887, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+      propertyPath: showDebugButtons
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4513342026305316520, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1273,6 +1277,14 @@ PrefabInstance:
     - target: {fileID: 4604608678760809334, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
       propertyPath: m_Name
       value: GameSystems
+      objectReference: {fileID: 0}
+    - target: {fileID: 4912072449073795865, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+      propertyPath: slowGrowthType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4912072449073795865, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+      propertyPath: showDebugButtons
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
