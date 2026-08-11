@@ -1,6 +1,6 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
 /// <summary>
 /// Event-driven kill readout. Subscribes to KillTracker.OnChanged rather than
@@ -10,54 +10,84 @@ using DG.Tweening;
 /// </summary>
 public class KillCountHUD : MonoBehaviour
 {
-    [SerializeField] Image fillImage;
+    [SerializeField] Image[] stageImages; // one per stage; each fills as its own stage, then stays full
     [SerializeField] StageKills stageKills;
     [SerializeField] float tweenDuration = 0.25f;
-
-    [Tooltip("TEMP: placeholder boss threshold. Replace with the run director's threshold once it owns pacing.")]
-    [SerializeField] float progressTarget = 50f;
 
     private Tween fillTween;
 
     private void OnEnable()
     {
-        stageKills.Tracker.OnChanged += HandleChanged;
-        // Refresh immediately so re-enabling the HUD doesn't show stale text. If it does, checky here.
-        SnapFillAmount(stageKills.Tracker.Progress, progressTarget);
+        stageKills.Gate.OnStageChanged += HandleStageChanged; // subscribe to events
+        stageKills.Gate.OnWindowExpired += HandleWindowExpired;
+        SnapToCurrentState();
     }
 
     private void OnDisable()
     {
-        stageKills.Tracker.OnChanged -= HandleChanged;
+        stageKills.Gate.OnStageChanged -= HandleStageChanged;
+        stageKills.Gate.OnWindowExpired -= HandleWindowExpired;
         fillTween?.Kill();
     }
 
-    private void HandleChanged(int kills, float progress)
+    private void HandleStageChanged(int stage, float stageProgress, float stageTarget)
     {
-        UpdateFillAmount(progress, progressTarget);
-    }
-
-    private void UpdateFillAmount(float current, float max)
-    {
-        if (max <= 0f)
-        {
-            fillImage.fillAmount = 0f;
-            return;
-        }
-
-        float targetFill = Mathf.Clamp01(current / max);
         fillTween?.Kill();
-        fillTween = fillImage.DOFillAmount(targetFill, tweenDuration)
-                             .SetEase(Ease.OutQuad);
+
+        for (int i = 0; i < stageImages.Length; i++)
+        {
+            if (i < stage)
+            {
+                stageImages[i].gameObject.SetActive(true);
+                stageImages[i].fillAmount = 1f;
+            }
+            else if (i > stage)
+            {
+                stageImages[i].gameObject.SetActive(false);
+                stageImages[i].fillAmount = 0f;
+            }
+        }
+
+        if (stage < stageImages.Length) // swap in current image for filling
+        {
+            var current = stageImages[stage];
+            current.gameObject.SetActive(true);
+            float target = Mathf.Clamp01(stageTarget > 0f ? stageProgress / stageTarget : 0f);
+            fillTween = current.DOFillAmount(target, tweenDuration).SetEase(Ease.OutQuad);
+        }
     }
 
-    private void SnapFillAmount(float current, float max)
+    private void HandleWindowExpired(int timesFilled)
     {
-        if (max <= 0f)
+        fillTween?.Kill();
+        foreach (var img in stageImages)
         {
-            fillImage.fillAmount = 0f;
-            return;
+            img.gameObject.SetActive(false);
+            img.fillAmount = 0f;
         }
-        fillImage.fillAmount = Mathf.Clamp01(current / max);
+    }
+
+    private void SnapToCurrentState()
+    {
+        var gate = stageKills.Gate;
+        for (int i = 0; i < stageImages.Length; i++)
+        {
+            if (i < gate.CurrentStage)
+            {
+                stageImages[i].gameObject.SetActive(true);
+                stageImages[i].fillAmount = 1f;
+            }
+            else if (i == gate.CurrentStage)
+            {
+                float target = gate.CurrentStageTarget;
+                stageImages[i].gameObject.SetActive(true);
+                stageImages[i].fillAmount = target > 0f ? Mathf.Clamp01(gate.StageProgress / target) : 0f;
+            }
+            else
+            {
+                stageImages[i].gameObject.SetActive(false);
+                stageImages[i].fillAmount = 0f;
+            }
+        }
     }
 }
