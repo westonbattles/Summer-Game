@@ -14,6 +14,7 @@ public class OverfillGate
     public bool WindowOpen { get; private set; }
     public float CurrentStageTarget => TargetFor(CurrentStage);
     public int StageTargetCount => stageTargets?.Length ?? 0;
+    public int maxFills = 3;
 
     private float lastSeenProgress;
     private float windowExpiry;
@@ -72,6 +73,11 @@ public class OverfillGate
     {
         TimesFilled++;
         CurrentStage++;
+        if (TimesFilled >= maxFills)
+        {
+            CloseWindow();
+            return;
+        }
 
         if (!WindowOpen)
         {
@@ -90,6 +96,13 @@ public class OverfillGate
     {
         WindowOpen = false;
         OnWindowExpired?.Invoke(TimesFilled);
+
+        // spawn item
+        for (int i = 0; i < TimesFilled; i++)
+        {
+            ItemDefinition randomItem = ItemSpawner.Instance.ItemCatalog.GetRandomItem(ItemRarityWeightDistribution.Default);
+            ItemSpawner.Instance.Spawn(randomItem, Player.Instance.transform.position + Vector3.up, Vector3.up * 13);
+        }
 
         CurrentStage = 0;
         StageProgress = 0f;

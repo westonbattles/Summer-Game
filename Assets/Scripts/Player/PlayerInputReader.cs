@@ -29,9 +29,9 @@ public class PlayerInputReader : MonoBehaviour
     InputAction _interactAction;
     
     public InputAction MoveAction => _moveAction;
-    public InputAction JumpAction => _lookAction;
-    public InputAction SwapAction => _jumpAction;
-    public InputAction LookAction => _swapAction;
+    public InputAction JumpAction => _jumpAction;
+    public InputAction SwapAction => _swapAction;
+    public InputAction LookAction => _lookAction;
     public InputAction PrimaryAbilityAction => _primaryAbilityAction;
     public InputAction SecondaryAbilityAction => _secondaryAbilityAction;
     public InputAction MovementAbilityAction => _movementAbilityAction;
