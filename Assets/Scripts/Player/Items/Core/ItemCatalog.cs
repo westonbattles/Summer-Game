@@ -162,6 +162,32 @@ public class ItemCatalog : ScriptableObject
         return groupings[rarity].GetRandom();
     }
 
+    // Orion addition for multiple random unique choices (choice bubbles)
+    public List<ItemDefinition> GetRandomUniqueItems(int count, ItemRarityWeightDistribution distribution, int maxAttemptsPerItem = 20)
+    {
+        var result = new List<ItemDefinition>(count);
+        var seen = new HashSet<ItemDefinition>();
+
+        for (int i = 0; i < count; i++)
+        {
+            ItemDefinition picked = null;
+            for (int attempt = 0; attempt < maxAttemptsPerItem; attempt++)
+            {
+                ItemDefinition candidate = GetRandomItem(distribution);
+                if (candidate == null) break;
+                if (seen.Contains(candidate)) continue;
+                picked = candidate;
+                break;
+            }
+
+            if (picked == null) continue; // pool exhausted, give fewer choices
+            seen.Add(picked);
+            result.Add(picked);
+        }
+
+        return result;
+    }
+
 #if UNITY_EDITOR        // prevents build runtime issues cause this is meant for editor to compile with AssetDatabase
     /// gets references to all ItemDefinition assets in Assets/#Game/Items (ignoring /Examples folder), and populates a list with them all
     public void UpdateItemCatalogFromAssets()

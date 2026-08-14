@@ -98,10 +98,14 @@ public class OverfillGate
         OnWindowExpired?.Invoke(TimesFilled);
 
         // spawn item
-        for (int i = 0; i < TimesFilled; i++)
+        if (TimesFilled == 1)
         {
             ItemDefinition randomItem = ItemSpawner.Instance.ItemCatalog.GetRandomItem(ItemRarityWeightDistribution.Default);
             ItemSpawner.Instance.Spawn(randomItem, Player.Instance.transform.position + Vector3.up, Vector3.up * 13);
+        }
+        else if (TimesFilled >= 2)
+        {
+            ItemSpawner.Instance.SpawnChoiceBubble(Player.Instance.transform.position + Vector3.up, TimesFilled);
         }
 
         CurrentStage = 0;
