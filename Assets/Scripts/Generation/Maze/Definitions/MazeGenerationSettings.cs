@@ -80,7 +80,7 @@ public class MazeGenerationSettings : ScriptableObject
     /// gets the center coordinates of the cell, adjusted with room size and gap size ( [0][0] centers at 0.5 * (CellWidth + CellGap) )
     public Vector3 GetCellCenterLocal(Vector2Int cell)
     {
-        return new Vector3((cell.x + 0.5f) * (CellWidth + CellGap), 0f, (cell.y + 0.5f) * (CellWidth + CellGap));
+        return new Vector3((cell.x + 0.5f) * (CellWidth + CellGap), 0f, (cell.y + 0.5f) * (CellHeight + CellGap));
     }
 
     /// gets world dimensions of a given room bounds (not counting outer cell gaps! but including inner ones ofc)

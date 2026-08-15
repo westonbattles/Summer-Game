@@ -18,6 +18,7 @@ public class MazeRoomPlacement
     public MazeRoomDefinition Definition;
 
     public Vector2Int GridOrigin;
+    public Vector2Int PrefabOriginCell;
     public RoomRotation Rotation;
 
     public List<Vector2Int> OccupiesCells = new();

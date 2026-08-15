@@ -14,6 +14,7 @@ public static class MazeLayoutGenerator
         public Vector2Int[] Cells;
         public VariantOpening[] Openings;
         public Vector2Int Bounds;
+        public Vector2Int AnchorCell;
     }
 
     struct VariantOpening
@@ -221,6 +222,12 @@ public static class MazeLayoutGenerator
                 return false;
             }
 
+            if (!occupiedCells.Contains(Vector2Int.zero))
+            {
+                error = $"Room '{definition.name}' must occupy cell (0,0), which anchors its prefab origin.";
+                return false;
+            }
+
             if (!AreOccupiedCellsConnected(occupiedCells))
             {
                 error = $"Room '{definition.name}' has occupied cells that do not touch each other.";
@@ -377,7 +384,8 @@ public static class MazeLayoutGenerator
             Rotation = rotation,
             Cells = normalizedCells,
             Openings = openings,
-            Bounds = maximum + Vector2Int.one
+            Bounds = maximum + Vector2Int.one,
+            AnchorCell = -minimum
         };
     }
 
@@ -859,6 +867,7 @@ public static class MazeLayoutGenerator
             Id = roomId,
             Definition = candidate.Variant.Definition,
             GridOrigin = candidate.Origin,
+            PrefabOriginCell = candidate.Origin + candidate.Variant.AnchorCell,
             Rotation = candidate.Variant.Rotation
         };
 

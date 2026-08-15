@@ -1143,7 +1143,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MazeGenerator
   settings: {fileID: 11400000, guid: 505e5db98f0c7457f80bbc02cd8ebc7a, type: 2}
   randomizeSeed: 0
-  seed: 69420
+  seed: 257034192
   generateOnStart: 1
   drawGizmos: 1
   generatedRoot: {fileID: 0}

@@ -32,7 +32,7 @@ public static class MazeBuilder
         GameObject instance = Object.Instantiate(room.Definition.Prefab, root);
         string roomName = string.IsNullOrWhiteSpace(room.Definition.DisplayName) ? room.Definition.name : room.Definition.DisplayName;
         instance.name = $"{roomName} #{room.Id} ({room.GridOrigin.x},{room.GridOrigin.y})";
-        instance.transform.localPosition = GetRoomCenterLocal(room, settings);
+        instance.transform.localPosition = settings.GetCellCenterLocal(room.PrefabOriginCell);
         instance.transform.localRotation = GridDirectionUtils.ToRotation(room.Rotation);
     }
 
@@ -92,27 +92,6 @@ public static class MazeBuilder
         instance.name = $"Opening Filler {opening.RoomId}";
         instance.transform.localPosition = fillerCenter;
         instance.transform.localRotation = GridDirectionUtils.ToRotation(opening.Direction);
-    }
-
-    static Vector3 GetRoomCenterLocal(MazeRoomPlacement room, MazeGenerationSettings settings)
-    {
-        int minX = int.MaxValue;
-        int minZ = int.MaxValue;
-        int maxX = int.MinValue;
-        int maxZ = int.MinValue;
-
-        foreach (Vector2Int cell in room.OccupiesCells)
-        {
-            minX = Mathf.Min(minX, cell.x);
-            minZ = Mathf.Min(minZ, cell.y);
-            maxX = Mathf.Max(maxX, cell.x);
-            maxZ = Mathf.Max(maxZ, cell.y);
-        }
-
-        float pitchX = settings.CellWidth + settings.CellGap;
-        float pitchZ = settings.CellHeight + settings.CellGap;
-
-        return new Vector3((minX + (maxX - minX + 1) * 0.5f) * pitchX, 0f, (minZ + (maxZ - minZ + 1) * 0.5f) * pitchZ);
     }
 
     static Vector3 GetBoundaryCenterLocal(MazePlacedOpening opening, MazeGenerationSettings settings)

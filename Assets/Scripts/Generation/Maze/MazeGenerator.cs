@@ -113,11 +113,22 @@ public class MazeGenerator : MonoBehaviour
         {
             Gizmos.color = Color.yellow;
 
+            // draw inner cell connections for each room
+            foreach (MazeRoomPlacement room in CurrentLayout.Rooms.Values)
+            {
+                foreach (Vector2Int cell in room.OccupiesCells)
+                {
+                    if (room.OccupiesCells.Contains(cell+Vector2Int.up)) Gizmos.DrawLine(settings.GetCellCenterLocal(cell), settings.GetCellCenterLocal(cell+Vector2Int.up));
+                    if (room.OccupiesCells.Contains(cell+Vector2Int.right)) Gizmos.DrawLine(settings.GetCellCenterLocal(cell), settings.GetCellCenterLocal(cell+Vector2Int.right));
+                }
+            }
+            
+            // draw opening connections for each room
             foreach (MazeConnection connection in CurrentLayout.Connections)
             {
-                int roomA = connection.PotentialConnection.OpeningA.RoomId;
-                int roomB = connection.PotentialConnection.OpeningB.RoomId;
-                Gizmos.DrawLine(GetRoomCenterLocal(CurrentLayout.Rooms[roomA]), GetRoomCenterLocal(CurrentLayout.Rooms[roomB]));
+                Vector3 roomA = settings.GetCellCenterLocal(connection.PotentialConnection.OpeningA.Cell);
+                Vector3 roomB = settings.GetCellCenterLocal(connection.PotentialConnection.OpeningB.Cell);
+                Gizmos.DrawLine(roomA, roomB);
             }
         }
 
@@ -127,17 +138,20 @@ public class MazeGenerator : MonoBehaviour
 
     Color GetCellColor(Vector2Int cell, RectInt startBounds)
     {
+        // outline of cells before any generation (startbounds/village cells are blue, the rest are grey)
         if (CurrentLayout == null) return startBounds.Contains(cell) ? new Color(0.2f, 0.7f, 1f, 0.5f) : new Color(1f, 1f, 1f, 0.25f);
 
+        // 
         MazeCell mazeCell = CurrentLayout.Grid.GetCell(cell);
         if (mazeCell.State == MazeCellState.ReservedForVillage) return new Color(0.2f, 0.7f, 1f, 0.5f);
-        if (mazeCell.State != MazeCellState.Occupied) return new Color(1f, 1f, 1f, 0.25f);
+        if (mazeCell.State != MazeCellState.Occupied) return new Color(1f, 1f, 1f, 0.75f);
         if (!CurrentLayout.Rooms.TryGetValue(mazeCell.RoomId, out MazeRoomPlacement room)) return Color.gray;
         if (CurrentLayout.Boss != null && room.Id == CurrentLayout.Boss.Opening.RoomId) return new Color(1f, 0.2f, 0.2f, 0.75f);
         if (room.IsEntrance) return new Color(0.2f, 1f, 0.3f, 0.75f);
 
-        Color color = Color.HSVToRGB(Mathf.Repeat(room.Id * 0.173f, 1f), 0.55f, 0.9f);
-        color.a = 0.65f;
+        // distinguishable hue for all different room ids 
+        // Color color = Color.HSVToRGB(room.Id * 0.173f % 1f, 0.55f, 0.9f);
+        Color color = new Color(1f, 1f, 1f, 0.25f);
         return color;
     }
 

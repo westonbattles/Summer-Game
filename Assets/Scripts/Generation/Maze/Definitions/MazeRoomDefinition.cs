@@ -23,7 +23,7 @@ public class MazeRoomDefinition : ScriptableObject
     public MazeCellType Type = MazeCellType.Normal;
 
     [Header("Properties")]
-    [Tooltip("Local occupied cells (Shape). 2x2 would occupy (0,0), (0,1), (1,0), (1,1) for example.")]
+    [Tooltip("Local occupied cells relative to the prefab origin cell (0,0). The prefab root must be centered on cell (0,0).")]
     // instead use public MazeShapeEnum Shape = MazeShapeEnum.1x1, 2x2, etc?
     public Vector2Int[] OccupiedCells = { Vector2Int.zero }; // -> local cell offsets, benefit would be using this as local cell locations from current generation spot
     [Tooltip("Opening Opprotunities")]
