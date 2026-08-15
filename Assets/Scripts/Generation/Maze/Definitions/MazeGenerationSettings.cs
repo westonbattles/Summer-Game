@@ -24,6 +24,8 @@ public class MazeGenerationSettings : ScriptableObject
     
     [Header("Room/Connector Catalogs")]
     public MazeRoomDefinition[] Rooms;
+    [Tooltip("Boss room prefabs. The prefab origin should be its entrance socket, with local forward pointing into the boss room.")]
+    public GameObject[] BossRoomPrefabs;
     [Tooltip("Connector prefabs for connecting rooms")]
     public GameObject[] Connectors;
     [Tooltip("Essentially half of a connector prefab that fills the opening instead of connecting it")]
@@ -31,6 +33,10 @@ public class MazeGenerationSettings : ScriptableObject
     
     [Header("Generation")]
     public int MaximumGenerationAttempts = 100;
+    [Tooltip("Adjacent rooms with matching openings are connected when their existing route would be longer than this many room connections.")]
+    [Min(2)] public int MaximumConnectionDetour = 6;
+    [Tooltip("Chance for each remaining optional room connection to be opened after guaranteed shortcuts are added.")]
+    [Range(0f, 1f)] public float ExtraConnectionChance = 0.1f;
 
     
     /*

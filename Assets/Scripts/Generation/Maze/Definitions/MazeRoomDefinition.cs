@@ -18,8 +18,6 @@ public struct MazeOpeningDefinition
 [CreateAssetMenu(fileName = "Maze Room", menuName = "Maze Generation/Objects/Room")]
 public class MazeRoomDefinition : ScriptableObject
 {
-    [Tooltip("Readable ID (0x0_CamalCaseRoomID): EG, 1x3_Crypt, 2x2_KnightPuzzle, L_Cavern")]
-    public string DefinitionId = "1x1_Room";
     public string DisplayName = "Room";
     public GameObject Prefab;
     public MazeCellType Type = MazeCellType.Normal;

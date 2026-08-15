@@ -7,6 +7,7 @@ public enum MazeOpeningState
     Unresolved,
     ConnectedToRoom,
     ConnectedToStart,
+    ConnectedToBoss,
     Filled,
 }
 
@@ -75,6 +76,13 @@ public class MazeEntrance
     public GameObject ConnectorPrefab;
 }
 
+public class MazeBossPlacement
+{
+    public MazePlacedOpening Opening;
+    public GameObject BossPrefab;
+    public GameObject ConnectorPrefab;
+}
+
 public class MazeLayout
 {
     public int Seed;
@@ -85,7 +93,7 @@ public class MazeLayout
     public List<MazePotentialConnection> PotentialConnections = new();
     public List<MazeConnection> Connections = new();
 
-    public int BossRoomId = -1;
+    public MazeBossPlacement Boss;
 
     public List<MazeEntrance> Entrances = new();
     public Dictionary<int, List<int>> Adjacency = new();
