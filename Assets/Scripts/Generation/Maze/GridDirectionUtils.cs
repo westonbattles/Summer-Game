@@ -1,5 +1,19 @@
 using UnityEngine;
 
+/*
+
+utils for defining rotations / directions for rooms
+
+*/
+
+public enum RoomRotation
+{
+    R0,
+    R90,
+    R180,
+    R270
+}
+
 public enum GridDirection
 {
     North,
@@ -47,15 +61,19 @@ public struct GridDirectionUtils
         };
     }
 
+    public static Quaternion ToRotation(RoomRotation rotation)
+    {
+        return Quaternion.Euler(0f, (int)rotation * 90f, 0f);
+    }
+    
     public static Quaternion ToRotation(GridDirection direction)
     {
-        return direction switch
-        {
-            GridDirection.North => Quaternion.identity,
-            GridDirection.East => Quaternion.Euler(0f, 90f, 0f),
-            GridDirection.South => Quaternion.Euler(0f, 180f, 0f),
-            GridDirection.West => Quaternion.Euler(0f, 270f, 0f),
-            _ => Quaternion.identity
-        };
+        return Quaternion.Euler(0f, (int)direction * 90f, 0f);
+    }
+
+    public static GridDirection RotateDirection(GridDirection direction, RoomRotation rotation)
+    {
+        int rotated = (int)direction + (int)rotation;
+        return (GridDirection)(rotated % 4);
     }
 }

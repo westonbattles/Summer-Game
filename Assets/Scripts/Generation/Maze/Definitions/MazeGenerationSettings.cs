@@ -32,9 +32,71 @@ public class MazeGenerationSettings : ScriptableObject
     [Header("Generation")]
     public int MaximumGenerationAttempts = 100;
 
+    
+    /*
+     if we had a grid like
+     
+     X X X X X
+     X 0 0 0 X
+     X 0 0 0 X
+     X 0 0 0 X
+     X X X X X
+     
+     start bounds wouuld be a rectint such that
+     xmin = 1 (top left i index)
+     ymin = 1 (top left j index)
+     width = 3
+     height = 3
+     
+     in cases for non even cetnering like a 1x1 start in a 4x4 maze:
+     
+     X X X X
+     X 0 X X
+     X X X X
+     X X X X
+     
+     we would calc minx as (maze width - start width)/2 which is (4-1)/2 -> 3/2 -> 1 (int floor)
+     so essentially uncenterable starting areas get offset up and left 
+     
+     */
+    public RectInt GetStartBounds()
+    {
+        int minX = (GridWidth - StartAreaWidth) / 2;
+        int minZ = (GridHeight - StartAreaHeight) / 2;
+
+        return new RectInt(
+            minX,
+            minZ,
+            StartAreaWidth,
+            StartAreaHeight);
+    }
+    
     /// gets the center coordinates of the cell, adjusted with room size and gap size ( [0][0] centers at 0.5 * (CellWidth + CellGap) )
     public Vector3 GetCellCenterLocal(Vector2Int cell)
     {
         return new Vector3((cell.x + 0.5f) * (CellWidth + CellGap), 0f, (cell.y + 0.5f) * (CellWidth + CellGap));
+    }
+
+    /// gets world dimensions of a given room bounds (not counting outer cell gaps! but including inner ones ofc)
+    public Vector2 GetRoomWorldSize(Vector2Int footprintBounds)
+    {
+        float width = footprintBounds.x * CellWidth + Mathf.Max(0, footprintBounds.x - 1) * CellGap;
+        float height = footprintBounds.y * CellHeight + Mathf.Max(0, footprintBounds.y - 1) * CellGap;
+        return new Vector2(width, height);
+    }
+    
+    /// gets location of center in world coordinates, but localized with 0,0,0 being the (bottom-left?) corner of the maze
+    public Vector3 GetStartAreaCenterLocal()
+    {
+        RectInt bounds = GetStartBounds();
+
+        return new Vector3(
+            (bounds.xMin + bounds.width * 0.5f) * (CellWidth + CellGap),
+            0f,
+            (bounds.yMin + bounds.height * 0.5f) * (CellHeight + CellGap));
+    }
+    public Vector2 GetStartAreaWorldSize()
+    {
+        return GetRoomWorldSize(new Vector2Int(StartAreaWidth, StartAreaHeight));
     }
 }

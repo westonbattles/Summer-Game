@@ -18,7 +18,7 @@ public class MazeGrid
     public int Width { get; }
     public int Height { get; }
 
-    MazeCell[,] cells; // https://stackoverflow.com/questions/12567329/multidimensional-array-vs
+    readonly MazeCell[,] cells; // https://stackoverflow.com/questions/12567329/multidimensional-array-vs
 
     public MazeGrid(int width, int height)
     {
@@ -37,26 +37,46 @@ public class MazeGrid
         }
     }
 
-    /// reserve a cell meaning generation won't bother it (good for village cells etc)
-    public void ReserveStartCell(Vector2Int cell)
+    public bool Contains(Vector2Int cell)
+    {
+        return cell.x >= 0 && cell.x < Width && cell.y >= 0 && cell.y < Height;
+    }
+    
+    public MazeCell GetCell(Vector2Int cell)
+    {
+        return cells[cell.x, cell.y];
+    }
+    
+    // if a cell in our grid hasn't been assigned yet (meaning its open for holding a room cell)
+    public bool IsFree(Vector2Int cell)
+    {
+        return Contains(cell) && GetCell(cell).State == MazeCellState.Available;
+    }
+    
+    /// reserve village cells meaning generation won't bother it
+    public void ReserveVillageCell(Vector2Int cell)
     {
         MazeCell mazeCell = GetCell(cell);
         mazeCell.State = MazeCellState.ReservedForVillage;
         mazeCell.RoomId = -1;
     }
 
-    public bool Contains(Vector2Int cell)
+    public void Occupy(Vector2Int cell, int roomId)
     {
-        return cell.x >= 0 && cell.x < Width && cell.y >= 0 && cell.y < Height;
+        MazeCell mazeCell = GetCell(cell);
+        mazeCell.State = MazeCellState.Occupied;
+        mazeCell.RoomId = roomId;
     }
 
-    public MazeCell GetCell(Vector2Int cell)
+    public bool TryGetRoomId(Vector2Int cell, out int roomId)
     {
-        return cells[cell.x, cell.y];
-    }
+        roomId = -1;
+        if (!Contains(cell)) return false;
 
-    public bool IsFree(Vector2Int cell)
-    {
-        return Contains(cell) && GetCell(cell).State == MazeCellState.Available;
+        MazeCell mazeCell = GetCell(cell);
+        if (mazeCell.State != MazeCellState.Occupied) return false;
+
+        roomId = mazeCell.RoomId;
+        return true;
     }
 }
