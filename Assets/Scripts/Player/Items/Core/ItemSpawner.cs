@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
 
@@ -11,6 +12,9 @@ public class ItemSpawner : MonoBehaviour
     [SerializeField] WorldItem worldItemPrefab;
     [SerializeField] GameObject nullItemModelPrefab;
     public static GameObject NullItemModelPrefab;
+
+    [SerializeField] ChoiceBubble choiceBubblePrefab;
+    [SerializeField] int defaultChoiceCount = 3;
 
     public static ItemSpawner Instance { get; private set; }
     public ItemCatalog ItemCatalog => itemCatalog;
@@ -37,6 +41,21 @@ public class ItemSpawner : MonoBehaviour
         WorldItem item = Instantiate(worldItemPrefab, position, Quaternion.identity, transform);
         item.Initialize(definition, initialVelocity);
         return item;
+    }
+
+    // Added by Orion to spawn choice bubbles, feel free to refactor somewhere else
+    public ChoiceBubble SpawnChoiceBubble(Vector3 position, int choiceCount = -1, ItemRarityWeightDistribution distribution = null)
+    {
+        if (choiceBubblePrefab == null) throw new InvalidOperationException("Choice bubble prefab can't be null");
+
+        distribution ??= ItemRarityWeightDistribution.Default;
+        int count = choiceCount > 0 ? choiceCount : defaultChoiceCount;
+
+        List<ItemDefinition> choices = itemCatalog.GetRandomUniqueItems(count, distribution);
+
+        ChoiceBubble bubble = Instantiate(choiceBubblePrefab, position, Quaternion.identity, transform);
+        bubble.Initialize(choices);
+        return bubble;
     }
 
 #if UNITY_EDITOR
