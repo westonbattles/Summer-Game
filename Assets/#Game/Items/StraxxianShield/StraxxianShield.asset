@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d920927034d2413e919b99a4d55a92f4, type: 3}
+  m_Name: StraxxianShield
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
+  id: straxxian_shield
+  displayName: Straxxian Shield
+  icon: {fileID: 21300000, guid: 600915ac97c745946b75b210ffeab059, type: 3}
+  shortDescription: Reduce incoming damage by flat 10%. Diminishing Returns apply.
+  longDescription: Reducing incoming damage by flat 10%. Each application only compounds
+    damage reduction on the remaining damage of each incoming hit.
+  notes: The flat % should be calculated out of the damage remainder. If it was 2%,
+    the first stack would leave 98% damage taken and the second stack would reduce
+    by 2% of 98%.
+  rarity: 0
+  isDuoItem: 0
+  canDropRandomly: 1
+  dropWeight: 1
+  difficultyCost: 1
+  worldModelPrefab: {fileID: 919132149155446097, guid: 553b9b49a3cd94a47af3ab7c90662b04, type: 3}
+  behaviour:
+    rid: 3161872548707434566
+  references:
+    version: 2
+    RefIds:
+    - rid: 3161872548707434566
+      type: {class: StraxxianShield, ns: , asm: Assembly-CSharp}
+      data: 

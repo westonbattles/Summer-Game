@@ -46,12 +46,19 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
     /// <param name="info"></param>
     public void TakeDamage(DamageInfo info)
     {
-        //Debug.Log($"{name} TakeDamage: {info.Amount}", this);
-
         if (isDead || info.Amount <= 0f)
             return;
 
-        CurrentHP = Mathf.Max(CurrentHP - info.Amount, 0f);
+        float damageMultiplier = 1f;
+
+        if (Player.Instance != null && gameObject == Player.Instance.gameObject)
+        {
+            damageMultiplier = Player.Instance.Modifiers.DamageTakenMultiplier.GetValue();
+        }
+
+        float finalDamage = info.Amount * damageMultiplier;
+
+        CurrentHP = Mathf.Max(CurrentHP - finalDamage, 0f);
         OnHealthChanged?.Invoke(CurrentHP, MaxHP);
 
         if (CurrentHP <= 0f)
@@ -104,6 +111,19 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
             return;
         isDead = true;
         OnDeath?.Invoke(killingBlow);
+    }
+
+    private float GetDamageTakenMultiplier()
+    {
+        // Check if this entity is the player
+        if (Player.Instance != null && gameObject == Player.Instance.gameObject)
+        {
+            return Player.Instance.Modifiers.DamageTakenMultiplier.GetValue();
+        }
+
+        // Optional: If enemies can also have modifiers (e.g., via a local Modifier component), fetch it here.
+        // Otherwise, default to taking full 100% damage.
+        return 1f;
     }
 
 #if UNITY_EDITOR

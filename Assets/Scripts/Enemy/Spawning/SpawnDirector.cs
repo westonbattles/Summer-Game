@@ -336,6 +336,11 @@ public class SpawnDirector : MonoBehaviour
         return d.baseIncome + (logisticMaxIncome - d.baseIncome) * sigmoid;
     }
 
+    void Refund(ref Director director, EnemySpawnCard card)
+    {
+        director.credits += card.creditCost;
+    }
+
 
 #if UNITY_EDITOR
     #region DEBUGGING
