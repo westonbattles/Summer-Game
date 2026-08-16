@@ -25,6 +25,7 @@ public class PlayerModifiers
     // Base Player Stats
     public Modifier<float> DamageMultiplier = new(1f);
     public Modifier<float> MaxHealthBonus = new(0f);
+    public Modifier<float> DamageTakenMultiplier = new(1f);       // 1.0 = 100% damage taken.
     public Modifier<float> BhopMomentumCarryPercent = new(0.33f); // how much horizontal velocity you keep on perfect bhops
     
     
@@ -90,4 +91,5 @@ public static class ModifierExtensions
 {
     public static void AddValue(this PlayerModifiers.Modifier<int> modifier, int value) { modifier.SetValue(modifier.GetValue() + value); }
     public static void AddValue(this PlayerModifiers.Modifier<float> modifier, float value) { modifier.SetValue(modifier.GetValue() + value); }
+    public static void MultiplyValue(this PlayerModifiers.Modifier<float> modifier, float factor) { modifier.SetValue(modifier.GetValue() * factor); }
 }

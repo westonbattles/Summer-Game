@@ -1238,6 +1238,10 @@ PrefabInstance:
       propertyPath: choiceBubblePrefab
       value: 
       objectReference: {fileID: 5069543672009847690, guid: 318f8ca99861f4948aad5e9ea79e0cc4, type: 3}
+    - target: {fileID: 1401973675182712887, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
+      propertyPath: debugItemDefinition
+      value: 
+      objectReference: {fileID: 11400000, guid: b9347712c69bb734280e1cfcd81f604b, type: 2}
     - target: {fileID: 4513342026305316520, guid: c7ba8be4618a548598136a2b1209ea89, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5952,8 +5956,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8473695232717567619, guid: fe683168dff954b2c880253d456b7c94, type: 3}
       propertyPath: startingItems.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8473695232717567619, guid: fe683168dff954b2c880253d456b7c94, type: 3}
+      propertyPath: 'startingItems.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: b9347712c69bb734280e1cfcd81f604b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -402,7 +402,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMeleeAttack
   damageType: 0
-  damage: 3
+  damage: 1.5
   cooldown: 0.7
   range: 4.55
   windup: 0
