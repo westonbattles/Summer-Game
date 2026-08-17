@@ -25,7 +25,7 @@ public class PsychicPulseHighlighter : MonoBehaviour
         // non enemy can be highlighted as well
         activeVFX.transform.position = enemyOwner != null ? enemyOwner.GetCenterPoint() : owner.transform.position;
 
-        if (cameraTransform != null) activeVFX.transform.forward = cameraTransform.forward; // rotation of vfx aligns with camera
+        //if (cameraTransform != null) activeVFX.transform.forward = cameraTransform.forward; // rotation of vfx aligns with camera
     }
 
     public void Highlight(PooledVfx highlightVFXPrefab)
