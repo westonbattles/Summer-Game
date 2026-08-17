@@ -43,7 +43,7 @@ MonoBehaviour:
       NoiseRandomiseRotationMinMax: {x: 0, y: 20}
       VariationMode: 2
       VariationOpacity: 1
-      VariationBrightness: 0.222
+      VariationBrightness: 0.67
       VariationSmallScale: 2
       VariationMediumScale: 1
       VariationLargeScale: 0.5
@@ -148,7 +148,7 @@ MonoBehaviour:
   - BaseMaterialData:
       Settings1: {x: 19, y: 93, z: 0.81, w: 0.5}
       Settings2: {x: 1, y: 1, z: 0.5, w: 2}
-      Settings3: {x: 2, y: 2, z: 1, w: 0.222}
+      Settings3: {x: 2, y: 2, z: 1, w: 0.67}
       Settings4: {x: 2, y: 1, z: 0.5, w: 0.4}
       Settings5: {x: 0.8, y: 1.2, z: 0, w: 20}
       AlbedoTint: {x: 1, y: 1, z: 1}

@@ -22,8 +22,4 @@ MonoBehaviour:
     Direction: 0
   - Cell: {x: 0, y: 0}
     Direction: 2
-  - Cell: {x: 0, y: 0}
-    Direction: 1
-  - Cell: {x: 0, y: 0}
-    Direction: 3
   SpawnWeight: 1

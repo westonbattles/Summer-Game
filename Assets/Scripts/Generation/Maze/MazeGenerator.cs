@@ -1,6 +1,8 @@
 using System;
+using Unity.AI.Navigation;
 using UnityEngine;
 
+[DefaultExecutionOrder(-100)]
 public class MazeGenerator : MonoBehaviour
 {
     [Header("Configuration")]
@@ -12,6 +14,9 @@ public class MazeGenerator : MonoBehaviour
 
     [Header("Runtime")]
     [SerializeField] bool generateOnStart = true;
+
+    [Header("Navigation")]
+    [SerializeField] NavMeshSurface navMeshSurface;
 
     [Header("Debug")]
     [SerializeField] bool drawGizmos = true;
@@ -48,19 +53,42 @@ public class MazeGenerator : MonoBehaviour
         CurrentLayout = layout;
         LastGeneratedSeed = layout.Seed;
         generatedRoot = MazeBuilder.Build(layout, settings, transform);
+        BakeNavMesh(); //allows nav mesh agents to walk and spawn in the generated rooms
 
         Debug.Log($"Generated maze with seed {layout.Seed}, {layout.Rooms.Count} rooms, and {layout.Connections.Count} connections.", this);
+    }
+
+    [ContextMenu("Bake Maze NavMesh")]
+    public void BakeNavMesh()
+    {
+        if (navMeshSurface == null) navMeshSurface = FindFirstObjectByType<NavMeshSurface>();
+
+        if (navMeshSurface == null)
+        {
+            Debug.LogError("MazeGenerator could not find a NavMeshSurface. Assign one under Navigation or add one to the scene.", this);
+            return;
+        }
+
+        Physics.SyncTransforms();
+        navMeshSurface.BuildNavMesh();
     }
 
     [ContextMenu("Clear Generated Maze")]
     public void ClearGeneratedObjects()
     {
-        if (generatedRoot == null) return;
+        if (generatedRoot != null)
+        {
+            if (Application.isPlaying)
+            {
+                generatedRoot.gameObject.SetActive(false);
+                Destroy(generatedRoot.gameObject);
+            }
+            else DestroyImmediate(generatedRoot.gameObject);
 
-        if (Application.isPlaying) Destroy(generatedRoot.gameObject);
-        else DestroyImmediate(generatedRoot.gameObject);
+            generatedRoot = null;
+        }
 
-        generatedRoot = null;
+        if (navMeshSurface != null) navMeshSurface.RemoveData();
         CurrentLayout = null;
     }
 
