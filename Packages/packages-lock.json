@@ -216,6 +216,14 @@
         "com.unity.modules.imgui": "1.0.0"
       }
     },
+    "com.williamschack.repetitionless": {
+      "version": "file:com.williamschack.repetitionless",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.shadergraph": "12.1.0"
+      }
+    },
     "org.khronos.unitygltf": {
       "version": "https://github.com/KhronosGroup/UnityGLTF.git",
       "depth": 0,

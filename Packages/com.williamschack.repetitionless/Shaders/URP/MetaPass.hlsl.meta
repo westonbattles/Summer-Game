@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 92e0dce7b88095d1c842f8231457ed63
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Shaders/URP~/MetaPass.hlsl
+  uploadId: 964494

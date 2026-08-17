@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 10078ad46295b0d48addfc0c78a8ab53
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Editor/Updating/SaleChecker.cs
+  uploadId: 964494

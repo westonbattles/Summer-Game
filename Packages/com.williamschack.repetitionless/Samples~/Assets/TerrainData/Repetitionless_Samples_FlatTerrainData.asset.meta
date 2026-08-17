@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7b3dcd4bf3022497fb988347af343af5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 15600000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Samples~/Assets/TerrainData/Repetitionless_Samples_FlatTerrainData.asset
+  uploadId: 964494

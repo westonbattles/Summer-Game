@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 26a735c441c2469c59fc015571070f70
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Shaders/Common/Main/SampleRepetitionlessDynamic.hlsl
+  uploadId: 964494

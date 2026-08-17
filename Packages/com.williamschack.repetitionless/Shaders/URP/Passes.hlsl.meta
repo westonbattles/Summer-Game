@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 148305ffb4a5efce08a4773abe3b5f1a
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Shaders/URP~/Passes.hlsl
+  uploadId: 964494

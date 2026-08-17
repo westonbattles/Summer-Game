@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 389f15bcade75d7ffab726677635459d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Editor/CustomDialog/ShaderGUIDialog.cs
+  uploadId: 964494

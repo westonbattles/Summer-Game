@@ -12,10 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a73f86c920f4a2990730ca6914d4bb5, type: 3}
   m_Name: Crypt
   m_EditorClassIdentifier: Assembly-CSharp::MazeRoomDefinition
-  DisplayName: Room
-  Prefab: {fileID: 0}
+  DisplayName: Crypt
+  Prefab: {fileID: 6457956803194282759, guid: 6696deafdebb84fd883466725664b896, type: 3}
   Type: 0
   OccupiedCells:
   - {x: 0, y: 0}
-  Openings: []
+  Openings:
+  - Cell: {x: 0, y: 0}
+    Direction: 0
+  - Cell: {x: 0, y: 0}
+    Direction: 2
+  - Cell: {x: 0, y: 0}
+    Direction: 1
+  - Cell: {x: 0, y: 0}
+    Direction: 3
   SpawnWeight: 1

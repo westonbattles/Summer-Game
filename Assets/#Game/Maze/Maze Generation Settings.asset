@@ -24,6 +24,7 @@ MonoBehaviour:
   Rooms:
   - {fileID: 11400000, guid: fdb4aa19922c6440aa9d20442bda0424, type: 2}
   - {fileID: 11400000, guid: 2888d6a14e4c8473ab64a6f10c170f9d, type: 2}
+  - {fileID: 11400000, guid: 99cb06ba3b928415b8d8865d4160b6bf, type: 2}
   BossRoomPrefabs:
   - {fileID: 6443445786636514196, guid: 89ab56db9bde847899cc7bade087f955, type: 3}
   Connectors:

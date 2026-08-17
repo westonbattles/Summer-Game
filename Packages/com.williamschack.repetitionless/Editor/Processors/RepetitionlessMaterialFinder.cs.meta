@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: a7d1838f984d72e24bfa3fafb257bcdb
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Editor/Processors/RepetitionlessMaterialFinder.cs
+  uploadId: 964494

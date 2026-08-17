@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 6b2fe004e368896afa3fcd9cd0234662
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Shaders/Common/Structs/RepetitionlessMaterialData.hlsl
+  uploadId: 964494

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: cea62e3c30e135774b649b33eb3b133c
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Samples~/Assets/Scripts/Runtime/com.williamschack.Repetitionless.Runtime.Samples.asmdef
+  uploadId: 964494

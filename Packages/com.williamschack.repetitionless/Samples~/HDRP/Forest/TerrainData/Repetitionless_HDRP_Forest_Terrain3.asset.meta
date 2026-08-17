@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 399e76892ef2555c2896731caa3073e1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 15600000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Samples~/HDRP/Forest/TerrainData/Repetitionless_HDRP_Forest_Terrain3.asset
+  uploadId: 964494

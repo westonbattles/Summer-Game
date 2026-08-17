@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 75c2a0dc3c420f6beab9dd2bc1b1ed58
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Shaders/HDRP~/RepetitionlessHDRPSampleLayer.hlsl
+  uploadId: 964494

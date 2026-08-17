@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a263307c26c330935a06d1d9111828fc
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Samples~/URP/Forest/Materials/pine_tree/Repetitionless_URP_Forest_leaves.mat
+  uploadId: 964494

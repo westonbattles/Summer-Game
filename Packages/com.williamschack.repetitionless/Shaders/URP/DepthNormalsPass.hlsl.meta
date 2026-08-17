@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 36bddc3c9c2b081c5925862eccbfcd58
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Shaders/URP~/DepthNormalsPass.hlsl
+  uploadId: 964494

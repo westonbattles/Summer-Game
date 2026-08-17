@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8b7136713e85b5fea8386b86708d2617
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Shaders/Common/Noise/Keijiro/Common.hlsl
+  uploadId: 964494

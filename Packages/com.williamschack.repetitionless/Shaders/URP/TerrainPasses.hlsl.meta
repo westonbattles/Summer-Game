@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 125c4fa08a3ac5455b6dc3353f834c05
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Shaders/URP~/TerrainPasses.hlsl
+  uploadId: 964494

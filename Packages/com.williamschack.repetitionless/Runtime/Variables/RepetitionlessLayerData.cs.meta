@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 8aeb9ab3a3821309292b27c2fabcbde3
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 374778
+  packageName: Repetitionless Free
+  packageVersion: 1.6.2
+  assetPath: Packages/com.williamschack.repetitionless/Runtime/Variables/RepetitionlessLayerData.cs
+  uploadId: 964494
