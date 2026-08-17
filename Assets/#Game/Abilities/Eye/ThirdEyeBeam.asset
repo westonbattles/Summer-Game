@@ -28,11 +28,13 @@ MonoBehaviour:
         beamDuration: 8
         beamRange: 40
         beamRadius: 0.35
+        baseDamageType: 2
         windupTime: 0.2
         castPositionOffset: {x: 0, y: 2, z: 0}
         showGizmo: 1
         obstructionLayers:
           serializedVersion: 2
           m_Bits: 528
-        beamLineRenderer: {fileID: 2648917411240475333, guid: aab774e9c6b0f3242addccc6c284b1ad, type: 3}
+        beamLineRenderer: {fileID: 0}
         beamImpactVfx: {fileID: 0}
+        impactVfxInterval: 0.08

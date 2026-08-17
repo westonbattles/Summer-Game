@@ -9,6 +9,7 @@ public class Dash : AbilityBehaviour
     [SerializeField] float dashCooldownTime = 2.3f;
     [SerializeField] float dashLandMomentumDecayTime = 0.6f; // time to apply updated friction for
     [SerializeField] float verticalDashDampPercent = 0.7f; // good feeling horizontal dashes lead to too strong vertical dashes, this value squishes down the vertical component for vert dashes to account for that
+    [SerializeField] GameObject dashVfxPrefab;
 
     // MODIFIERS
     // to use a stat modifier, simply use it here! like so
@@ -58,6 +59,13 @@ public class Dash : AbilityBehaviour
 
         if (DashVerticallyEnabled && (dash.Player.Input.Move.y > 0 || dash.Player.Input.Move == Vector2.zero)) dash.Player.DashVertically(DashSpeed);
         else dash.Player.DashAlongInputAxis(DashSpeed); //<- base dash
+
+        if (dashVfxPrefab != null)
+        {
+            GameObject vfxInstance = UnityEngine.Object.Instantiate(dashVfxPrefab, dash.Player.transform.position, dash.Player.transform.rotation);
+            vfxInstance.transform.SetParent(dash.Player.transform);
+            UnityEngine.Object.Destroy(vfxInstance, 1.0f);
+        }
         
         dash.CooldownRemaining = DashCooldownTime; // update cooldown
         return true;
