@@ -28,7 +28,6 @@ public static class MazeLayoutGenerator
     {
         public RoomVariant Variant;
         public Vector2Int Origin;
-        public float Weight => Variant.Definition.SpawnWeight;
     }
 
     struct EntranceRequirement
@@ -150,23 +149,20 @@ public static class MazeLayoutGenerator
         }
 
         if (!TryBuildCriticalPaths(layout.Grid, bossRequirement, entranceRequirements, random, out HashSet<Vector2Int> criticalCells, out HashSet<CellEdge> requiredEdges, out failure)) return false;
-        if (!TryPlaceCriticalRooms(layout, variants, criticalCells, requiredEdges, entranceSlots, random))
+        HashSet<CellEdge> criticalEdges = new HashSet<CellEdge>(requiredEdges);
+
+        if (!TryExpandGuaranteedNetwork(layout.Grid, criticalCells, requiredEdges, random, out HashSet<Vector2Int> guaranteedCells, out failure)) return false;
+        if (!TryPlaceCriticalRooms(layout, variants, guaranteedCells, requiredEdges, entranceSlots, random))
         {
-            failure = "The critical paths could not be covered by compatible rooms.";
+            failure = "The guaranteed network could not be covered by compatible rooms.";
             return false;
         }
 
         if (!TryCreateBoss(layout, settings, bossRequirement, random, out failure)) return false;
         if (!TryCreateEntrances(layout, settings, entranceRequirements, random, out failure)) return false;
 
-        if (!TryFillRemainingCells(layout, variants, random))
-        {
-            failure = "A free cell could not be covered by any available normal room.";
-            return false;
-        }
-
         if (!TryBuildPotentialConnections(layout, out failure)) return false;
-        if (!TryBuildConnectionGraph(layout, settings, requiredEdges, random, out failure)) return false;
+        if (!TryBuildConnectionGraph(layout, settings, requiredEdges, criticalEdges, random, out failure)) return false;
 
         ResolveUnusedOpenings(layout, settings, random);
         layout.RebuildAdjacency();
@@ -291,6 +287,49 @@ public static class MazeLayoutGenerator
         {
             error = "The catalog needs a normal 1x1 fallback room with openings on all four sides.";
             return false;
+        }
+
+        error = null;
+        return true;
+    }
+
+    static bool TryExpandGuaranteedNetwork(MazeGrid grid, HashSet<Vector2Int> criticalCells, HashSet<CellEdge> requiredEdges, Random random, out HashSet<Vector2Int> guaranteedCells, out string error)
+    {
+        guaranteedCells = new HashSet<Vector2Int>(criticalCells);
+        int freeCellCount = 0;
+
+        for (int x = 0; x < grid.Width; x++)
+        {
+            for (int z = 0; z < grid.Height; z++)
+            {
+                if (grid.IsFree(new Vector2Int(x, z))) freeCellCount++;
+            }
+        }
+
+        while (guaranteedCells.Count < freeCellCount)
+        {
+            List<CellEdge> frontier = new List<CellEdge>();
+
+            foreach (Vector2Int cell in guaranteedCells)
+            {
+                for (int direction = 0; direction < 4; direction++)
+                {
+                    Vector2Int neighbor = cell + GridDirectionUtils.ToGridOffset((GridDirection)direction);
+                    if (!grid.IsFree(neighbor) || guaranteedCells.Contains(neighbor)) continue;
+                    frontier.Add(new CellEdge(cell, neighbor));
+                }
+            }
+
+            if (frontier.Count == 0)
+            {
+                error = "The guaranteed network could not reach every available maze cell.";
+                return false;
+            }
+
+            CellEdge selectedEdge = frontier[random.Next(frontier.Count)];
+            Vector2Int newCell = guaranteedCells.Contains(selectedEdge.CellA) ? selectedEdge.CellB : selectedEdge.CellA;
+            guaranteedCells.Add(newCell);
+            requiredEdges.Add(selectedEdge);
         }
 
         error = null;
@@ -648,51 +687,99 @@ public static class MazeLayoutGenerator
     {
         while (true)
         {
-            List<PlacementCandidate> bestCandidates = null;
+            bool hasFreeCriticalCell = false;
 
             foreach (Vector2Int criticalCell in criticalCells)
             {
                 if (!layout.Grid.IsFree(criticalCell)) continue;
-
-                List<PlacementCandidate> candidates = GetCriticalCandidatesCoveringCell(layout.Grid, variants, criticalCell, requiredEdges, entranceSlots);
-                if (candidates.Count == 0) return false;
-                if (bestCandidates == null || candidates.Count < bestCandidates.Count) bestCandidates = candidates;
+                hasFreeCriticalCell = true;
+                break;
             }
 
-            if (bestCandidates == null) return true;
-            PlaceRoom(layout, PickWeighted(bestCandidates, random));
+            if (!hasFreeCriticalCell) return true;
+
+            Dictionary<MazeRoomDefinition, List<PlacementCandidate>> candidatesByDefinition = GetCriticalPlacementCandidates(layout.Grid, variants, criticalCells, requiredEdges, entranceSlots);
+            List<MazeRoomDefinition> preferredDefinitions = new List<MazeRoomDefinition>();
+            List<MazeRoomDefinition> fallbackDefinitions = new List<MazeRoomDefinition>();
+
+            foreach (MazeRoomDefinition definition in candidatesByDefinition.Keys)
+            {
+                if (IsUniversalOneCellFallback(definition)) fallbackDefinitions.Add(definition);
+                else preferredDefinitions.Add(definition);
+            }
+
+            List<MazeRoomDefinition> definitionsToPickFrom = preferredDefinitions.Count > 0 ? preferredDefinitions : fallbackDefinitions;
+            if (definitionsToPickFrom.Count == 0) return false;
+
+            MazeRoomDefinition selectedDefinition = PickWeightedDefinition(definitionsToPickFrom, random);
+            List<PlacementCandidate> placements = candidatesByDefinition[selectedDefinition];
+            PlaceRoom(layout, placements[random.Next(placements.Count)]);
         }
     }
 
-    static List<PlacementCandidate> GetCriticalCandidatesCoveringCell(MazeGrid grid, Dictionary<MazeRoomDefinition, List<RoomVariant>> variants, Vector2Int requiredCell, HashSet<CellEdge> requiredEdges, HashSet<Vector2Int> entranceSlots)
+    static Dictionary<MazeRoomDefinition, List<PlacementCandidate>> GetCriticalPlacementCandidates(MazeGrid grid, Dictionary<MazeRoomDefinition, List<RoomVariant>> variants, HashSet<Vector2Int> criticalCells, HashSet<CellEdge> requiredEdges, HashSet<Vector2Int> entranceSlots)
     {
-        List<PlacementCandidate> candidates = new();
+        Dictionary<MazeRoomDefinition, List<PlacementCandidate>> candidatesByDefinition = new Dictionary<MazeRoomDefinition, List<PlacementCandidate>>();
 
         foreach (KeyValuePair<MazeRoomDefinition, List<RoomVariant>> pair in variants)
         {
             if (pair.Key.Type != MazeCellType.Normal) continue;
+            List<PlacementCandidate> candidates = new List<PlacementCandidate>();
 
             foreach (RoomVariant variant in pair.Value)
             {
-                foreach (Vector2Int localCell in variant.Cells)
+                for (int x = 0; x <= grid.Width - variant.Bounds.x; x++)
                 {
-                    PlacementCandidate candidate = new PlacementCandidate { Variant = variant, Origin = requiredCell - localCell };
-                    if (!CanPlace(grid, candidate)) continue;
-
-                    int occupiedEntranceSlots = 0;
-                    foreach (Vector2Int entranceSlot in entranceSlots)
+                    for (int z = 0; z <= grid.Height - variant.Bounds.y; z++)
                     {
-                        if (CandidateOccupies(candidate, entranceSlot)) occupiedEntranceSlots++;
-                    }
+                        PlacementCandidate candidate = new PlacementCandidate { Variant = variant, Origin = new Vector2Int(x, z) };
+                        if (!CanPlace(grid, candidate)) continue;
 
-                    if (occupiedEntranceSlots > 1) continue;
-                    if (!CandidateSupportsRequiredEdges(candidate, requiredEdges)) continue;
-                    candidates.Add(candidate);
+                        bool coversCriticalCell = false;
+                        foreach (Vector2Int localCell in variant.Cells)
+                        {
+                            if (!criticalCells.Contains(candidate.Origin + localCell)) continue;
+                            coversCriticalCell = true;
+                            break;
+                        }
+
+                        if (!coversCriticalCell) continue;
+
+                        int occupiedEntranceSlots = 0;
+                        foreach (Vector2Int entranceSlot in entranceSlots)
+                        {
+                            if (CandidateOccupies(candidate, entranceSlot)) occupiedEntranceSlots++;
+                        }
+
+                        if (occupiedEntranceSlots > 1) continue;
+                        if (!CandidateSupportsRequiredEdges(candidate, requiredEdges)) continue;
+                        candidates.Add(candidate);
+                    }
                 }
+            }
+
+            if (candidates.Count > 0) candidatesByDefinition.Add(pair.Key, candidates);
+        }
+
+        return candidatesByDefinition;
+    }
+
+    static bool IsUniversalOneCellFallback(MazeRoomDefinition definition)
+    {
+        if (definition.Type != MazeCellType.Normal || definition.OccupiedCells == null || definition.OccupiedCells.Length != 1) return false;
+
+        Vector2Int roomCell = definition.OccupiedCells[0];
+        HashSet<GridDirection> openingDirections = new HashSet<GridDirection>();
+
+        if (definition.Openings != null)
+        {
+            foreach (MazeOpeningDefinition opening in definition.Openings)
+            {
+                if (opening.Cell == roomCell) openingDirections.Add(opening.Direction);
             }
         }
 
-        return candidates;
+        return openingDirections.Contains(GridDirection.North) && openingDirections.Contains(GridDirection.East) && openingDirections.Contains(GridDirection.South) && openingDirections.Contains(GridDirection.West);
     }
 
     static bool CandidateSupportsRequiredEdges(PlacementCandidate candidate, HashSet<CellEdge> requiredEdges)
@@ -764,69 +851,6 @@ public static class MazeLayoutGenerator
 
         error = null;
         return true;
-    }
-
-    static bool TryFillRemainingCells(MazeLayout layout, Dictionary<MazeRoomDefinition, List<RoomVariant>> variants, Random random)
-    {
-        while (true)
-        {
-            List<PlacementCandidate> bestCandidates = null;
-
-            for (int x = 0; x < layout.Grid.Width; x++)
-            {
-                for (int z = 0; z < layout.Grid.Height; z++)
-                {
-                    Vector2Int cell = new Vector2Int(x, z);
-                    if (!layout.Grid.IsFree(cell)) continue;
-
-                    List<PlacementCandidate> candidates = GetNormalCandidatesCoveringCell(layout.Grid, variants, cell, null, null);
-                    if (candidates.Count == 0) return false;
-                    if (bestCandidates == null || candidates.Count < bestCandidates.Count) bestCandidates = candidates;
-                }
-            }
-
-            if (bestCandidates == null) return true;
-            PlaceRoom(layout, PickWeighted(bestCandidates, random));
-        }
-    }
-
-    static List<PlacementCandidate> GetNormalCandidatesCoveringCell(MazeGrid grid, Dictionary<MazeRoomDefinition, List<RoomVariant>> variants, Vector2Int requiredCell, GridDirection? requiredOpeningDirection, HashSet<Vector2Int> entranceSlots)
-    {
-        List<PlacementCandidate> candidates = new();
-
-        foreach (KeyValuePair<MazeRoomDefinition, List<RoomVariant>> pair in variants)
-        {
-            if (pair.Key.Type != MazeCellType.Normal) continue;
-
-            foreach (RoomVariant variant in pair.Value)
-            {
-                foreach (Vector2Int localCell in variant.Cells)
-                {
-                    PlacementCandidate candidate = new PlacementCandidate { Variant = variant, Origin = requiredCell - localCell };
-                    if (!CanPlace(grid, candidate)) continue;
-
-                    if (entranceSlots != null)
-                    {
-                        bool occupiesOtherEntrance = false;
-
-                        foreach (Vector2Int entranceSlot in entranceSlots)
-                        {
-                            if (entranceSlot == requiredCell) continue;
-                            if (!CandidateOccupies(candidate, entranceSlot)) continue;
-                            occupiesOtherEntrance = true;
-                            break;
-                        }
-
-                        if (occupiesOtherEntrance) continue;
-                    }
-
-                    if (requiredOpeningDirection.HasValue && !VariantHasOpeningAt(candidate, requiredCell, requiredOpeningDirection.Value)) continue;
-                    candidates.Add(candidate);
-                }
-            }
-        }
-
-        return candidates;
     }
 
     static bool CanPlace(MazeGrid grid, PlacementCandidate candidate)
@@ -932,7 +956,7 @@ public static class MazeLayoutGenerator
         return true;
     }
 
-    static bool TryBuildConnectionGraph(MazeLayout layout, MazeGenerationSettings settings, HashSet<CellEdge> requiredEdges, Random random, out string error)
+    static bool TryBuildConnectionGraph(MazeLayout layout, MazeGenerationSettings settings, HashSet<CellEdge> requiredEdges, HashSet<CellEdge> criticalEdges, Random random, out string error)
     {
         Dictionary<CellEdge, MazePotentialConnection> connectionsByCellEdge = new();
 
@@ -955,7 +979,7 @@ public static class MazeLayoutGenerator
                 return false;
             }
 
-            AddConnection(layout, settings, random, connection, selectedEdgeIds, true);
+            AddConnection(layout, settings, random, connection, selectedEdgeIds, criticalEdges.Contains(edge));
         }
 
         if (layout.Boss == null || layout.Boss.Opening == null)
@@ -1118,21 +1142,21 @@ public static class MazeLayoutGenerator
         }
     }
 
-    static PlacementCandidate PickWeighted(List<PlacementCandidate> candidates, Random random)
+    static MazeRoomDefinition PickWeightedDefinition(List<MazeRoomDefinition> definitions, Random random)
     {
         float totalWeight = 0f;
-        foreach (PlacementCandidate candidate in candidates) totalWeight += Mathf.Max(0f, candidate.Weight);
-        if (totalWeight <= 0f) return candidates[random.Next(candidates.Count)];
+        foreach (MazeRoomDefinition definition in definitions) totalWeight += Mathf.Max(0f, definition.SpawnWeight);
+        if (totalWeight <= 0f) return definitions[random.Next(definitions.Count)];
 
         double roll = random.NextDouble() * totalWeight;
 
-        foreach (PlacementCandidate candidate in candidates)
+        foreach (MazeRoomDefinition definition in definitions)
         {
-            roll -= Mathf.Max(0f, candidate.Weight);
-            if (roll <= 0d) return candidate;
+            roll -= Mathf.Max(0f, definition.SpawnWeight);
+            if (roll <= 0d) return definition;
         }
 
-        return candidates[candidates.Count - 1];
+        return definitions[definitions.Count - 1];
     }
 
     static GameObject PickRandomPrefab(GameObject[] prefabs, Random random)
