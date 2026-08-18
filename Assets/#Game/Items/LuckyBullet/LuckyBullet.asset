@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   id: lucky_bullet
   displayName: Lucky Bullet
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: a939368098e3d2d43997f81d09bf14a1, type: 3}
   shortDescription: 
   longDescription: 
   notes: 

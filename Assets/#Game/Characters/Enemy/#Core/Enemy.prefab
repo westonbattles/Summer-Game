@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9023206881366999175}
   - component: {fileID: 4605932228610628774}
   - component: {fileID: 5920493299780475443}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: FilledHealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 998504094862993413}
   - component: {fileID: 3279442286933131406}
   - component: {fileID: 2897991035460074173}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -113,8 +113,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 666.386, y: 607.8594}
-  m_SizeDelta: {x: 1358.75, y: 1220.25}
+  m_AnchoredPosition: {x: 633.386, y: 361.2344}
+  m_SizeDelta: {x: 1292.75, y: 727}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &1762485148436870184
 Canvas:
@@ -352,6 +352,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   baseMaxHP: 100
+  <CurrentHP>k__BackingField: 0
+  showDebugButtons: 0
 --- !u!114 &6866691012167821880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -417,7 +419,7 @@ GameObject:
   - component: {fileID: 2156246695042309923}
   - component: {fileID: 4480598383666154606}
   - component: {fileID: 7367478197675635649}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: EmptyHealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}

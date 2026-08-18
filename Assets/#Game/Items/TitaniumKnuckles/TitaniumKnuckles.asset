@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   id: titanium_knuckles
   displayName: Titanium Knuckles
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 4c21f9c7507ee834abdbd76ca3ba19f6, type: 3}
   shortDescription: '2x The Brass Knuckles combo damage multiplier '
   longDescription: 
   notes: 
