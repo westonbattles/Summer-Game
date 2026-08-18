@@ -7,6 +7,11 @@ public class TPPlayerViewSource : TPViewSource
     [SerializeField] Vector2 defaultFraming = new Vector2(0f, -0.43f);
     [SerializeField] float distance = 4.3f;
 
+    [Header("Dashing Camera Lag")]
+    [SerializeField] float dashingTrackingLag = 2f;
+    [SerializeField] float dashingLagIncreaseTime = 0.1f;
+    [SerializeField] float dashingLagDecreaseTime = 0.4f;
+    
     [Header("Jump Tracking")]
     [Tooltip("If the Camera targeted y position should be given by the player or by the ground under the player")]
     [SerializeField] bool dontTrackJumps = true;
@@ -19,40 +24,35 @@ public class TPPlayerViewSource : TPViewSource
     [SerializeField] [Range(0f,85f)] float VOE_end = 85f;
     [SerializeField] [Range(-1f,1f)] float straightDownFraming = -0.08f;
     [SerializeField] [Range(0f,50f)] float straightDownDistance = 5f;
-    
-    
+
+
+    Player player;
     PlayerLook look;
     public override Quaternion LookRotation => look != null ? look.LookRotation : Quaternion.identity;
     
     float smoothTrackingX;
     float smoothTrackingY;
     float smoothTrackingZ;
+    Vector3 smoothDashingTrackingOffset;
+    
     float trackingVelocityX;
     float trackingVelocityY;
     float trackingVelocityZ;
+    Vector3 dashingTrackingOffsetVelocity;
     
 
     // ensures target and input reference
-    void Awake()
+    void Start()
     {
+        player = Player.Instance;
         // ensure player look component
-        look = GetComponentInParent<PlayerLook>();
-        if (look == null)
-        {
-            Debug.LogError($"{nameof(TPPlayerViewSource)} needs a parent PlayerLook.", this);
-        }
+        look = Player.Instance.Look;
+        if (look == null) Debug.LogError($"{nameof(TPPlayerViewSource)} needs a parent PlayerLook.", this);
 
         // ensure target
         if (target == null)
         {
             // default target to player transform if no target given
-            Player player = GetComponentInParent<Player>();
-            if (player == null)
-            {
-                Debug.LogError($"{nameof(TPPlayerViewSource)} needs a target or a parent Player object.", this);
-                return;
-            }
-
             target = player.transform;
         }
 
@@ -89,9 +89,28 @@ public class TPPlayerViewSource : TPViewSource
                 smoothTrackingY = highestAllowedY;
                 trackingVelocityY = 0; // stop the smoothing
             }
-
+            
             trackingPosition.y = smoothTrackingY;
         }
+        
+        // dashing camera lag smoothing
+        Vector3 planarVelocity = Vector3.ProjectOnPlane(player.Motor.Velocity, Vector3.up);
+        Vector3 dashDirection = planarVelocity.normalized;
+
+        Vector3 flatForward = Quaternion.Euler(0f, look.Yaw, 0f) * Vector3.forward;
+        float forwardDot = Vector3.Dot(dashDirection, flatForward);
+        
+        // -1...1 -> 0...1
+        float directionalAmount = (forwardDot + 1f) * 0.5f;
+        directionalAmount *= directionalAmount;
+
+        // Shrink the vector without changing its direction.
+        Vector3 shapedDashDirection = dashDirection * directionalAmount;
+        
+        Vector3 targetDashOffset = player.IsDashing ? - shapedDashDirection * dashingTrackingLag : Vector3.zero;
+        float dashSmoothTime = player.IsDashing ? dashingLagIncreaseTime : dashingLagDecreaseTime;
+        smoothDashingTrackingOffset = Vector3.SmoothDamp(smoothDashingTrackingOffset, targetDashOffset, ref dashingTrackingOffsetVelocity, dashSmoothTime);
+        trackingPosition += smoothDashingTrackingOffset;
         
         // TrackingOffset is member variable derived by TPViewSource that lets us offset the target position if we want.
         return trackingPosition + TrackingOffset;
@@ -118,7 +137,7 @@ public class TPPlayerViewSource : TPViewSource
         float factor = Mathf.InverseLerp(VOE_start, VOE_end, look.Pitch);
         factor = Mathf.SmoothStep(0f, 1f, factor); // easing function
         adjustedDistance = Mathf.Lerp(adjustedDistance, straightDownDistance, factor);
-        
+
         return adjustedDistance;
     }
     

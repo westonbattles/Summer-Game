@@ -114,7 +114,7 @@ public class Player : MonoBehaviour, ICharacterController
         
         Input               = GetComponent<PlayerInputReader>();
         Aim                 = GetComponent<PlayerAim>();
-        Look                = GetComponentInChildren<PlayerLook>();
+        Look                = GetComponent<PlayerLook>();
         AbilityController   = GetComponent<AbilityController>();
         CharacterSwitcher   = GetComponent<PlayerCharacterSwitcher>();
         Combat              = GetComponent<Combat>();
