@@ -111,7 +111,7 @@ public class XPHUD : MonoBehaviour
     {
         if (levelText != null)
         {
-            levelText.text = level.ToString();
+            levelText.text = $"Lv. {level.ToString()}";
         }
     }
 

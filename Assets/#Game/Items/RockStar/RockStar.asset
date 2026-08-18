@@ -14,13 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   id: rock_star
   displayName: Rock Star
-  icon: {fileID: 21300000, guid: 0ca7172cb66034348a7e2629289a50c6, type: 3}
+  icon: {fileID: 0}
   shortDescription: Physical attacks set the enemy ablaze.
   longDescription: Physical attacks set the enemy ablaze, applying 3 ticks of fire
     damage to the enemy.
   notes: That rock is on fire. This will apply to all physical attacks.
   rarity: 0
   isDuoItem: 0
+  canDropRandomly: 1
+  dropWeight: 1
   difficultyCost: 1
   worldModelPrefab: {fileID: 0}
   behaviour:
