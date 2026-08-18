@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df5a79d86c1c4dbdad74976aad3aa6c9, type: 3}
   m_Name: Maze Generation Settings
   m_EditorClassIdentifier: Assembly-CSharp::MazeGenerationSettings
-  GridWidth: 9
-  GridHeight: 9
+  GridWidth: 11
+  GridHeight: 11
   CellWidth: 30
   CellHeight: 30
   CellGap: 3

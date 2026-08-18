@@ -1123,7 +1123,7 @@ Transform:
   m_GameObject: {fileID: 621762347}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -80.7, y: 0, z: -108.1}
+  m_LocalPosition: {x: -109.4, y: 0, z: -143.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1145,6 +1145,7 @@ MonoBehaviour:
   randomizeSeed: 1
   seed: 257034192
   generateOnStart: 1
+  navMeshSurface: {fileID: 0}
   drawGizmos: 1
   generatedRoot: {fileID: 0}
 --- !u!1 &729309365
