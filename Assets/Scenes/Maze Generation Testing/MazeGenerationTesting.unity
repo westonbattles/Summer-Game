@@ -1145,6 +1145,7 @@ MonoBehaviour:
   randomizeSeed: 1
   seed: 257034192
   generateOnStart: 1
+  navMeshSurface: {fileID: 0}
   drawGizmos: 1
   generatedRoot: {fileID: 0}
 --- !u!1 &729309365

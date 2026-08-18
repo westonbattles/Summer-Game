@@ -27,12 +27,14 @@ public class PlayerModifiers
     public Modifier<float> MaxHealthBonus = new(0f);
     public Modifier<float> DamageTakenMultiplier = new(1f);       // 1.0 = 100% damage taken.
     public Modifier<float> BhopMomentumCarryPercent = new(0.33f); // how much horizontal velocity you keep on perfect bhops
-    
-    
-    
-    
+    public Modifier<float> AttackSpeedPercent = new(1f);          // 1.0 = 100% speed, 2.0 = 200% speed, etc
+    public Modifier<float> MovementSpeedPercent = new(1f);        // 1.0 = 100% speed, 2.0 = 200% speed, etc
+    public Modifier<float> CooldownDurationPercent = new(1f);     // (0.0 < x < 2.0). You can have LONGER cooldowns
+
+
+
     // Eye Abilities
-    
+
     // Revolver
     public Modifier<int> RevolverBulletsBonus = new(0);                             // how many extra bullets in the chamber the revolver gets
     public Modifier<float> RevolverLastBulletDamageMultiplier = new(1f);            // damage multiplier for the last bullet in the revolvers chamber
