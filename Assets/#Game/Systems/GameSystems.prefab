@@ -180,6 +180,57 @@ MonoBehaviour:
   showDebugButtons: 1
   debugEnemyPrefab: {fileID: 8271345309812604368, guid: f599b8334c9b4a6408683de7f616f862, type: 3}
   debugSpawnDistance: 5
+--- !u!1 &4081607228381149523
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8581011835486627224}
+  - component: {fileID: 4999386142727029611}
+  m_Layer: 0
+  m_Name: MazeGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8581011835486627224
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4081607228381149523}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -109.4, y: 0, z: -143.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4513342026305316520}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4999386142727029611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4081607228381149523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0ee90420b2d64348902e15b37479060, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MazeGenerator
+  settings: {fileID: 11400000, guid: 505e5db98f0c7457f80bbc02cd8ebc7a, type: 2}
+  randomizeSeed: 1
+  seed: 257034192
+  generateOnStart: 1
+  navMeshSurface: {fileID: 0}
+  drawGizmos: 1
+  generatedRoot: {fileID: 0}
 --- !u!1 &4177934630902473835
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,8 +279,10 @@ MonoBehaviour:
   duoItemSpawnChance: 0.08
   worldItemPrefab: {fileID: 1509475967646051853, guid: cc095aa2b0db04651b50c04daeb3920f, type: 3}
   nullItemModelPrefab: {fileID: 2874779153525773236, guid: 549dff1b6b6a8495bacfd88af67dae80, type: 3}
-  showDebugButtons: 0
-  debugItemDefinition: {fileID: 11400000, guid: b3776bbb31fb642c88be8246d990deef, type: 2}
+  choiceBubblePrefab: {fileID: 5069543672009847690, guid: 318f8ca99861f4948aad5e9ea79e0cc4, type: 3}
+  defaultChoiceCount: 3
+  showDebugButtons: 1
+  debugItemDefinition: {fileID: 11400000, guid: b9347712c69bb734280e1cfcd81f604b, type: 2}
   debugSpawnDistance: 5
 --- !u!1 &4604608678760809334
 GameObject:
@@ -268,6 +321,7 @@ Transform:
   - {fileID: 3776421891346396205}
   - {fileID: 6772202803879410068}
   - {fileID: 1928683261831155040}
+  - {fileID: 8581011835486627224}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5682544102942595893
@@ -363,6 +417,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814ff83ecb425f045919a809ad0e2e19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageKills
+  stageTargets:
+  - 25
+  - 10
+  - 15
+  overfillDuration: 10
+  expiryDecay: 0.8
 --- !u!1 &6592087602059961266
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,10 +469,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpawnDirector
   spawnCap: 32
   slowIncome: 1
-  slowMinPurchase: 100
+  slowMinPurchase: 25
   slowFailChance: 0.1
-  fastIncome: 10
-  fastMinPurchase: 10
+  fastIncome: 1
+  fastMinPurchase: 3
   fastFailChance: 0.6
   spawnGrouping: {fileID: 11400000, guid: 660bde6014d65490c8fa827a3b0ad9d1, type: 2}
   minSpawnDistance: 12
@@ -431,7 +491,7 @@ MonoBehaviour:
   logisticMaxIncome: 0
   logisticSteepness: 0
   logisticMidpointTime: 0
-  showDebugButtons: 0
+  showDebugButtons: 1
 --- !u!1 &8046806030501190633
 GameObject:
   m_ObjectHideFlags: 0

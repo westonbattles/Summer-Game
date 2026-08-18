@@ -7,10 +7,10 @@ public class TPPlayerViewSource : TPViewSource
     [SerializeField] Vector2 defaultFraming = new Vector2(0f, -0.43f);
     [SerializeField] float distance = 4.3f;
 
-    [Header("Dashing Camera Lag")]
-    [SerializeField] float dashingTrackingLag = 2f;
-    [SerializeField] float dashingLagIncreaseTime = 0.1f;
-    [SerializeField] float dashingLagDecreaseTime = 0.4f;
+    [Header("Dashing Distance")]
+    [SerializeField] float dashingDistanceIncrease = 2f;
+    [SerializeField] float dashingDistanceIncreaseTime = 0.1f;
+    [SerializeField] float dashingDistanceDecreaseTime = 0.4f;
     
     [Header("Jump Tracking")]
     [Tooltip("If the Camera targeted y position should be given by the player or by the ground under the player")]
@@ -33,12 +33,12 @@ public class TPPlayerViewSource : TPViewSource
     float smoothTrackingX;
     float smoothTrackingY;
     float smoothTrackingZ;
-    Vector3 smoothDashingTrackingOffset;
+    float smoothDashingDistance;
     
     float trackingVelocityX;
     float trackingVelocityY;
     float trackingVelocityZ;
-    Vector3 dashingTrackingOffsetVelocity;
+    float dashingDistanceVelocity;
     
 
     // ensures target and input reference
@@ -93,25 +93,6 @@ public class TPPlayerViewSource : TPViewSource
             trackingPosition.y = smoothTrackingY;
         }
         
-        // dashing camera lag smoothing
-        Vector3 planarVelocity = Vector3.ProjectOnPlane(player.Motor.Velocity, Vector3.up);
-        Vector3 dashDirection = planarVelocity.normalized;
-
-        Vector3 flatForward = Quaternion.Euler(0f, look.Yaw, 0f) * Vector3.forward;
-        float forwardDot = Vector3.Dot(dashDirection, flatForward);
-        
-        // -1...1 -> 0...1
-        float directionalAmount = (forwardDot + 1f) * 0.5f;
-        directionalAmount *= directionalAmount;
-
-        // Shrink the vector without changing its direction.
-        Vector3 shapedDashDirection = dashDirection * directionalAmount;
-        
-        Vector3 targetDashOffset = player.IsDashing ? - shapedDashDirection * dashingTrackingLag : Vector3.zero;
-        float dashSmoothTime = player.IsDashing ? dashingLagIncreaseTime : dashingLagDecreaseTime;
-        smoothDashingTrackingOffset = Vector3.SmoothDamp(smoothDashingTrackingOffset, targetDashOffset, ref dashingTrackingOffsetVelocity, dashSmoothTime);
-        trackingPosition += smoothDashingTrackingOffset;
-        
         // TrackingOffset is member variable derived by TPViewSource that lets us offset the target position if we want.
         return trackingPosition + TrackingOffset;
     }
@@ -138,7 +119,35 @@ public class TPPlayerViewSource : TPViewSource
         factor = Mathf.SmoothStep(0f, 1f, factor); // easing function
         adjustedDistance = Mathf.Lerp(adjustedDistance, straightDownDistance, factor);
 
-        return adjustedDistance;
+        // get planar dash alignment with where the camera is facing
+        bool isPlanarDashing = player.IsDashing;
+        
+        float directionalAmount = 1f;
+        float horizontalLookAmount = 1f;
+        
+        // ground pound does full distance change always, eye dash scales based on vertical alignment
+        if (player.CharacterSwitcher.CurrentCharacter == PlayerCharacter.Eye)
+        {
+            Vector3 flatForward = Quaternion.Euler(0f, look.Yaw, 0f) * Vector3.forward;
+            Vector3 planarVelocity = Vector3.ProjectOnPlane(player.Motor.Velocity, Vector3.up);
+            Vector3 dashDirection = isPlanarDashing ? planarVelocity.normalized : Vector3.zero;
+            
+            // front dash = 1, side dash = .25, back dash = 0
+            directionalAmount = (Vector3.Dot(dashDirection, flatForward) + 1f) * 0.5f;
+            directionalAmount *= directionalAmount;
+            
+            // fade the distance when looking vertical so the camera doesnt move up/down
+            horizontalLookAmount = Mathf.Cos(Mathf.Abs(look.Pitch) * Mathf.Deg2Rad);
+            horizontalLookAmount *= horizontalLookAmount;
+        }
+        
+
+        // smooth the camera in/out based on the current dash angle
+        float targetDashingDistance = isPlanarDashing ? dashingDistanceIncrease * directionalAmount * horizontalLookAmount : 0f;
+        float dashingDistanceSmoothTime = targetDashingDistance > smoothDashingDistance ? dashingDistanceIncreaseTime : dashingDistanceDecreaseTime;
+        smoothDashingDistance = Mathf.SmoothDamp(smoothDashingDistance, targetDashingDistance, ref dashingDistanceVelocity, dashingDistanceSmoothTime);
+
+        return adjustedDistance + smoothDashingDistance;
     }
     
     public override CameraParams GetParams()
