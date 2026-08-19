@@ -1,7 +1,10 @@
 // rough example for now - these are base stats, don't change these in file. we'll use Player.Instance.Modifiers to change them
 
-// bonus        -> addition modifiers
-// multiplier   -> multiplicative modifiers
+// Naming convention:
+//   ...Bonus       -> intended for AddFlat
+//   ...Multiplier  -> intended for AddMultiplier
+//   ...Percent     -> a rate where 1.0 = 100% (can be flat-shifted or multiplied)
+//   ...Enabled     -> bool toggle, use SetValue
 
 using System.Collections.Generic;
 

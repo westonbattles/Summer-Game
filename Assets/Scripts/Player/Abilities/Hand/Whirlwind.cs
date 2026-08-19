@@ -1,33 +1,33 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 [Serializable]
 public class Whirlwind : AbilityBehaviour
 {
     [Header("Properties")] 
-    [SerializeField] float baseDamage = 10f;
-    [SerializeField] float baseCooldownTime = 4f;
+    [SerializeField, Min(0f)] float baseDamage = 10f;
+    [SerializeField, Min(0f)] float baseCooldownTime = 4f;
     [SerializeField] DamageType baseDamageType = DamageType.Physical;
 
     [Header("Spin/Animation")]
-    [SerializeField, Header("delay for applying the tick of damage")] float spinDamageDelay = 0.5f;
+    [SerializeField, Tooltip("delay for applying the tick of damage")] 
+    float spinDamageDelay = 0.5f;
     //[SerializeField] float spinTime = 0.5f; // how long to play the animation for
 
     [Header("Target Gathering")]
-    [SerializeField] float overlapSphereRadius = 3.3f;
+    [SerializeField, Min(0f)] float overlapSphereRadius = 3.3f;
     [Tooltip("max buffer size for the overlap sphere aplying damage. more colliders than buffer allows for means some enemies won't be damaged")]
-    [SerializeField] uint overlapSphereMaxColliders = 128;
+    [SerializeField, Min(1)] uint overlapSphereMaxColliders = 128;
     [SerializeField] bool showGizmo = true;
 
     [Header("VFX")]
     [SerializeField] GameObject whirlwindSlashVFX;
-    [SerializeField] float vfxDuration = 1.0f;
+    [SerializeField, Min(0f)] float vfxDuration = 1.0f;
+    [SerializeField] float vfxHeightOffset = 2.2f;
 
     LayerMask HitLayers => Enemy.LayerMask | LayerMask.GetMask("Hittable");
-    
+
     // MODIFIERS
     // to use a stat modifier, simply use it here! like so
     // public ModifiableStat => baseStat | could be turned into the following:
@@ -48,6 +48,7 @@ public class Whirlwind : AbilityBehaviour
     class WhirlwindState : AbilityState
     {
         public readonly Player Player;
+        public readonly Collider[] HitBuffer;
         public HashSet<IDamageable> DamagedTargets = new();
 
         public bool HitPending;
@@ -56,16 +57,18 @@ public class Whirlwind : AbilityBehaviour
 
         public GameObject ActiveVfxInstance;
 
-        public WhirlwindState(Player player)
+        public WhirlwindState(Player player, int bufferSize)
         {
             Player = player;
+            HitBuffer = new Collider[bufferSize];
         }
     }
 
     public override AbilityState CreateState()
     {
         Player player = Player.Instance;
-        WhirlwindState state = new WhirlwindState(player);
+        int bufferSize = (int)overlapSphereMaxColliders;
+        WhirlwindState state = new WhirlwindState(player, bufferSize);
         return state;
     }
     
@@ -111,19 +114,16 @@ public class Whirlwind : AbilityBehaviour
     
     public override void Tick(AbilityState state, float deltaTime)
     {
-        WhirlwindState whirlwind = state as WhirlwindState;
-        if (whirlwind == null) return;
+        if (state is not WhirlwindState whirlwind) return;
 
+        whirlwind.SpinTimerRemaining = Mathf.Max(0f, whirlwind.SpinTimerRemaining - deltaTime); // update spin damage offset timer
+        whirlwind.CooldownRemaining = Mathf.Max(0f, whirlwind.CooldownRemaining - deltaTime);   // update ability cooldown
 
         if (whirlwind.HitPending && whirlwind.SpinTimerRemaining == 0f)
         {
             ApplyDamage(whirlwind);
             whirlwind.HitPending = false;
         }
-        
-            
-        whirlwind.SpinTimerRemaining = Mathf.Max(0f, whirlwind.SpinTimerRemaining - deltaTime); // update spin damage offset timer
-        whirlwind.CooldownRemaining = Mathf.Max(0f, whirlwind.CooldownRemaining - deltaTime);   // update ability cooldown
     }
 
     public override bool TryExecute(AbilityState state)
@@ -167,13 +167,10 @@ public class Whirlwind : AbilityBehaviour
         return true;
     }
 
-    public override float GetCooldownFraction(AbilityState state)
-    {
-        WhirlwindState whirlwind = state as WhirlwindState;
-        if (whirlwind == null) return 0f;
-
-        return whirlwind.CooldownRemaining / CooldownTime;
-    }
+    public override float GetCooldownFraction(AbilityState state) =>
+        state is WhirlwindState w && CooldownTime > 0f
+            ? Mathf.Clamp01(w.CooldownRemaining / CooldownTime)
+            : 0f;
 
     public override void Cancel(AbilityState state)
     {
