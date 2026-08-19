@@ -24,8 +24,11 @@ MonoBehaviour:
       type: {class: Whirlwind, ns: , asm: Assembly-CSharp}
       data:
         baseDamage: 10
-        baseDamageIncreasePerEnemy: 3
         baseCooldownTime: 4
+        baseDamageType: 0
         spinDamageDelay: 0.2
         overlapSphereRadius: 3.3
+        overlapSphereMaxColliders: 128
         showGizmo: 0
+        whirlwindSlashVFX: {fileID: 4074180291764849440, guid: 88073036e4110f842bbc6b061ac775f0, type: 3}
+        vfxDuration: 1

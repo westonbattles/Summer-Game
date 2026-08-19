@@ -28,6 +28,7 @@ MonoBehaviour:
         baseComboStages: 3
         baseCooldownTime: 0.72
         baseComboResetTime: 2.8
+        baseDamageType: 0
         punchHitDelays:
         - 0.158
         - 0.158
@@ -37,3 +38,4 @@ MonoBehaviour:
         boxCastOffsetVector3: {x: 0, y: 1.2, z: 0}
         maxEntityCount: 16
         showGizmo: 0
+        hitVfx: {fileID: 6271241949191652176, guid: a21ea6ac741f87b40a6d023f69451b6f, type: 3}

@@ -41,6 +41,9 @@ public class BrassKnuckles : AbilityBehaviour
     [SerializeField] Vector3 boxCastOffsetVector3;
     [SerializeField] int maxEntityCount = 16;
     [SerializeField] bool showGizmo = false;
+
+    [Header("References")]
+    [SerializeField] GameObject hitVfx;
     
     LayerMask HitLayers => Enemy.LayerMask | LayerMask.GetMask("Hittable");
     
@@ -129,6 +132,7 @@ public class BrassKnuckles : AbilityBehaviour
         
         // todo: swing vfx
         
+
         brassKnuckles.PunchIndex += 1;
         brassKnuckles.CooldownRemaining = CooldownTime; // start cooldown countdown
         return true;
@@ -155,20 +159,36 @@ public class BrassKnuckles : AbilityBehaviour
             // build damageinfo
             float damage = Damage * brassKnuckles.GetActiveMultiplier(ComboIncrease);
             DamageInfo damageInfo = new DamageInfo(damage, DamageType, brassKnuckles.Player.gameObject, isCrit: false); // todo : implement crit chance?
-            
+
+            Vector3 playerImpactOrigin = brassKnuckles.Player.transform.position + Vector3.up * 1.2f;
+
             // de-duplicate
             brassKnuckles.DamagedTargets.Clear();
             for (int i = 0; i < hitCount; i++)
             {
+                Collider col = results[i];
                 IDamageable target = results[i].GetComponentInParent<IDamageable>();
+
                 if (target != null && brassKnuckles.DamagedTargets.Add(target))
                 {
                     brassKnuckles.Player.Combat.TryDamage(target, damageInfo);
+
+                    // punch hit vfx / particles
+                    if (hitVfx != null)
+                    {
+                        Vector3 contactPoint = col.ClosestPoint(playerImpactOrigin);
+
+                        // Face the VFX direction outward from player to enemy
+                        Vector3 direction = (contactPoint - playerImpactOrigin).normalized;
+                        Quaternion vfxRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
+
+                        GameObject vfxInstance = UnityEngine.Object.Instantiate(hitVfx, contactPoint, vfxRotation);
+                        UnityEngine.Object.Destroy(vfxInstance, 1.0f);
+                    }
                 }
             }
-            
-            // todo: punch hit vfx / particles. maybe individual on each enemy? but prob not
 
+            
             // update combo state 
             if (brassKnuckles.ComboState < MaxCombo) brassKnuckles.ComboState += 1;
             brassKnuckles.ComboResetTimeRemaining = ComboResetTime;

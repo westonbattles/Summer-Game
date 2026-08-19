@@ -22,9 +22,10 @@ public class Whirlwind : AbilityBehaviour
     [SerializeField] uint overlapSphereMaxColliders = 128;
     [SerializeField] bool showGizmo = true;
 
-    //[Header("VFX")]
-    //[SerializeField] PooledVfx whirlwindSlashVFX;
-    
+    [Header("VFX")]
+    [SerializeField] GameObject whirlwindSlashVFX;
+    [SerializeField] float vfxDuration = 1.0f;
+
     LayerMask HitLayers => Enemy.LayerMask | LayerMask.GetMask("Hittable");
     
     // MODIFIERS
@@ -52,7 +53,8 @@ public class Whirlwind : AbilityBehaviour
         public bool HitPending;
         public float SpinTimerRemaining;         // how much time left until we should tick spin damage
         public float CooldownRemaining;          // how much time left on the ability cooldown
-        
+
+        public GameObject ActiveVfxInstance;
 
         public WhirlwindState(Player player)
         {
@@ -136,6 +138,32 @@ public class Whirlwind : AbilityBehaviour
         whirlwind.HitPending = true;                    // tell tick we need to apply a hit
         whirlwind.SpinTimerRemaining = spinDamageDelay; // start spin damage tick cooldown
         whirlwind.CooldownRemaining = CooldownTime;     // start cooldown countdown
+
+        if (whirlwindSlashVFX != null)
+        {
+            if (whirlwind.ActiveVfxInstance != null) UnityEngine.Object.Destroy(whirlwind.ActiveVfxInstance);
+
+            // 1. Instantiate with prefab's native rotation
+            whirlwind.ActiveVfxInstance = UnityEngine.Object.Instantiate(
+                whirlwindSlashVFX,
+                whirlwind.Player.transform.position,
+                whirlwindSlashVFX.transform.rotation
+            );
+
+            // 2. Parent to player (worldPositionStays: false lets us set local transforms directly)
+            whirlwind.ActiveVfxInstance.transform.SetParent(whirlwind.Player.transform, false);
+
+            // 3. Set local offset (e.g., center height around 1.0f - 1.2f up from feet)
+            whirlwind.ActiveVfxInstance.transform.localPosition = new Vector3(0f, 2.2f, 0f);
+
+            // 4. Scale VFX dynamically
+            float scaleRatio = DamageRadius / overlapSphereRadius;
+            whirlwind.ActiveVfxInstance.transform.localScale *= scaleRatio;
+
+            // 5. Cleanup
+            UnityEngine.Object.Destroy(whirlwind.ActiveVfxInstance, vfxDuration);
+        }
+
         return true;
     }
 
@@ -155,6 +183,11 @@ public class Whirlwind : AbilityBehaviour
         // stop any pending hits from happening
         whirlwind.HitPending = false;
         whirlwind.SpinTimerRemaining = 0f;
+
+        if (whirlwind.ActiveVfxInstance != null)
+        {
+            UnityEngine.Object.Destroy(whirlwind.ActiveVfxInstance);
+        }
     }
     
     
