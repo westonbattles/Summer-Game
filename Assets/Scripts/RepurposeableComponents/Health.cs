@@ -7,7 +7,9 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
 {
     [SerializeField] private float baseMaxHP = 100f;
     public float BaseMaxHP => baseMaxHP;
-    public float MaxHP { get; private set; }
+    public float MaxHP => (Player.Instance != null && gameObject == Player.Instance.gameObject)
+        ? baseMaxHP * (1f + Player.Instance.Modifiers.MaxHealthBonus.GetValue())
+        : baseMaxHP;
 
     [field: SerializeField]
     [field: ProgressBar("Health", nameof(MaxHP), EColor.Red)]
@@ -23,7 +25,6 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
 
     private void Awake()
     {
-        MaxHP = baseMaxHP;
         CurrentHP = MaxHP;
     }
 
@@ -77,7 +78,7 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
     /// <param name="newMax"></param>
     public void SetMaxHP(float newMax)
     {
-        MaxHP = Mathf.Max(newMax, 1f);
+        baseMaxHP = Mathf.Max(newMax, 1f);
         CurrentHP = Mathf.Min(CurrentHP, MaxHP);
         OnHealthChanged?.Invoke(CurrentHP, MaxHP);
     }
@@ -88,7 +89,7 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
     /// <param name="newMax"></param>
     public void InitializeMaxHP(float newMax)
     {
-        MaxHP = Mathf.Max(newMax, 1f);
+        baseMaxHP = Mathf.Max(newMax, 1f);
         CurrentHP = MaxHP;
         OnHealthChanged?.Invoke(CurrentHP, MaxHP);
     }
