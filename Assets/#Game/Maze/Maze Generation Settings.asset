@@ -22,15 +22,12 @@ MonoBehaviour:
   StartAreaWidth: 5
   StartAreaHeight: 5
   Rooms:
-  - {fileID: 11400000, guid: fdb4aa19922c6440aa9d20442bda0424, type: 2}
-  - {fileID: 11400000, guid: 2888d6a14e4c8473ab64a6f10c170f9d, type: 2}
-  - {fileID: 11400000, guid: 99cb06ba3b928415b8d8865d4160b6bf, type: 2}
+  - {fileID: 8791805939629922458, guid: 158e9a95abefe4ce688652cfb05e79db, type: 3}
+  - {fileID: 8231126240587729376, guid: 6696deafdebb84fd883466725664b896, type: 3}
   BossRoomPrefabs:
   - {fileID: 6443445786636514196, guid: 89ab56db9bde847899cc7bade087f955, type: 3}
   Connectors:
   - {fileID: 7432908738590826676, guid: fb41668c9d8474c9e891972994786614, type: 3}
-  OpeningFillers:
-  - {fileID: 7432908738590826676, guid: ce437197c143e47179bc980aec375784, type: 3}
   MaximumGenerationAttempts: 100
   MaximumConnectionDetour: 6
   ExtraConnectionChance: 0.1

@@ -14,26 +14,32 @@ public static class MazeBuilder
         foreach (MazeEntrance entrance in layout.Entrances) BuildEntranceConnection(entrance, settings, root);
         BuildBoss(layout.Boss, settings, root);
 
-        foreach (MazeRoomPlacement room in layout.Rooms.Values)
-        {
-            foreach (MazePlacedOpening opening in room.Openings)
-            {
-                if (opening.State == MazeOpeningState.Filled) BuildOpeningFiller(opening, settings, root);
-            }
-        }
-
         return root;
     }
 
     static void BuildRoom(MazeRoomPlacement room, MazeGenerationSettings settings, Transform root)
     {
-        if (room.Definition == null || room.Definition.Prefab == null) return;
+        if (room.RoomPrefab == null) return;
 
-        GameObject instance = Object.Instantiate(room.Definition.Prefab, root);
-        string roomName = string.IsNullOrWhiteSpace(room.Definition.DisplayName) ? room.Definition.name : room.Definition.DisplayName;
+        MazeRoom instanceRoom = Object.Instantiate(room.RoomPrefab, root);
+        GameObject instance = instanceRoom.gameObject;
+        string roomName = string.IsNullOrWhiteSpace(room.RoomPrefab.DisplayName) ? room.RoomPrefab.name : room.RoomPrefab.DisplayName;
         instance.name = $"{roomName} #{room.Id} ({room.GridOrigin.x},{room.GridOrigin.y})";
         instance.transform.localPosition = settings.GetCellCenterLocal(room.PrefabOriginCell);
         instance.transform.localRotation = GridDirectionUtils.ToRotation(room.Rotation);
+
+        foreach (MazePlacedOpening placedOpening in room.Openings)
+        {
+            if (!instanceRoom.TryGetOpening(placedOpening.PrefabKey, out MazeRoomOpening prefabOpening))
+            {
+                Debug.LogError($"Generated room '{instance.name}' has no prefab opening marker for {placedOpening.PrefabKey}.", instance);
+                continue;
+            }
+
+            if (placedOpening.State == MazeOpeningState.Unresolved) Debug.LogError($"Generated room '{instance.name}' reached the builder with an unresolved opening at {placedOpening.PrefabKey}. It will remain closed.", instance);
+
+            prefabOpening.ApplyState(placedOpening.State);
+        }
     }
 
     static void BuildConnection(MazeConnection connection, MazeGenerationSettings settings, Transform root)
@@ -78,20 +84,6 @@ public static class MazeBuilder
         bossRoom.name = "Boss Room";
         bossRoom.transform.localPosition = boundaryCenter + outward * (settings.CellGap * 0.5f);
         bossRoom.transform.localRotation = GridDirectionUtils.ToRotation(boss.Opening.Direction);
-    }
-
-    static void BuildOpeningFiller(MazePlacedOpening opening, MazeGenerationSettings settings, Transform root)
-    {
-        if (opening.FillerPrefab == null) return;
-
-        Vector3 outward = GridDirectionUtils.ToWorldDirection(opening.Direction);
-        Vector3 boundaryCenter = GetBoundaryCenterLocal(opening, settings);
-        Vector3 fillerCenter = boundaryCenter - outward * (settings.CellGap * 0.25f);
-
-        GameObject instance = Object.Instantiate(opening.FillerPrefab, root);
-        instance.name = $"Opening Filler {opening.RoomId}";
-        instance.transform.localPosition = fillerCenter;
-        instance.transform.localRotation = GridDirectionUtils.ToRotation(opening.Direction);
     }
 
     static Vector3 GetBoundaryCenterLocal(MazePlacedOpening opening, MazeGenerationSettings settings)

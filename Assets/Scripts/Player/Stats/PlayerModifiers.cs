@@ -1,9 +1,9 @@
 // rough example for now - these are base stats, don't change these in file. we'll use Player.Instance.Modifiers to change them
 
 // Naming convention:
-//   ...Bonus       -> intended for AddFlat
-//   ...Multiplier  -> intended for AddMultiplier
-//   ...Percent     -> a rate where 1.0 = 100% (can be flat-shifted or multiplied)
+//   ...Bonus       -> 
+//   ...Multiplier  -> a rate where 1.0 = 100% (probably should never be multiplied)
+// 
 //   ...Enabled     -> bool toggle, use SetValue
 
 using System.Collections.Generic;
@@ -25,8 +25,9 @@ public class PlayerModifiers
         foreach (IModifier modifier in Modifiers) modifier.ResetValue();
     }
 
-    // Base Player Stats
+    // Base Player Modifiers
     public Modifier<float> DamageMultiplier = new(1f);
+    
     public Modifier<float> MaxHealthBonus = new(0f);
     public Modifier<float> DamageTakenMultiplier = new(1f);       // 1.0 = 100% damage taken.
     public Modifier<float> BhopMomentumCarryPercent = new(0.33f); // how much horizontal velocity you keep on perfect bhops

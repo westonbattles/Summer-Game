@@ -15,7 +15,7 @@ public enum MazeOpeningState
 public class MazeRoomPlacement
 {
     public int Id;
-    public MazeRoomDefinition Definition;
+    public MazeRoom RoomPrefab;
 
     public Vector2Int GridOrigin;
     public Vector2Int PrefabOriginCell;
@@ -25,27 +25,25 @@ public class MazeRoomPlacement
     public List<MazePlacedOpening> Openings = new();
 
     public bool IsEntrance;
-    
+
     public int BranchId = -1;
 }
 
 public class MazePlacedOpening
 {
     public int RoomId;
-    public int OpeningIndex;
+    public MazeOpeningKey PrefabKey;
 
     public Vector2Int Cell;
     public GridDirection Direction;
 
     public MazeOpeningState State = MazeOpeningState.Unresolved;
-
-    public GameObject FillerPrefab;
 }
 
 public class MazePotentialConnection
 {
     public int Id;
-    
+
     public MazePlacedOpening OpeningA;
     public MazePlacedOpening OpeningB;
 
@@ -105,7 +103,7 @@ public class MazeLayout
         Adjacency.Clear();
 
         foreach (int roomId in Rooms.Keys) Adjacency[roomId] = new List<int>();
-        
+
         foreach (MazeConnection connection in Connections)
         {
             MazePotentialConnection potential = connection.PotentialConnection;

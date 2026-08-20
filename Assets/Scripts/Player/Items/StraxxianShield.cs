@@ -11,7 +11,21 @@ public class StraxxianShield : ItemBehaviour
 
     public override void ApplyModifiers(PlayerModifiers modifiers, int itemCount)
     {
-        float damageRetentionRatio = Mathf.Pow(1f - ReductionPerStack, itemCount);
+        float damageRetentionRatio = Mathf.Pow(1f - ReductionPerStack, itemCount); // .98 -> .88 -> .86 -> .85
         modifiers.DamageTakenMultiplier.MultiplyValue(damageRetentionRatio);
     }
 }
+
+/*
+Inventory:
+100 Straxxian Sheilds
+- DamageTakenMultipler = 0.1326
+
+
+Item
+- Reduces DamageTakenMultipler by .2
+
+
+
+
+*/
