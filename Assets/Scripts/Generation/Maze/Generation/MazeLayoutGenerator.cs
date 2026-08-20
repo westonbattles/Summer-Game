@@ -9,7 +9,7 @@ public static class MazeLayoutGenerator
 
     class RoomVariant
     {
-        public MazeRoomDefinition Definition;
+        public MazeRoom RoomPrefab;
         public RoomRotation Rotation;
         public Vector2Int[] Cells;
         public VariantOpening[] Openings;
@@ -19,7 +19,7 @@ public static class MazeLayoutGenerator
 
     struct VariantOpening
     {
-        public int DefinitionOpeningIndex;
+        public MazeOpeningKey PrefabKey;
         public Vector2Int Cell;
         public GridDirection Direction;
     }
@@ -110,7 +110,7 @@ public static class MazeLayoutGenerator
         layout = null;
         if (!ValidateSettings(settings, out error)) return false;
 
-        Dictionary<MazeRoomDefinition, List<RoomVariant>> variants = BuildVariantCatalog(settings.Rooms);
+        Dictionary<MazeRoom, List<RoomVariant>> variants = BuildVariantCatalog(settings.Rooms);
         string failure = "No generation attempt ran.";
 
         for (int attempt = 0; attempt < settings.MaximumGenerationAttempts; attempt++)
@@ -128,7 +128,7 @@ public static class MazeLayoutGenerator
         return false;
     }
 
-    static bool TryGenerateAttempt(MazeGenerationSettings settings, Dictionary<MazeRoomDefinition, List<RoomVariant>> variants, int seed, Random random, out MazeLayout layout, out string failure)
+    static bool TryGenerateAttempt(MazeGenerationSettings settings, Dictionary<MazeRoom, List<RoomVariant>> variants, int seed, Random random, out MazeLayout layout, out string failure)
     {
         layout = new MazeLayout
         {
@@ -136,7 +136,9 @@ public static class MazeLayoutGenerator
             Grid = new MazeGrid(settings.GridWidth, settings.GridHeight)
         };
 
+        // marks village cells (as defined by settings) reserved so generation cant touch it
         ReserveStartingArea(layout.Grid, settings);
+
 
         List<EntranceRequirement> entranceRequirements = GetEntranceRequirements(settings);
         HashSet<Vector2Int> entranceSlots = new();
@@ -164,7 +166,7 @@ public static class MazeLayoutGenerator
         if (!TryBuildPotentialConnections(layout, out failure)) return false;
         if (!TryBuildConnectionGraph(layout, settings, requiredEdges, criticalEdges, random, out failure)) return false;
 
-        ResolveUnusedOpenings(layout, settings, random);
+        ResolveUnusedOpenings(layout);
         layout.RebuildAdjacency();
 
         failure = null;
@@ -200,70 +202,71 @@ public static class MazeLayoutGenerator
         bool hasNormalRoom = false;
         bool hasUniversalOneCellRoom = false;
 
-        foreach (MazeRoomDefinition definition in settings.Rooms)
+        foreach (MazeRoom roomPrefab in settings.Rooms)
         {
-            if (definition == null) continue;
+            if (roomPrefab == null) continue;
 
-            if (definition.OccupiedCells == null || definition.OccupiedCells.Length == 0)
+            if (roomPrefab.transform.parent != null)
             {
-                error = $"Room '{definition.name}' has no occupied cells.";
+                error = $"MazeRoom on '{roomPrefab.name}' must be on the prefab root.";
                 return false;
             }
 
-            HashSet<Vector2Int> occupiedCells = new HashSet<Vector2Int>(definition.OccupiedCells);
-
-            if (occupiedCells.Count != definition.OccupiedCells.Length)
+            if (roomPrefab.OccupiedCells == null || roomPrefab.OccupiedCells.Length == 0)
             {
-                error = $"Room '{definition.name}' has duplicate occupied cells.";
+                error = $"Room prefab '{roomPrefab.name}' has no occupied cells.";
+                return false;
+            }
+
+            HashSet<Vector2Int> occupiedCells = new HashSet<Vector2Int>(roomPrefab.OccupiedCells);
+
+            if (occupiedCells.Count != roomPrefab.OccupiedCells.Length)
+            {
+                error = $"Room prefab '{roomPrefab.name}' has duplicate occupied cells.";
                 return false;
             }
 
             if (!occupiedCells.Contains(Vector2Int.zero))
             {
-                error = $"Room '{definition.name}' must occupy cell (0,0), which anchors its prefab origin.";
+                error = $"Room prefab '{roomPrefab.name}' must occupy cell (0,0), which anchors its prefab origin.";
                 return false;
             }
 
             if (!AreOccupiedCellsConnected(occupiedCells))
             {
-                error = $"Room '{definition.name}' has occupied cells that do not touch each other.";
+                error = $"Room prefab '{roomPrefab.name}' has occupied cells that do not touch each other.";
                 return false;
             }
 
-            if (definition.Openings != null)
+            if (!roomPrefab.TryValidate(out error)) return false;
+
+            MazeRoomOpening[] prefabOpenings = roomPrefab.GetOpenings();
+
+            foreach (MazeRoomOpening opening in prefabOpenings)
             {
-                foreach (MazeOpeningDefinition opening in definition.Openings)
+                if (!occupiedCells.Contains(opening.LocalCell))
                 {
-                    if (!occupiedCells.Contains(opening.Cell))
-                    {
-                        error = $"An opening in '{definition.name}' belongs to a cell outside its shape.";
-                        return false;
-                    }
-
-                    Vector2Int neighbor = opening.Cell + GridDirectionUtils.ToGridOffset(opening.Direction);
-                    if (!occupiedCells.Contains(neighbor)) continue;
-
-                    error = $"An opening in '{definition.name}' points into another cell belonging to that same room.";
+                    error = $"The prefab opening at {opening.Key} in room '{roomPrefab.name}' belongs to a cell outside its occupied shape.";
                     return false;
                 }
+
+                Vector2Int neighbor = opening.LocalCell + GridDirectionUtils.ToGridOffset(opening.Direction);
+                if (!occupiedCells.Contains(neighbor)) continue;
+
+                error = $"The prefab opening at {opening.Key} in room '{roomPrefab.name}' points into another occupied cell of that room.";
+                return false;
             }
 
-            if (definition.Type == MazeCellType.Normal)
+            if (roomPrefab.Type == MazeCellType.Normal)
             {
                 hasNormalRoom = true;
 
                 if (occupiedCells.Count == 1)
                 {
-                    Vector2Int roomCell = definition.OccupiedCells[0];
+                    Vector2Int roomCell = roomPrefab.OccupiedCells[0];
                     HashSet<GridDirection> openingDirections = new();
 
-                    if (definition.Openings != null)
-                    {
-                        foreach (MazeOpeningDefinition opening in definition.Openings)
-                        {
-                            if (opening.Cell == roomCell) openingDirections.Add(opening.Direction);
-                        }
-                    }
+                    foreach (MazeRoomOpening opening in prefabOpenings) if (opening.LocalCell == roomCell) openingDirections.Add(opening.Direction);
 
                     if (openingDirections.Contains(GridDirection.North) && openingDirections.Contains(GridDirection.East) && openingDirections.Contains(GridDirection.South) && openingDirections.Contains(GridDirection.West)) hasUniversalOneCellRoom = true;
                 }
@@ -363,33 +366,33 @@ public static class MazeLayoutGenerator
         return reachedCells.Count == occupiedCells.Count;
     }
 
-    static Dictionary<MazeRoomDefinition, List<RoomVariant>> BuildVariantCatalog(MazeRoomDefinition[] definitions)
+    static Dictionary<MazeRoom, List<RoomVariant>> BuildVariantCatalog(MazeRoom[] roomPrefabs)
     {
-        Dictionary<MazeRoomDefinition, List<RoomVariant>> catalog = new();
+        Dictionary<MazeRoom, List<RoomVariant>> catalog = new();
 
-        foreach (MazeRoomDefinition definition in definitions)
+        foreach (MazeRoom roomPrefab in roomPrefabs)
         {
-            if (definition == null) continue;
+            if (roomPrefab == null) continue;
 
             List<RoomVariant> variants = new();
-            variants.Add(BuildVariant(definition, RoomRotation.R0));
-            variants.Add(BuildVariant(definition, RoomRotation.R90));
-            variants.Add(BuildVariant(definition, RoomRotation.R180));
-            variants.Add(BuildVariant(definition, RoomRotation.R270));
-            catalog.Add(definition, variants);
+            variants.Add(BuildVariant(roomPrefab, RoomRotation.R0));
+            variants.Add(BuildVariant(roomPrefab, RoomRotation.R90));
+            variants.Add(BuildVariant(roomPrefab, RoomRotation.R180));
+            variants.Add(BuildVariant(roomPrefab, RoomRotation.R270));
+            catalog.Add(roomPrefab, variants);
         }
 
         return catalog;
     }
 
-    static RoomVariant BuildVariant(MazeRoomDefinition definition, RoomRotation rotation)
+    static RoomVariant BuildVariant(MazeRoom roomPrefab, RoomRotation rotation)
     {
-        Vector2Int[] rawCells = new Vector2Int[definition.OccupiedCells.Length];
+        Vector2Int[] rawCells = new Vector2Int[roomPrefab.OccupiedCells.Length];
         Vector2Int minimum = new Vector2Int(int.MaxValue, int.MaxValue);
 
         for (int i = 0; i < rawCells.Length; i++)
         {
-            rawCells[i] = RotateCell(definition.OccupiedCells[i], rotation);
+            rawCells[i] = RotateCell(roomPrefab.OccupiedCells[i], rotation);
             minimum.x = Mathf.Min(minimum.x, rawCells[i].x);
             minimum.y = Mathf.Min(minimum.y, rawCells[i].y);
         }
@@ -404,22 +407,23 @@ public static class MazeLayoutGenerator
             maximum.y = Mathf.Max(maximum.y, normalizedCells[i].y);
         }
 
-        MazeOpeningDefinition[] definitionOpenings = definition.Openings ?? Array.Empty<MazeOpeningDefinition>();
-        VariantOpening[] openings = new VariantOpening[definitionOpenings.Length];
+        MazeRoomOpening[] prefabOpenings = roomPrefab.GetOpenings();
+        VariantOpening[] openings = new VariantOpening[prefabOpenings.Length];
 
-        for (int i = 0; i < definitionOpenings.Length; i++)
+        for (int i = 0; i < prefabOpenings.Length; i++)
         {
+            MazeRoomOpening prefabOpening = prefabOpenings[i];
             openings[i] = new VariantOpening
             {
-                DefinitionOpeningIndex = i,
-                Cell = RotateCell(definitionOpenings[i].Cell, rotation) - minimum,
-                Direction = GridDirectionUtils.RotateDirection(definitionOpenings[i].Direction, rotation)
+                PrefabKey = prefabOpening.Key,
+                Cell = RotateCell(prefabOpening.LocalCell, rotation) - minimum,
+                Direction = GridDirectionUtils.RotateDirection(prefabOpening.Direction, rotation)
             };
         }
 
         return new RoomVariant
         {
-            Definition = definition,
+            RoomPrefab = roomPrefab,
             Rotation = rotation,
             Cells = normalizedCells,
             Openings = openings,
@@ -493,15 +497,33 @@ public static class MazeLayoutGenerator
     {
         List<BossRequirement> requirements = new();
 
+        List<int> entranceXs = new();
+        List<int> entranceYs = new();
+
+        foreach (Vector2Int cell in entranceSlots)
+        {
+            entranceXs.Add(cell.x);
+            entranceYs.Add(cell.y);
+        }
+
+
         for (int x = 0; x < grid.Width; x++)
         {
+            if (entranceXs.Contains(x)) continue; // don't allow boss room to be placed in line w any entrances
+
+            // top perimeter
             AddBossRequirement(requirements, entranceSlots, new Vector2Int(x, grid.Height - 1), GridDirection.North);
+            // bottom perimeter
             AddBossRequirement(requirements, entranceSlots, new Vector2Int(x, 0), GridDirection.South);
         }
 
         for (int z = 0; z < grid.Height; z++)
         {
+            if (entranceYs.Contains(z)) continue; // don't allow boss room to be placed in line w any entrances
+
+            // right perimeter
             AddBossRequirement(requirements, entranceSlots, new Vector2Int(grid.Width - 1, z), GridDirection.East);
+            // left perimeter
             AddBossRequirement(requirements, entranceSlots, new Vector2Int(0, z), GridDirection.West);
         }
 
@@ -513,7 +535,6 @@ public static class MazeLayoutGenerator
 
     static void AddBossRequirement(List<BossRequirement> requirements, HashSet<Vector2Int> entranceSlots, Vector2Int roomCell, GridDirection direction)
     {
-        if (entranceSlots.Contains(roomCell)) return;
         requirements.Add(new BossRequirement { RoomCell = roomCell, DirectionOutOfMaze = direction });
     }
 
@@ -683,7 +704,7 @@ public static class MazeLayoutGenerator
         return true;
     }
 
-    static bool TryPlaceCriticalRooms(MazeLayout layout, Dictionary<MazeRoomDefinition, List<RoomVariant>> variants, HashSet<Vector2Int> criticalCells, HashSet<CellEdge> requiredEdges, HashSet<Vector2Int> entranceSlots, Random random)
+    static bool TryPlaceCriticalRooms(MazeLayout layout, Dictionary<MazeRoom, List<RoomVariant>> variants, HashSet<Vector2Int> criticalCells, HashSet<CellEdge> requiredEdges, HashSet<Vector2Int> entranceSlots, Random random)
     {
         while (true)
         {
@@ -698,30 +719,30 @@ public static class MazeLayoutGenerator
 
             if (!hasFreeCriticalCell) return true;
 
-            Dictionary<MazeRoomDefinition, List<PlacementCandidate>> candidatesByDefinition = GetCriticalPlacementCandidates(layout.Grid, variants, criticalCells, requiredEdges, entranceSlots);
-            List<MazeRoomDefinition> preferredDefinitions = new List<MazeRoomDefinition>();
-            List<MazeRoomDefinition> fallbackDefinitions = new List<MazeRoomDefinition>();
+            Dictionary<MazeRoom, List<PlacementCandidate>> candidatesByRoom = GetCriticalPlacementCandidates(layout.Grid, variants, criticalCells, requiredEdges, entranceSlots);
+            List<MazeRoom> preferredRooms = new List<MazeRoom>();
+            List<MazeRoom> fallbackRooms = new List<MazeRoom>();
 
-            foreach (MazeRoomDefinition definition in candidatesByDefinition.Keys)
+            foreach (MazeRoom roomPrefab in candidatesByRoom.Keys)
             {
-                if (IsUniversalOneCellFallback(definition)) fallbackDefinitions.Add(definition);
-                else preferredDefinitions.Add(definition);
+                if (IsUniversalOneCellFallback(roomPrefab)) fallbackRooms.Add(roomPrefab);
+                else preferredRooms.Add(roomPrefab);
             }
 
-            List<MazeRoomDefinition> definitionsToPickFrom = preferredDefinitions.Count > 0 ? preferredDefinitions : fallbackDefinitions;
-            if (definitionsToPickFrom.Count == 0) return false;
+            List<MazeRoom> roomsToPickFrom = preferredRooms.Count > 0 ? preferredRooms : fallbackRooms;
+            if (roomsToPickFrom.Count == 0) return false;
 
-            MazeRoomDefinition selectedDefinition = PickWeightedDefinition(definitionsToPickFrom, random);
-            List<PlacementCandidate> placements = candidatesByDefinition[selectedDefinition];
+            MazeRoom selectedRoom = PickWeightedRoom(roomsToPickFrom, random);
+            List<PlacementCandidate> placements = candidatesByRoom[selectedRoom];
             PlaceRoom(layout, placements[random.Next(placements.Count)]);
         }
     }
 
-    static Dictionary<MazeRoomDefinition, List<PlacementCandidate>> GetCriticalPlacementCandidates(MazeGrid grid, Dictionary<MazeRoomDefinition, List<RoomVariant>> variants, HashSet<Vector2Int> criticalCells, HashSet<CellEdge> requiredEdges, HashSet<Vector2Int> entranceSlots)
+    static Dictionary<MazeRoom, List<PlacementCandidate>> GetCriticalPlacementCandidates(MazeGrid grid, Dictionary<MazeRoom, List<RoomVariant>> variants, HashSet<Vector2Int> criticalCells, HashSet<CellEdge> requiredEdges, HashSet<Vector2Int> entranceSlots)
     {
-        Dictionary<MazeRoomDefinition, List<PlacementCandidate>> candidatesByDefinition = new Dictionary<MazeRoomDefinition, List<PlacementCandidate>>();
+        Dictionary<MazeRoom, List<PlacementCandidate>> candidatesByRoom = new Dictionary<MazeRoom, List<PlacementCandidate>>();
 
-        foreach (KeyValuePair<MazeRoomDefinition, List<RoomVariant>> pair in variants)
+        foreach (KeyValuePair<MazeRoom, List<RoomVariant>> pair in variants)
         {
             if (pair.Key.Type != MazeCellType.Normal) continue;
             List<PlacementCandidate> candidates = new List<PlacementCandidate>();
@@ -758,26 +779,20 @@ public static class MazeLayoutGenerator
                 }
             }
 
-            if (candidates.Count > 0) candidatesByDefinition.Add(pair.Key, candidates);
+            if (candidates.Count > 0) candidatesByRoom.Add(pair.Key, candidates);
         }
 
-        return candidatesByDefinition;
+        return candidatesByRoom;
     }
 
-    static bool IsUniversalOneCellFallback(MazeRoomDefinition definition)
+    static bool IsUniversalOneCellFallback(MazeRoom roomPrefab)
     {
-        if (definition.Type != MazeCellType.Normal || definition.OccupiedCells == null || definition.OccupiedCells.Length != 1) return false;
+        if (roomPrefab.Type != MazeCellType.Normal || roomPrefab.OccupiedCells == null || roomPrefab.OccupiedCells.Length != 1) return false;
 
-        Vector2Int roomCell = definition.OccupiedCells[0];
+        Vector2Int roomCell = roomPrefab.OccupiedCells[0];
         HashSet<GridDirection> openingDirections = new HashSet<GridDirection>();
 
-        if (definition.Openings != null)
-        {
-            foreach (MazeOpeningDefinition opening in definition.Openings)
-            {
-                if (opening.Cell == roomCell) openingDirections.Add(opening.Direction);
-            }
-        }
+        foreach (MazeRoomOpening opening in roomPrefab.GetOpenings()) if (opening.LocalCell == roomCell) openingDirections.Add(opening.Direction);
 
         return openingDirections.Contains(GridDirection.North) && openingDirections.Contains(GridDirection.East) && openingDirections.Contains(GridDirection.South) && openingDirections.Contains(GridDirection.West);
     }
@@ -889,7 +904,7 @@ public static class MazeLayoutGenerator
         MazeRoomPlacement room = new MazeRoomPlacement
         {
             Id = roomId,
-            Definition = candidate.Variant.Definition,
+            RoomPrefab = candidate.Variant.RoomPrefab,
             GridOrigin = candidate.Origin,
             PrefabOriginCell = candidate.Origin + candidate.Variant.AnchorCell,
             Rotation = candidate.Variant.Rotation
@@ -907,7 +922,7 @@ public static class MazeLayoutGenerator
             room.Openings.Add(new MazePlacedOpening
             {
                 RoomId = roomId,
-                OpeningIndex = opening.DefinitionOpeningIndex,
+                PrefabKey = opening.PrefabKey,
                 Cell = candidate.Origin + opening.Cell,
                 Direction = opening.Direction
             });
@@ -1129,7 +1144,7 @@ public static class MazeLayoutGenerator
         });
     }
 
-    static void ResolveUnusedOpenings(MazeLayout layout, MazeGenerationSettings settings, Random random)
+    static void ResolveUnusedOpenings(MazeLayout layout)
     {
         foreach (MazeRoomPlacement room in layout.Rooms.Values)
         {
@@ -1137,26 +1152,25 @@ public static class MazeLayoutGenerator
             {
                 if (opening.State != MazeOpeningState.Unresolved) continue;
                 opening.State = MazeOpeningState.Filled;
-                opening.FillerPrefab = PickRandomPrefab(settings.OpeningFillers, random);
             }
         }
     }
 
-    static MazeRoomDefinition PickWeightedDefinition(List<MazeRoomDefinition> definitions, Random random)
+    static MazeRoom PickWeightedRoom(List<MazeRoom> roomPrefabs, Random random)
     {
         float totalWeight = 0f;
-        foreach (MazeRoomDefinition definition in definitions) totalWeight += Mathf.Max(0f, definition.SpawnWeight);
-        if (totalWeight <= 0f) return definitions[random.Next(definitions.Count)];
+        foreach (MazeRoom roomPrefab in roomPrefabs) totalWeight += Mathf.Max(0f, roomPrefab.SpawnWeight);
+        if (totalWeight <= 0f) return roomPrefabs[random.Next(roomPrefabs.Count)];
 
         double roll = random.NextDouble() * totalWeight;
 
-        foreach (MazeRoomDefinition definition in definitions)
+        foreach (MazeRoom roomPrefab in roomPrefabs)
         {
-            roll -= Mathf.Max(0f, definition.SpawnWeight);
-            if (roll <= 0d) return definition;
+            roll -= Mathf.Max(0f, roomPrefab.SpawnWeight);
+            if (roll <= 0d) return roomPrefab;
         }
 
-        return definitions[definitions.Count - 1];
+        return roomPrefabs[roomPrefabs.Count - 1];
     }
 
     static GameObject PickRandomPrefab(GameObject[] prefabs, Random random)
