@@ -136,8 +136,10 @@ public static class MazeLayoutGenerator
             Grid = new MazeGrid(settings.GridWidth, settings.GridHeight)
         };
 
+        // marks village cells (as defined by settings) reserved so generation cant touch it
         ReserveStartingArea(layout.Grid, settings);
 
+        
         List<EntranceRequirement> entranceRequirements = GetEntranceRequirements(settings);
         HashSet<Vector2Int> entranceSlots = new();
         foreach (EntranceRequirement requirement in entranceRequirements) entranceSlots.Add(requirement.RoomCell);
@@ -492,16 +494,34 @@ public static class MazeLayoutGenerator
     static bool TryPickBossRequirement(MazeGrid grid, HashSet<Vector2Int> entranceSlots, Random random, out BossRequirement bossRequirement)
     {
         List<BossRequirement> requirements = new();
+        
+        List<int> entranceXs = new();
+        List<int> entranceYs = new();
+        
+        foreach (Vector2Int cell in entranceSlots)
+        {
+            entranceXs.Add(cell.x);
+            entranceYs.Add(cell.y);
+        }
+        
 
         for (int x = 0; x < grid.Width; x++)
         {
+            if (entranceXs.Contains(x)) continue; // don't allow boss room to be placed in line w any entrances
+            
+            // top perimeter
             AddBossRequirement(requirements, entranceSlots, new Vector2Int(x, grid.Height - 1), GridDirection.North);
+            // bottom perimeter
             AddBossRequirement(requirements, entranceSlots, new Vector2Int(x, 0), GridDirection.South);
         }
 
         for (int z = 0; z < grid.Height; z++)
         {
+            if (entranceYs.Contains(z)) continue; // don't allow boss room to be placed in line w any entrances
+            
+            // right perimeter
             AddBossRequirement(requirements, entranceSlots, new Vector2Int(grid.Width - 1, z), GridDirection.East);
+            // left perimeter
             AddBossRequirement(requirements, entranceSlots, new Vector2Int(0, z), GridDirection.West);
         }
 
@@ -513,7 +533,6 @@ public static class MazeLayoutGenerator
 
     static void AddBossRequirement(List<BossRequirement> requirements, HashSet<Vector2Int> entranceSlots, Vector2Int roomCell, GridDirection direction)
     {
-        if (entranceSlots.Contains(roomCell)) return;
         requirements.Add(new BossRequirement { RoomCell = roomCell, DirectionOutOfMaze = direction });
     }
 
