@@ -6,7 +6,7 @@ using NaughtyAttributes;
 public class Health : MonoBehaviour, IDamageable, IPoolable
 {
     [SerializeField] private float baseMaxHP = 100f;
-
+    public float BaseMaxHP => baseMaxHP;
     public float MaxHP { get; private set; }
 
     [field: SerializeField]
@@ -49,14 +49,7 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
         if (isDead || info.Amount <= 0f)
             return;
 
-        float damageMultiplier = 1f;
-
-        if (Player.Instance != null && gameObject == Player.Instance.gameObject)
-        {
-            damageMultiplier = Player.Instance.Modifiers.DamageTakenMultiplier.GetValue();
-        }
-
-        float finalDamage = info.Amount * damageMultiplier;
+        float finalDamage = info.Amount * GetDamageTakenMultiplier();
 
         CurrentHP = Mathf.Max(CurrentHP - finalDamage, 0f);
         OnHealthChanged?.Invoke(CurrentHP, MaxHP);
