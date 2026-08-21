@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Blank_30x3
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9ec7b0d52d4b34c92aa2774978c1dc2e, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
