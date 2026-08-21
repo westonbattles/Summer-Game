@@ -53,9 +53,10 @@ public class PsychicPulse : AbilityBehaviour
     {
         public readonly Player Player;
         public readonly PlayerAim PlayerAim;
-        public HashSet<Enemy> Targets = new(); // hashmap to de-dupe targets selected for finding which enemy to highlight
+        public HashSet<Targetable> Targets = new(); // hashmap to de-dupe targets selected for finding which enemy to highlight
 
-        public Enemy CurrentTarget;
+        public Targetable CurrentTarget;
+        public PooledVfx ActiveHighlightVFX;
         
         public float CooldownRemaining;
         public float HighlightCheckRemaining;
@@ -79,71 +80,65 @@ public class PsychicPulse : AbilityBehaviour
 
     public override void Tick(AbilityState state, float deltaTime)
     {
-        PsychicPulseState psychicPulse = state as PsychicPulseState;
-        if (psychicPulse == null) return;
+        if (state is not PsychicPulseState psychicPulse) return;
 
-        // cooldown update
         psychicPulse.CooldownRemaining = Mathf.Max(0f, psychicPulse.CooldownRemaining - deltaTime);
-        
-        // don't do highlight updates if cooldown isn't done yet
-        if (psychicPulse.CooldownRemaining > 0f) return;
-        
-        // make sure eye loadout is equipped
-        if (psychicPulse.Player.AbilityController.CurrentLoadout != psychicPulse.Player.EyeLoadout) return;
 
-        // ---------- ENEMY HIGHLIGHTING / TARGETING -------------
-        // only check for highlights using our interval rate, not every frame
+        bool canTarget = psychicPulse.CooldownRemaining <= 0f
+                      && psychicPulse.Player.AbilityController.CurrentLoadout == psychicPulse.Player.EyeLoadout;
+
+        if (!canTarget)
+        {
+            ClearTarget(psychicPulse); // no-op if nothing is targeted
+            return;
+        }
+
+        if (psychicPulse.CurrentTarget != null && psychicPulse.ActiveHighlightVFX != null)
+            psychicPulse.ActiveHighlightVFX.transform.position = psychicPulse.CurrentTarget.TargetPosition;
+
         psychicPulse.HighlightCheckRemaining -= deltaTime;
         if (psychicPulse.HighlightCheckRemaining > 0f) return;
         psychicPulse.HighlightCheckRemaining = targetHighlightCheckInterval;
 
-        // set target (handles highlighting / dehighlighting)
-        Enemy target = FindBestTarget(psychicPulse);
-        SetTarget(psychicPulse, target);
+        SetTarget(psychicPulse, FindBestTarget(psychicPulse));
     }
-    
+
     public override bool TryExecute(AbilityState state)
     {
-        PsychicPulseState psychicPulse = state as PsychicPulseState;
-        if (psychicPulse == null) return false;
+        if (state is not PsychicPulseState psychicPulse) return false;
         if (psychicPulse.CooldownRemaining > 0f) return false;
-        
-        
-        // if no enemies selected, return false and don't execute
-        Enemy target = psychicPulse.CurrentTarget;
+
+        Targetable targetable = psychicPulse.CurrentTarget;
+        if (targetable == null) return false;
+
+        Enemy target = targetable.GetComponentInParent<Enemy>();
         if (target == null)
         {
-            Debug.Log("No enemies selected");
+            Debug.LogWarning($"[PsychicPulse.cs] {targetable.name} has no Enemy in its hierarchy.", targetable);
             return false;
         }
-        
-        Vector3 pulseDirection = GetPulseDirection(psychicPulse, target);
 
-        IKnockbackable knockbackable = target.GetComponentInParent<IKnockbackable>();
-        if (knockbackable == null)
+        // Enemy and IKnockbackable are almost certainly on the same object,
+        // so look it up there instead of walking the hierarchy again.
+        if (!target.TryGetComponent(out IKnockbackable knockbackable))
         {
-            Debug.LogWarning($"{target.name} has no IKnockbackable component.", target);
+            Debug.LogWarning($"[PsychicPulse.cs] - {target.name} has no IKnockbackable component.", target);
             return false;
         }
 
+        Vector3 pulseDirection = GetPulseDirection(psychicPulse, target);
         GameObject source = psychicPulse.Player.gameObject;
 
-        bool knockbackStarted = knockbackable.ApplyKnockback(new KnockbackInfo(
-            pulseDirection,
-            pulseKnockbackStrength,
-            pulseKnockbackDuration,
-            source));
-        if (!knockbackStarted) return false;
+        bool started = knockbackable.ApplyKnockback(
+            new KnockbackInfo(pulseDirection, pulseKnockbackStrength, pulseKnockbackDuration, source));
+        if (!started) return false;
 
         StartRamEffect(target, pulseDirection, source);
-        
-        // clear highlight and target
         ClearTarget(psychicPulse);
-
         psychicPulse.CooldownRemaining = CooldownTime;
         return true;
     }
-    
+
     public override void Cancel(AbilityState state)
     {
         PsychicPulseState psychicPulse = state as PsychicPulseState;
@@ -152,14 +147,12 @@ public class PsychicPulse : AbilityBehaviour
         // remove highlighted target
         ClearTarget(psychicPulse);
     }
-    
-    Enemy FindBestTarget(PsychicPulseState psychicPulse)
+
+    Targetable FindBestTarget(PsychicPulseState psychicPulse)
     {
         Vector3 playerPosition = psychicPulse.Player.transform.position;
         Vector3 cameraOrigin = psychicPulse.PlayerAim.AimOrigin;
         Vector3 cameraForward = psychicPulse.PlayerAim.AimDirection;
-        
-        //float halfVerticalTan = Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad); // up/down fov for some reason @unity
 
         int hitCount = Physics.OverlapSphereNonAlloc(
             playerPosition,
@@ -167,53 +160,47 @@ public class PsychicPulse : AbilityBehaviour
             psychicPulse.CandidateBuffer,
             TargetLayers,
             QueryTriggerInteraction.Collide);
-        
-        // if the overlap sphere got an equal number of enemies as our buffer, it means more enemies than our buffer allows for was in the allocsphere haha
-        if (hitCount == psychicPulse.CandidateBuffer.Length) Debug.LogWarning("PsychicPulse candidate buffer may be full and missed out on enemies for valid highlight / targeting. Increase maxPossibleTargets if the amount of enemies causing this warning will happen in game");
-        
-        Enemy target = null;
+
+        if (hitCount == psychicPulse.CandidateBuffer.Length)
+            Debug.LogWarning("PsychicPulse candidate buffer full.");
+
+        Targetable bestTarget = null;
         float bestScore = Mathf.Infinity;
         psychicPulse.Targets.Clear();
+
         for (int i = 0; i < hitCount; i++)
         {
             Collider collider = psychicPulse.CandidateBuffer[i];
             if (collider == null) continue;
 
-            Enemy enemy = collider.GetComponentInParent<Enemy>();
-            if (enemy == null || !psychicPulse.Targets.Add(enemy)) continue;
-            
-            
-            // check if enemy is closer than current target enemy
-            
-            Vector3 targetPoint = enemy.GetCenterPoint();
+            Targetable targetable = collider.GetComponentInParent<Targetable>();
+            if (targetable == null || !psychicPulse.Targets.Add(targetable)) continue;
+
+            Vector3 targetPoint = targetable.TargetPosition;
             Vector3 cameraToTarget = targetPoint - cameraOrigin;
-            
-            // btw, the value of this dot product is just the magnitude of the cameraToTarget vector after it has been projected onto the camera forward (since cameraForward is normalized)
+
             float targetDistanceAlongAimRay = Vector3.Dot(cameraForward, cameraToTarget);
-            
-            // prune targets behind the camera
-            if (targetDistanceAlongAimRay <= 0f) continue; // || cameraForwardDotTarget > maxTargetDistance) continue; // <-- prunes targets too far from CAMERA but it's a bit redunant since we do this pruning from player position alr. prob only need that one
-            
-            // prune targets too far behind the player body relative to the camera
+
+            if (targetDistanceAlongAimRay <= 0f) continue;
             if (Vector3.Dot(cameraForward, targetPoint - playerPosition) < backPruneThreshold) continue;
 
-            Vector3 targetProjectionOnCameraForward = cameraOrigin + cameraForward * targetDistanceAlongAimRay; // the closest point on the camera forward ray to our target -> its 90 deg projection
+            Vector3 targetProjectionOnCameraForward = cameraOrigin + cameraForward * targetDistanceAlongAimRay;
 
             float distanceFromAimRaySqr = (targetPoint - targetProjectionOnCameraForward).sqrMagnitude;
             float selectionRadiusSqr = selectionRadius * selectionRadius;
             if (distanceFromAimRaySqr > selectionRadiusSqr) continue;
-            
-            // NEW METHOD - sort by distance to closest point in the camera forward ray
-            float normalizedSideDistanceSqr = distanceFromAimRaySqr / selectionRadiusSqr; // garunteed 0-1 value
-            float score = normalizedSideDistanceSqr + targetDistanceAlongAimRay * distanceScoreWeight; // farther away (high
+
+            float normalizedSideDistanceSqr = distanceFromAimRaySqr / selectionRadiusSqr;
+            float score = normalizedSideDistanceSqr + targetDistanceAlongAimRay * distanceScoreWeight;
+
             if (score < bestScore)
             {
                 bestScore = score;
-                target = enemy;
+                bestTarget = targetable;
             }
-            
         }
-        return target;
+
+        return bestTarget;
     }
 
     Vector3 GetPulseDirection(PsychicPulseState psychicPulse, Enemy target)
@@ -262,29 +249,35 @@ public class PsychicPulse : AbilityBehaviour
     }
 
     /// sets and highlights target
-    void SetTarget(PsychicPulseState psychicPulse, Enemy target)
+    void SetTarget(PsychicPulseState psychicPulse, Targetable target)
     {
         if (psychicPulse.CurrentTarget == target) return;
-        
         ClearTarget(psychicPulse);
-        psychicPulse.CurrentTarget = target;
-        
         if (target == null) return;
 
-        // HIGHLIGHT
-        target.Highlighter.Highlight(highlightVFXPrefab);
+        psychicPulse.CurrentTarget = target;
+        target.SetHighlighted(true);
+        if (highlightVFXPrefab != null)
+        {
+            psychicPulse.ActiveHighlightVFX = VFXPoolManager.Instance.Play(highlightVFXPrefab, target.TargetPosition, Quaternion.identity);
+        }
     }
 
     // stops vfx on current target and sets current target to null
     void ClearTarget(PsychicPulseState psychicPulse)
     {
-        // UNHIGHLIGHT
         if (psychicPulse.CurrentTarget == null) return;
-        psychicPulse.CurrentTarget.Highlighter.Unhighlight();
-        
+
+        psychicPulse.CurrentTarget.SetHighlighted(false);
         psychicPulse.CurrentTarget = null;
+
+        if (psychicPulse.ActiveHighlightVFX != null)
+        {
+            VFXPoolManager.Instance.Release(psychicPulse.ActiveHighlightVFX);
+            psychicPulse.ActiveHighlightVFX = null;
+        }
     }
-    
+
     public override float GetCooldownFraction(AbilityState state)
     {
         if (state is not PsychicPulseState pp) return 0f;

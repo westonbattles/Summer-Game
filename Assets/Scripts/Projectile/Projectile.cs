@@ -8,8 +8,6 @@ using UnityEngine;
 /// contact deals damage once then releases itself back to whatever pool spawned it.
 /// It does NOT know about the pool directly � the spawner injects a release callback.
 /// </summary>
-//[RequireComponent(typeof(Collider))]
-//[RequireComponent(typeof(Rigidbody))]       // make sure its kinematic
 public class Projectile : MonoBehaviour, IPoolable
 {
     [Header("Core Settings")]
@@ -21,7 +19,9 @@ public class Projectile : MonoBehaviour, IPoolable
     [Tooltip("Radius used for collision detection fixing")]
     [SerializeField, Min(0.001f)] private float sphereCastRadius;
 
-    [Tooltip("DO NOT ENABLE THIS UNLESS YOU REALLY NEED TO USE A COLLIDER FOR SOME REASON. LIKE FOR SOME ABSURED PROJECTILE SHAPE. SPHERECAST METHOD IS SO MUCH BETTER AND MORE EFFECIENT AND MOST PROJECTILES WORK PERFECTLY WITH A SPHERECAST IF THEYRE SMALL")]
+    [Tooltip("DO NOT ENABLE THIS UNLESS YOU REALLY NEED TO USE A COLLIDER FOR SOME REASON. " +
+        "LIKE FOR SOME ABSURED PROJECTILE SHAPE. SPHERECAST METHOD IS SO MUCH BETTER AND MORE " +
+        "EFFECIENT AND MOST PROJECTILES WORK PERFECTLY WITH A SPHERECAST IF THEYRE SMALL")]
     [SerializeField] private bool usePhysicsCollision = false;
     
     [Header("Visuals")]
@@ -30,14 +30,14 @@ public class Projectile : MonoBehaviour, IPoolable
 
     public int PoolCapacity => poolCapacity;
 
-    Combat _ownerCombat;
+    private Combat _ownerCombat;
     private DamageInfo damageInfo;
     private float speed;
     private Action<Projectile> release;     // injected: "Put yourself back" FORCEEE!!!
     private float lifeTimer;
     private bool isSpent;                   // has it already hit something and dealt damage? I dunno *shrug*
 
-    void Awake()
+    private void Awake()
     {
         Rigidbody body = GetComponent<Rigidbody>();
         Collider projectileCollider = GetComponent<Collider>();
@@ -47,7 +47,7 @@ public class Projectile : MonoBehaviour, IPoolable
             if (body != null)
             {
                 body.isKinematic = true;
-                body.useGravity = false; // redundant 
+                body.useGravity = false;
                 body.detectCollisions = false;
             }
 
@@ -59,13 +59,13 @@ public class Projectile : MonoBehaviour, IPoolable
 
         if (body == null || projectileCollider == null)
         {
-            Debug.LogError("Projectile physics collision fallback requires a Rigidbody and Collider.", this);
+            Debug.LogError("[Projectile.cs] - Projectile physics collision fallback requires a Rigidbody and Collider.", this);
             usePhysicsCollision = false;
             return;
         }
 
         body.isKinematic = true;
-        body.useGravity = false; // redundant 
+        body.useGravity = false;
         body.detectCollisions = true;
 
         projectileCollider.enabled = true;
@@ -81,7 +81,7 @@ public class Projectile : MonoBehaviour, IPoolable
     static readonly Collider[] overlapBuffer = new Collider[8];
     
     /// make sure projectiles can't spawn inside walls
-    void CheckSpawnOverlap()
+    private void CheckSpawnOverlap()
     {
         int hitCount = Physics.OverlapSphereNonAlloc(
             transform.position,
@@ -94,12 +94,10 @@ public class Projectile : MonoBehaviour, IPoolable
         {
             Collider hitCollider = overlapBuffer[i];
 
-            if (hitCollider == null)
+            if (hitCollider == null || ShouldIgnoreCollision(hitCollider))
                 continue;
 
-            Vector3 hitPoint =
-                hitCollider.ClosestPoint(transform.position);
-
+            Vector3 hitPoint = hitCollider.ClosestPoint(transform.position);
             HandleHit(hitCollider, hitPoint);
             return;
         }
@@ -113,18 +111,14 @@ public class Projectile : MonoBehaviour, IPoolable
         transform.position = origin;
         this.speed = speed;
         damageInfo = info;
-        transform.forward = direction;
-        
+
+        if (direction != Vector3.zero)
+        {
+            transform.forward = direction;
+        }
+
         CheckSpawnOverlap();
     }
-    
-    // /// <summary>Sets this shot's flight parameters. Pool lifecycle is already handled.</summary>
-    // public void Launch(Vector3 direction, float speed, DamageInfo info)
-    // {
-    //     this.speed = speed;
-    //     damageInfo = info;
-    //     transform.forward = direction;
-    // }
 
     /// <summary>Called by the pool's actionOnGet, before the projectile is fired.</summary>
     public void OnSpawn()
@@ -142,10 +136,11 @@ public class Projectile : MonoBehaviour, IPoolable
 
     private void Update()
     {
+        if (isSpent) return;
+
         Vector3 direction = transform.forward;
         Vector3 startPosition = transform.position;
         float deltaDistance = speed * Time.deltaTime; // s=d/t
-
 
         if (deltaDistance > 0f && Physics.SphereCast(
                 startPosition,
@@ -156,14 +151,23 @@ public class Projectile : MonoBehaviour, IPoolable
                 hittableLayers,
                 QueryTriggerInteraction.Collide))
         {
-            // move the projectile to the collision location
-            transform.position = startPosition + direction * hitInfo.distance; // we cant use hit.point since itll put the bullet center at the collision point
-            HandleHit(hitInfo.collider, hitInfo.point); // plays vfx at impact point; -> could change to center of bullet if we want, but particles coming backward with this will look a lot better
-            return;
+            // ignores collisions with owner/shooter or the projectile itself
+            if (ShouldIgnoreCollision(hitInfo.collider))
+            {
+                transform.position = startPosition + direction * deltaDistance;
+            }
+            else
+            {
+                transform.position = startPosition + direction * hitInfo.distance;
+                HandleHit(hitInfo.collider, hitInfo.point);
+                return;
+            }
         }
-        
-        //transform.position += transform.forward * (speed * Time.deltaTime);
-        transform.position = startPosition + direction * deltaDistance; // literally the same thing just alr cached these values so might as well use them
+        else
+        {
+            // move forward if no hit is detected
+            transform.position = startPosition + direction * deltaDistance;
+        }
         
         lifeTimer -= Time.deltaTime;
         if (lifeTimer <= 0f)
@@ -172,7 +176,8 @@ public class Projectile : MonoBehaviour, IPoolable
     
     private void OnTriggerEnter(Collider other)
     {
-        if (!usePhysicsCollision) return;
+        if (!usePhysicsCollision || isSpent) return;
+        if (ShouldIgnoreCollision(other)) return;
 
         Vector3 impactPoint = other.ClosestPoint(transform.position);
         HandleHit(other, impactPoint);
@@ -183,26 +188,49 @@ public class Projectile : MonoBehaviour, IPoolable
         if (isSpent) return;
         if ((hittableLayers.value & (1 << other.gameObject.layer)) == 0) return; // only use collisions with correct layers
 
-        // allows for colliders in children of idamageable target to be damaged
-        IDamageable target = other.GetComponentInParent<IDamageable>();
-
-        if (target != null)
-        {
-            if (_ownerCombat != null) _ownerCombat.TryDamage(target, damageInfo);
-            else Debug.LogError("Projectile was launched without an owner Combat.", this);
-        }
-        
-
-        // spawn the hit projectiles
-        if (impactVFXPrefab == null) Debug.LogWarning("Projectile has no impactVFXPrefab assigned.", this);
-        else VFXPoolManager.Instance.Play(impactVFXPrefab, impactPoint, Quaternion.identity);
+        TryApplyDamage(other);
+        PlayImpactVFX(impactPoint);
 
         Despawn();
     }
 
-    /// <summary>
-    /// Marks this projectile as spent and invokes the release callback to return it to the pool.
-    /// </summary>
+    private void TryApplyDamage(Collider other)
+    {
+        IDamageable target = other.GetComponentInParent<IDamageable>();
+        if (target == null) return;
+
+        if (_ownerCombat != null)
+        {
+            _ownerCombat.TryDamage(target, damageInfo);
+        }
+        else
+        {
+            Debug.LogError("[Projectile.cs] - Projectile was launched without an owner Combat.", this);
+        }
+    }
+
+    private void PlayImpactVFX(Vector3 point)
+    {
+        if (impactVFXPrefab == null)
+        {
+            Debug.LogWarning("[Projectile.cs] - Projectile has no impactVFXPrefab assigned.", this);
+            return;
+        }
+        VFXPoolManager.Instance.Play(impactVFXPrefab, point, Quaternion.identity);
+    }
+
+    // Helper to filter out shooter, trap spawner, or invalid targets.
+    private bool ShouldIgnoreCollision(Collider col)
+    {
+        if (_ownerCombat != null && col.gameObject == _ownerCombat.gameObject)
+            return true;
+
+        if (col.gameObject == gameObject)
+            return true;
+
+        return false;
+    }
+
     private void Despawn()
     {
         if (isSpent) return;

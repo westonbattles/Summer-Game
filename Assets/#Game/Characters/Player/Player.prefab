@@ -551,6 +551,7 @@ GameObject:
   - component: {fileID: 8473695232717567619}
   - component: {fileID: 3743264238371457764}
   - component: {fileID: 2477840363552947040}
+  - component: {fileID: 4870589787546588099}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -850,6 +851,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerOutOfBounds
   deathYBoundary: -80
   spawnPoint: {fileID: 0}
+--- !u!114 &4870589787546588099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6463087256270042916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e81f205f0282494a8f1084e6c516374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PsychicPulseTargeter
+  highlightVFXPrefab: {fileID: 7076799518104773974, guid: 0dfbf2b4576ef46b489258f97757a183, type: 3}
+  targetRadius: 2
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &6505037897921243107
 GameObject:
   m_ObjectHideFlags: 0

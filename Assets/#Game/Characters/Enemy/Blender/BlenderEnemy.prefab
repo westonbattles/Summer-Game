@@ -208,6 +208,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 116487772874097836, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 116487772874097836, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       propertyPath: rimMaterial
       value: 
       objectReference: {fileID: -876546973899608171, guid: 431996d3c5e74ae488e03e75adb58c82, type: 3}
@@ -288,8 +292,8 @@ PrefabInstance:
     - {fileID: 58326397325589126, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
     - {fileID: 259425922093845636, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
     - {fileID: 5484198891856497733, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
-    - {fileID: 6617042525696661146, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
-    - {fileID: 817663937308119340, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
     - {fileID: 8739945219018221596, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
     m_RemovedGameObjects:
     - {fileID: 8456588543439128524, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
@@ -319,6 +323,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       insertIndex: -1
       addedObject: {fileID: -6852204193156727527}
+    - targetCorrespondingSourceObject: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4036047454879006019}
     - targetCorrespondingSourceObject: {fileID: 6943601538615146641, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3855863462912369784}
@@ -442,6 +449,19 @@ MonoBehaviour:
   knockbackImmunityDuration: 0.25
   defaultKnockbackDuration: 0.25
   decayVelocityOverDuration: 1
+--- !u!114 &4036047454879006019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 760290393894106730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51ed85e5e20c4b945aca0c47740d30e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Targetable
+  centerOverride: {fileID: 0}
 --- !u!1 &1563200709544899845 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6943601538615146641, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
