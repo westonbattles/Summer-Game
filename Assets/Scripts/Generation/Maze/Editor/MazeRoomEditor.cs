@@ -263,7 +263,7 @@ public class MazeRoomOpeningEditor : Editor
 
         using (new EditorGUILayout.HorizontalScope())
         {
-            if (GUILayout.Button("Preview Closed")) ApplyPreview(opening, MazeOpeningState.Filled);
+            if (GUILayout.Button("Preview Closed")) ApplyPreview(opening, MazeOpeningState.Closed);
             if (GUILayout.Button("Preview Open")) ApplyPreview(opening, MazeOpeningState.ConnectedToRoom);
         }
 

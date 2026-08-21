@@ -8,7 +8,7 @@ public enum MazeOpeningState
     ConnectedToRoom,
     ConnectedToStart,
     ConnectedToBoss,
-    Filled,
+    Closed,
 }
 
 /// placement of a room in our grid

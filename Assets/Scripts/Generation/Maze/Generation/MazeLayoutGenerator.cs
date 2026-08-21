@@ -166,7 +166,7 @@ public static class MazeLayoutGenerator
         if (!TryBuildPotentialConnections(layout, out failure)) return false;
         if (!TryBuildConnectionGraph(layout, settings, requiredEdges, criticalEdges, random, out failure)) return false;
 
-        ResolveUnusedOpenings(layout);
+        CloseUnusedOpenings(layout);
         layout.RebuildAdjacency();
 
         failure = null;
@@ -1144,14 +1144,14 @@ public static class MazeLayoutGenerator
         });
     }
 
-    static void ResolveUnusedOpenings(MazeLayout layout)
+    static void CloseUnusedOpenings(MazeLayout layout)
     {
         foreach (MazeRoomPlacement room in layout.Rooms.Values)
         {
             foreach (MazePlacedOpening opening in room.Openings)
             {
                 if (opening.State != MazeOpeningState.Unresolved) continue;
-                opening.State = MazeOpeningState.Filled;
+                opening.State = MazeOpeningState.Closed;
             }
         }
     }
