@@ -5,15 +5,17 @@ using UnityEngine;
 [CustomEditor(typeof(MazeRoom))]
 public class MazeRoomEditor : Editor
 {
-    // maze room prefabs use a fixed 30 m square local-cell grid.
+    // maze room prefabs use fixed 30 m cells separated by 3 m gaps.
     const float CellSize = 30f;
+    const float CellGap = 3f;
+    const float CellPitch = CellSize + CellGap;
 
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
 
         EditorGUILayout.Space();
-        EditorGUILayout.HelpBox("Create an opening slot by choosing a prefab-local Cell X/Z and an outward direction. " + "The slot is automatically positioned and rotated on the 30 m room grid.", MessageType.Info);
+        EditorGUILayout.HelpBox("Create an opening slot by choosing a prefab-local Cell X/Z and an outward direction. The slot is automatically positioned and rotated using 30 m cells with 3 m gaps.", MessageType.Info);
 
         MazeRoom room = (MazeRoom)target;
         if (GUILayout.Button("Create Opening Slot...")) MazeOpeningCreationWindow.ShowFor(room);
@@ -40,14 +42,12 @@ public class MazeRoomEditor : Editor
         serializedOpening.FindProperty("openRoot").objectReferenceValue = openRoot;
         serializedOpening.ApplyModifiedProperties();
 
-        Selection.activeGameObject = marker;
-        EditorGUIUtility.PingObject(marker);
         return opening;
     }
 
     internal static Vector3 GetWallCenterLocal(Vector2Int localCell, GridDirection direction)
     {
-        Vector3 cellCenter = new Vector3(localCell.x * CellSize, 0f, localCell.y * CellSize);
+        Vector3 cellCenter = new Vector3(localCell.x * CellPitch, 0f, localCell.y * CellPitch);
         Vector3 outward = GridDirectionUtils.ToWorldDirection(direction);
         return cellCenter + outward * (CellSize * 0.5f);
     }
@@ -70,9 +70,17 @@ public class MazeRoomEditor : Editor
 
 public class MazeOpeningCreationWindow : EditorWindow
 {
+    static readonly GridDirection[] AllDirections =
+    {
+        GridDirection.North,
+        GridDirection.East,
+        GridDirection.South,
+        GridDirection.West
+    };
+
     [SerializeField] MazeRoom room;
     [SerializeField] Vector2Int localCell;
-    [SerializeField] GridDirection direction;
+    [SerializeField] int directionMask = 1 << (int)GridDirection.North;
 
     public static void ShowFor(MazeRoom targetRoom)
     {
@@ -86,7 +94,7 @@ public class MazeOpeningCreationWindow : EditorWindow
     void OnGUI()
     {
         EditorGUILayout.LabelField("Create Opening Slot", EditorStyles.boldLabel);
-        EditorGUILayout.HelpBox("Choose any prefab-local cell and outward direction. Cells are spaced 30 m apart and the slot is placed 15 m from its cell center.", MessageType.Info);
+        EditorGUILayout.HelpBox("Choose any prefab-local cell and outward direction. Click selects one direction; Shift-click adds or removes the direction you clicked. Cell centers are spaced 33 m apart and each slot is placed 15 m from its cell center.", MessageType.Info);
 
         using (new EditorGUI.DisabledScope(true))
         {
@@ -102,11 +110,8 @@ public class MazeOpeningCreationWindow : EditorWindow
         DrawDirectionPicker();
 
         EditorGUILayout.Space();
-        // Vector3 previewPosition = MazeRoomEditor.GetWallCenterLocal(localCell, direction);
-        // EditorGUILayout.LabelField("Slot local position", $"({previewPosition.x:0.###}, {previewPosition.y:0.###}, {previewPosition.z:0.###})");
-        // EditorGUILayout.LabelField("Slot faces", GetDirectionLabel(direction));
-
         string validationError = GetValidationError();
+        int selectedDirectionCount = GetDirectionsToCreate().Length;
         if (!string.IsNullOrEmpty(validationError)) EditorGUILayout.HelpBox(validationError, MessageType.Error);
 
         GUILayout.FlexibleSpace();
@@ -117,7 +122,7 @@ public class MazeOpeningCreationWindow : EditorWindow
 
             using (new EditorGUI.DisabledScope(!string.IsNullOrEmpty(validationError)))
             {
-                if (GUILayout.Button("Create Opening")) CreateOpening();
+                if (GUILayout.Button(selectedDirectionCount > 1 ? $"Create {selectedDirectionCount} Openings" : "Create Opening")) CreateOpening();
             }
         }
     }
@@ -151,9 +156,14 @@ public class MazeOpeningCreationWindow : EditorWindow
     void DrawDirectionButton(GridDirection buttonDirection, string label)
     {
         Color previousColor = GUI.backgroundColor;
-        if (direction == buttonDirection) GUI.backgroundColor = new Color(0.35f, 0.8f, 1f);
+        if (IsDirectionSelected(buttonDirection)) GUI.backgroundColor = new Color(0.35f, 0.8f, 1f);
 
-        if (GUILayout.Button(label, GUILayout.Width(110f))) direction = buttonDirection;
+        if (GUILayout.Button(label, GUILayout.Width(110f)))
+        {
+            if (Event.current.shift) directionMask ^= 1 << (int)buttonDirection;
+            else directionMask = 1 << (int)buttonDirection;
+        }
+
         GUI.backgroundColor = previousColor;
     }
 
@@ -161,13 +171,18 @@ public class MazeOpeningCreationWindow : EditorWindow
     {
         if (room == null) return "The room prefab is no longer available.";
 
-        MazeOpeningKey key = new MazeOpeningKey(localCell, direction);
-        if (room.TryGetOpening(key, out _))
+        GridDirection[] directions = GetDirectionsToCreate();
+        if (directions.Length == 0) return "Select at least one opening direction.";
+
+        GridDirection[] existingDirections = directions.Where(openingDirection => room.TryGetOpening(new MazeOpeningKey(localCell, openingDirection), out _)).ToArray();
+
+        if (existingDirections.Length == 1)
         {
-            return $"This prefab already has an opening at cell X={localCell.x}, Z={localCell.y}, facing {GetDirectionLabel(direction)}.";
+            return $"This prefab already has an opening at cell X={localCell.x}, Z={localCell.y}, facing {GetDirectionLabel(existingDirections[0])}.";
         }
 
-        
+        if (existingDirections.Length > 1) return $"This prefab already has openings at cell X={localCell.x}, Z={localCell.y}, facing {string.Join(", ", existingDirections.Select(GetDirectionLabel))}.";
+
         Vector2Int[] cells = room.OccupiedCells;
         if (!cells.Contains(localCell)) return $"Local cell not in list of valid cells as defined by the room :(";
 
@@ -176,8 +191,29 @@ public class MazeOpeningCreationWindow : EditorWindow
 
     void CreateOpening()
     {
-        MazeRoomEditor.CreateOpeningSlot(room, localCell, direction);
+        GridDirection[] directions = GetDirectionsToCreate();
+        MazeRoomOpening[] openings = new MazeRoomOpening[directions.Length];
+
+        Undo.IncrementCurrentGroup();
+        int undoGroup = Undo.GetCurrentGroup();
+        Undo.SetCurrentGroupName(directions.Length == 1 ? "Add Maze Room Opening" : "Add Maze Room Openings");
+
+        for (int i = 0; i < directions.Length; i++) openings[i] = MazeRoomEditor.CreateOpeningSlot(room, localCell, directions[i]);
+
+        Undo.CollapseUndoOperations(undoGroup);
+        Selection.objects = openings.Select(opening => opening.gameObject).ToArray();
+        EditorGUIUtility.PingObject(openings[0].gameObject);
         Close();
+    }
+
+    GridDirection[] GetDirectionsToCreate()
+    {
+        return AllDirections.Where(IsDirectionSelected).ToArray();
+    }
+
+    bool IsDirectionSelected(GridDirection openingDirection)
+    {
+        return (directionMask & (1 << (int)openingDirection)) != 0;
     }
 
     static string GetDirectionLabel(GridDirection openingDirection)
@@ -221,7 +257,7 @@ public class MazeRoomOpeningEditor : Editor
         serializedObject.ApplyModifiedProperties();
 
         EditorGUILayout.Space();
-        EditorGUILayout.HelpBox("Cell X/Z is prefab-local. The Snap button uses the room prefab's fixed 30 m grid.", MessageType.Info);
+        EditorGUILayout.HelpBox("Cell X/Z is prefab-local. The Snap button uses fixed 30 m cells separated by 3 m gaps.", MessageType.Info);
 
         MazeRoomOpening opening = (MazeRoomOpening)target;
 
@@ -231,7 +267,7 @@ public class MazeRoomOpeningEditor : Editor
             if (GUILayout.Button("Preview Open")) ApplyPreview(opening, MazeOpeningState.ConnectedToRoom);
         }
 
-        if (GUILayout.Button("Snap To 30 m Cell Wall")) SnapToCellWall(opening);
+        if (GUILayout.Button("Snap To Authored Cell Wall")) SnapToCellWall(opening);
     }
 
     void OnSceneGUI()
