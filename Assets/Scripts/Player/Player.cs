@@ -108,6 +108,7 @@ public class Player : MonoBehaviour, ICharacterController
         if (ab is GroundPound gp) gp.DrawGizmos(transform);
     }
 
+    
     void Awake()
     {
         Instance = this;

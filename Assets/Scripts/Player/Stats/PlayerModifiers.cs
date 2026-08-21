@@ -1,9 +1,10 @@
 // rough example for now - these are base stats, don't change these in file. we'll use Player.Instance.Modifiers to change them
 
 // Naming convention:
-//   ...Bonus               -> 
-//   ...Multiplier          ->
-//   ...Enabled             -> bool toggle, use SetValue
+//   ...Bonus                     -> 
+//   ...MultiplierMultiplicative  -> (change name?)
+//   ...MultiplierAdditive        -> (change name?)
+//   ...Enabled                   -> bool toggle, use SetValue
 
 using System.Collections.Generic;
 
@@ -28,11 +29,11 @@ public class PlayerModifiers
     public Modifier<float> DamageMultiplier = new(1f);
     
     public Modifier<float> MaxHealthBonus = new(0f);
-    public Modifier<float> DamageTakenMultiplier = new(1f);       // 1.0 = 100% damage taken.
-    public Modifier<float> BhopMomentumCarryPercent = new(0.33f); // how much horizontal velocity you keep on perfect bhops
-    public Modifier<float> AttackSpeedPercent = new(1f);          // 1.0 = 100% speed, 2.0 = 200% speed, etc
-    public Modifier<float> MovementSpeedPercent = new(1f);        // 1.0 = 100% speed, 2.0 = 200% speed, etc
-    public Modifier<float> CooldownDurationPercent = new(1f);     // (0.0 < x < 2.0). You can have LONGER cooldowns
+    public Modifier<float> DamageTakenMultiplierMultiplicative = new(1f);   // 1.0 = 100% damage taken.
+    public Modifier<float> BhopMomentumCarryPercent = new(0.33f);           // how much horizontal velocity you keep on perfect bhops
+    public Modifier<float> AttackSpeedPercent = new(1f);                    // 1.0 = 100% speed, 2.0 = 200% speed, etc
+    public Modifier<float> MovementSpeedPercent = new(1f);                  // 1.0 = 100% speed, 2.0 = 200% speed, etc
+    public Modifier<float> CooldownDurationPercent = new(1f);               // (0.0 < x < 2.0). You can have LONGER cooldowns
 
 
 
