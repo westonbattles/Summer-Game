@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 public class PlayerModifiers
 {
-
+    
     static readonly List<IModifier> Modifiers = new();
     
     // we initialize with this instead of a constructor so we can ensure the modifiers get reset and have no duplicates
@@ -35,8 +35,8 @@ public class PlayerModifiers
     public Modifier<float> MovementSpeedPercent = new(1f);                  // 1.0 = 100% speed, 2.0 = 200% speed, etc
     public Modifier<float> CooldownDurationPercent = new(1f);               // (0.0 < x < 2.0). You can have LONGER cooldowns
 
-
-
+    
+    
     // Eye Abilities
 
     // Revolver
@@ -86,8 +86,12 @@ public class PlayerModifiers
         }
         
         public T GetValue() => _currentValue;
+
         /// sets the current modifier value (we can still access and use BaseValue if we want, that doesn't get modified. only currentvalue does)
-        public void SetValue(T value) { _currentValue = value; }
+        public void SetValue(T value)
+        {
+            _currentValue = value;
+        }
         /// reset the modifier value to it's base value, gets called on inventory recalculations before re-applying all modifiers again
         public void ResetValue() { _currentValue = _baseValue; }
     }
