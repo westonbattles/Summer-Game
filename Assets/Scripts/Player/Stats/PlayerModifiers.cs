@@ -1,10 +1,9 @@
 // rough example for now - these are base stats, don't change these in file. we'll use Player.Instance.Modifiers to change them
 
 // Naming convention:
-//   ...Bonus       -> 
-//   ...Multiplier  -> a rate where 1.0 = 100% (probably should never be multiplied)
-// 
-//   ...Enabled     -> bool toggle, use SetValue
+//   ...Bonus               -> 
+//   ...Multiplier          ->
+//   ...Enabled             -> bool toggle, use SetValue
 
 using System.Collections.Generic;
 

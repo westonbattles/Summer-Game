@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -101,9 +102,9 @@ public class MazeOpeningCreationWindow : EditorWindow
         DrawDirectionPicker();
 
         EditorGUILayout.Space();
-        Vector3 previewPosition = MazeRoomEditor.GetWallCenterLocal(localCell, direction);
-        EditorGUILayout.LabelField("Slot local position", $"({previewPosition.x:0.###}, {previewPosition.y:0.###}, {previewPosition.z:0.###})");
-        EditorGUILayout.LabelField("Slot faces", GetDirectionLabel(direction));
+        // Vector3 previewPosition = MazeRoomEditor.GetWallCenterLocal(localCell, direction);
+        // EditorGUILayout.LabelField("Slot local position", $"({previewPosition.x:0.###}, {previewPosition.y:0.###}, {previewPosition.z:0.###})");
+        // EditorGUILayout.LabelField("Slot faces", GetDirectionLabel(direction));
 
         string validationError = GetValidationError();
         if (!string.IsNullOrEmpty(validationError)) EditorGUILayout.HelpBox(validationError, MessageType.Error);
@@ -124,8 +125,7 @@ public class MazeOpeningCreationWindow : EditorWindow
     void DrawDirectionPicker()
     {
         EditorGUILayout.LabelField("Opening Direction", EditorStyles.boldLabel);
-        EditorGUILayout.LabelField("Directions use Unity's horizontal X/Z axes.", EditorStyles.miniLabel);
-
+        
         using (new EditorGUILayout.HorizontalScope())
         {
             GUILayout.FlexibleSpace();
@@ -166,6 +166,10 @@ public class MazeOpeningCreationWindow : EditorWindow
         {
             return $"This prefab already has an opening at cell X={localCell.x}, Z={localCell.y}, facing {GetDirectionLabel(direction)}.";
         }
+
+        
+        Vector2Int[] cells = room.OccupiedCells;
+        if (!cells.Contains(localCell)) return $"Local cell not in list of valid cells as defined by the room :(";
 
         return null;
     }
