@@ -75,7 +75,7 @@ public class PlayerModifiers
     {
         readonly T _baseValue;
         T _currentValue;
-        
+
         public T BaseValue => _baseValue;
 
         public Modifier(T value)
@@ -84,14 +84,12 @@ public class PlayerModifiers
             _currentValue = value;
             Modifiers.Add(this);
         }
-        
-        public T GetValue() => _currentValue;
 
+        public T GetValue() => _currentValue;
+        
         /// sets the current modifier value (we can still access and use BaseValue if we want, that doesn't get modified. only currentvalue does)
-        public void SetValue(T value)
-        {
-            _currentValue = value;
-        }
+        public void SetValue(T value) { _currentValue = value; }
+
         /// reset the modifier value to it's base value, gets called on inventory recalculations before re-applying all modifiers again
         public void ResetValue() { _currentValue = _baseValue; }
     }
