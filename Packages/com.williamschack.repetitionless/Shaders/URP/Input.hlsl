@@ -1,6 +1,9 @@
 #ifndef REPETITIONLESSINPUT_INCLUDED
 #define REPETITIONLESSINPUT_INCLUDED
 
+// Triplanar sampling returns a world-space normal so it does not depend on mesh UV tangents.
+#define REPETITIONLESS_TRIPLANAR_NORMAL_WORLD
+
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
 // Material Properties

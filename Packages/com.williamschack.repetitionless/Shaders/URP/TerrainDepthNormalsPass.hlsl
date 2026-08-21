@@ -71,7 +71,11 @@ half4 DepthNormalOnlyFragment(VaryingsDepthNormal input) : SV_Target0
         albedo, normalTS, metallic, smoothness, occlusion, emission
     );
 
+#if defined(_REPETITIONLESS_TRIPLANAR) && defined(REPETITIONLESS_TRIPLANAR_NORMAL_WORLD)
+    float3 normalWS = normalTS;
+#else
     float3 normalWS = TransformTangentToWorld(normalTS, half3x3(-input.tangent.xyz, input.bitangent.xyz, input.normal.xyz));
+#endif
     half4 outNormalWS = half4(NormalizeNormalPerPixel(normalWS), 0.0);
 
     return outNormalWS;

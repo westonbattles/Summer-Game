@@ -31,7 +31,7 @@ MonoBehaviour:
       PackedTextureAssigned: 0
       AlbedoTint: {r: 1, g: 1, b: 1, a: 1}
       EmissionColour: {r: 0, g: 0, b: 0, a: 1}
-      TilingOffset: {x: 10, y: 10, z: 0, w: 0}
+      TilingOffset: {x: 1, y: 1, z: 0, w: 0}
       Metallic: 0
       SmoothnessRoughness: 0.5
       NormalScale: 1
@@ -127,7 +127,7 @@ MonoBehaviour:
       VariationNoiseScale: 100
       VariationNoiseOffset: {x: 0, y: 0}
       VariationTextureTO: {x: 5, y: 5, z: 0, w: 0}
-    GlobalTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+    GlobalTilingOffset: {x: 350, y: 400, z: 0, w: 0}
     DistanceBlendEnabled: 0
     DistanceBlendMode: 0
     DistanceBlendMinMax: {x: 100, y: 150}
@@ -153,7 +153,7 @@ MonoBehaviour:
       Settings5: {x: 0.8, y: 1.2, z: 0, w: 0}
       AlbedoTint: {x: 1, y: 1, z: 1}
       EmissionColour: {x: 0, y: 0, z: 0}
-      TilingOffset: {x: 10, y: 10, z: 0, w: 0}
+      TilingOffset: {x: 350, y: 400, z: 0, w: 0}
       VariationTO: {x: 5, y: 5, z: 0, w: 0}
     FarMaterialData:
       Settings1: {x: 15, y: 0, z: 0, w: 0.5}
@@ -163,7 +163,7 @@ MonoBehaviour:
       Settings5: {x: 0.8, y: 1.2, z: 0, w: 360}
       AlbedoTint: {x: 1, y: 1, z: 1}
       EmissionColour: {x: 0, y: 0, z: 0}
-      TilingOffset: {x: 1, y: 1, z: 0, w: 0}
+      TilingOffset: {x: 350, y: 400, z: 0, w: 0}
       VariationTO: {x: 5, y: 5, z: 0, w: 0}
     BlendMaterialData:
       Settings1: {x: 15, y: 0, z: 0, w: 0.5}
@@ -173,7 +173,7 @@ MonoBehaviour:
       Settings5: {x: 0.8, y: 1.2, z: 0, w: 360}
       AlbedoTint: {x: 1, y: 1, z: 1}
       EmissionColour: {x: 0, y: 0, z: 0}
-      TilingOffset: {x: 1, y: 1, z: 0, w: 0}
+      TilingOffset: {x: 350, y: 400, z: 0, w: 0}
       VariationTO: {x: 5, y: 5, z: 0, w: 0}
     DistanceBlendSettings: {x: 0, y: 0, z: 100, w: 150}
     BlendMaskDistanceTO: {x: 1, y: 1, z: 0, w: 0}
@@ -181,4 +181,4 @@ MonoBehaviour:
     MaterialBlendMaskTO: {x: 10, y: 0, z: 0, w: 0}
     MaterialBlendMaskExtraSettings: {x: 0, y: 0, z: 0, w: 0}
   _noiseQuality: 1
-  _globalTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  _globalTilingOffset: {x: 350, y: 400, z: 0, w: 0}

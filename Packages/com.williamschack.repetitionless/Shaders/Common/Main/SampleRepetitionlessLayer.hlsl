@@ -158,11 +158,12 @@ void SampleRepetitionlessLayer(
     // ----------------------- UVs / Triplanar ------------------------- // 
 
 #ifdef _REPETITIONLESS_TRIPLANAR
-    float3 triplanarWeights = pow(abs(WorldNormalVector), 8);
+    float3 triplanarSurfaceNormal = normalize(WorldNormalVector);
+    float3 triplanarWeights = pow(abs(triplanarSurfaceNormal), 8);
     triplanarWeights /= dot(triplanarWeights, 1.0);
 
     float2 triplanarUVs[3] = {
-        WorldPosition.yz / 1000,
+        WorldPosition.zy / 1000,
         WorldPosition.xz / 1000,
         WorldPosition.xy / 1000
     };
@@ -174,6 +175,11 @@ void SampleRepetitionlessLayer(
     };
 
     float4 triplanarAlbedo = 0;
+    float3 triplanarNormal = 0;
+    float triplanarMetallic = 0;
+    float triplanarSmoothness = 0;
+    float triplanarOcclussion = 0;
+    float3 triplanarEmission = 0;
 
     [unroll]
     for (int i = 0; i < 3; i++) {
@@ -313,11 +319,39 @@ void SampleRepetitionlessLayer(
 #endif
 
 #ifdef _REPETITIONLESS_TRIPLANAR
-        triplanarAlbedo += albedoColor * triplanarWeightsArray[i];
+        float triplanarWeight = triplanarWeightsArray[i];
+        triplanarAlbedo += albedoColor * triplanarWeight;
+        triplanarMetallic += metallic * triplanarWeight;
+        triplanarSmoothness += smoothness * triplanarWeight;
+        triplanarOcclussion += occlussion * triplanarWeight;
+        triplanarEmission += emissionColor * triplanarWeight;
+
+#ifdef REPETITIONLESS_TRIPLANAR_NORMAL_WORLD
+        float3 projectedNormal = 0;
+        switch (i) {
+            case 0: projectedNormal = float3(normalVector.xy + triplanarSurfaceNormal.zy, abs(normalVector.z) * triplanarSurfaceNormal.x).zyx; break;
+            case 1: projectedNormal = float3(normalVector.xy + triplanarSurfaceNormal.xz, abs(normalVector.z) * triplanarSurfaceNormal.y).xzy; break;
+            case 2: projectedNormal = float3(normalVector.xy + triplanarSurfaceNormal.xy, abs(normalVector.z) * triplanarSurfaceNormal.z); break;
+        }
+        triplanarNormal += projectedNormal * triplanarWeight;
+#else
+        triplanarNormal += normalVector * triplanarWeight;
+#endif
+
         albedoColor = 1;
+        normalVector = WorldNormalVector;
+        metallic = 0;
+        smoothness = 0;
+        occlussion = 0;
+        emissionColor = 0;
     } // End loop
 
     albedoColor = triplanarAlbedo;
+    normalVector = normalize(triplanarNormal);
+    metallic = triplanarMetallic;
+    smoothness = triplanarSmoothness;
+    occlussion = triplanarOcclussion;
+    emissionColor = triplanarEmission;
 #endif
 
     // ----------------------- Output ------------------------- //

@@ -89,7 +89,11 @@ half4 DepthNormalsFragment(Varyings input) : SV_Target0
 
         float sgn = input.tangentWS.w;
         float3 bitangent = sgn * cross(input.normalWS.xyz, input.tangentWS.xyz);
+#if defined(_REPETITIONLESS_TRIPLANAR) && defined(REPETITIONLESS_TRIPLANAR_NORMAL_WORLD)
+        float3 normalWS = normalTS;
+#else
         float3 normalWS = TransformTangentToWorld(normalTS, half3x3(input.tangentWS.xyz, bitangent.xyz, input.normalWS.xyz));
+#endif
         outNormalWS = half4(NormalizeNormalPerPixel(normalWS), 0.0);
     #endif
 

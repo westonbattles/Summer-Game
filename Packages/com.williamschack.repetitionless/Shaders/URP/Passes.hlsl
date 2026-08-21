@@ -94,7 +94,11 @@ void InitializeInputData(Varyings input, half3 normalTS, out InputData inputData
     half3x3 tangentToWorld = half3x3(input.tangentWS.xyz, bitangent.xyz, input.normalWS.xyz);
 
     inputData.tangentToWorld = tangentToWorld;
+#if defined(_REPETITIONLESS_TRIPLANAR) && defined(REPETITIONLESS_TRIPLANAR_NORMAL_WORLD)
+    inputData.normalWS = normalTS;
+#else
     inputData.normalWS = TransformTangentToWorld(normalTS, tangentToWorld);
+#endif
 
     inputData.normalWS = NormalizeNormalPerPixel(inputData.normalWS);
     inputData.viewDirectionWS = viewDirWS;

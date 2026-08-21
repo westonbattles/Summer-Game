@@ -61,7 +61,11 @@ void InitializeInputData(Varyings input, half3 normalTS, out InputData inputData
 
     // Convert normals from tangent to world space
     inputData.tangentToWorld = half3x3(-input.tangent.xyz, input.bitangent.xyz, input.normal.xyz);
+#if defined(_REPETITIONLESS_TRIPLANAR) && defined(REPETITIONLESS_TRIPLANAR_NORMAL_WORLD)
+    inputData.normalWS = normalTS;
+#else
     inputData.normalWS = TransformTangentToWorld(normalTS, inputData.tangentToWorld);
+#endif
     inputData.normalWS = normalize(inputData.normalWS);
         
     inputData.viewDirectionWS = half3(input.normal.w, input.tangent.w, input.bitangent.w);
