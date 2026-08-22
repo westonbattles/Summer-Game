@@ -4,8 +4,8 @@
 //   ...Percent (Same as multiplier but usually only between 0-1)
 //   ...Enabled   
 //
-// REMEMBER: Bonuses can be written to multiplicatively if we want, and multipliers can be written to additively.
-// It all depends on how we want the individual modifier to scale
+// REMEMBER: Bonuses don't have to be changed additively. And multipliers/percents don't have to be changed multiplicatively
+// it all just depends on the modifier itself and how we want it to scale
 using System.Collections.Generic;
 
 
