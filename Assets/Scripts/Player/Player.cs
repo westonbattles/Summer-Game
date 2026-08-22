@@ -278,6 +278,9 @@ public class Player : MonoBehaviour, ICharacterController
         currentVelocity = currentVelocity - Vector3.Project(currentVelocity, _motor.CharacterUp);
         currentVelocity += _motor.CharacterUp * GetCurrentJumpHeight();
 
+        // essentially just lerps between max speed and current speed (when max speed < current speed) using BhopMomentumCarryMultiplier.
+        // when BhopMomentumCarryPercent is 0 -> carry is just max speed
+        // when BhopMomentumCarryPercent is 1 -> carry is just current speed (no speed loss)
         float speed = horizontalVelocity.magnitude;
         float carry = speed;
         if (carry > GetCurrentMaxSpeed()) carry = (speed - GetCurrentMaxSpeed()) * Modifiers.BhopMomentumCarryPercent.GetValue() + GetCurrentMaxSpeed(); // same as Mathf.Lerp(maxSpeed, speed, Modifiers.BhopMomentumCarryPercent); without the 0-1 clamping

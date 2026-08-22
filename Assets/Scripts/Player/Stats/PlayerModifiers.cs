@@ -1,6 +1,7 @@
 // Naming convention:
 //   ...Bonus     
 //   ...Multiplier
+//   ...Percent (Same as multiplier but usually only between 0-1)
 //   ...Enabled   
 //
 // REMEMBER: Bonuses can be written to multiplicatively if we want, and multipliers can be written to additively.
@@ -14,10 +15,10 @@ public class PlayerModifiers
     // Base Player Modifiers
     public Modifier<float, Multiplicative> DamageMultiplier = new(1f);
     public Modifier<float, Additive> MaxHealthBonus = new(0f);
-    public Modifier<float, Multiplicative> DamageTakenMultiplier = new(1f);     // 1.0 = 100% damage taken.
+    public Modifier<float, Multiplicative> DamageTakenPercent = new(1f);        // 1.0 = 100% damage taken, 0.5 = 50% damage takrn, etc
     public Modifier<float> AttackSpeedMultiplier = new(1f);                     // 1.0 = 100% speed, 2.0 = 200% speed, etc
     public Modifier<float> MovementSpeedMultiplier = new(1f);                   // 1.0 = 100% speed, 2.0 = 200% speed, etc
-    public Modifier<float> BhopMomentumCarryMultiplier = new(0.33f);            // how much horizontal velocity you keep on perfect bhops 
+    public Modifier<float> BhopMomentumCarryPercent = new(0.33f);               // how much horizontal velocity you keep on perfect bhops 
     public Modifier<float> CooldownDurationMultiplier = new(1f);                // (0.0 < x < 2.0). You can have LONGER cooldowns
     
     
