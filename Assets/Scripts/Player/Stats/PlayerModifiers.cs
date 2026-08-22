@@ -1,15 +1,54 @@
-// rough example for now - these are base stats, don't change these in file. we'll use Player.Instance.Modifiers to change them
-
 // Naming convention:
-//   ...Bonus                     -> additive
-//   ...Multiplier                -> can be additive or multiplicative
-//   ...Enabled                   -> bool toggle, use SetValue
+//   ...Bonus     
+//   ...Multiplier
+//   ...Enabled   
+//
+// REMEMBER: Bonuses can be written to multiplicatively if we want, and multipliers can be written to additively.
+// It all depends on how we want the individual modifier to scale
 using System.Collections.Generic;
 
 
 public class PlayerModifiers
 {
     
+    // Base Player Modifiers
+    public Modifier<float, Multiplicative> DamageMultiplier = new(1f);
+    public Modifier<float, Additive> MaxHealthBonus = new(0f);
+    public Modifier<float, Multiplicative> DamageTakenMultiplier = new(1f);     // 1.0 = 100% damage taken.
+    public Modifier<float> AttackSpeedMultiplier = new(1f);                     // 1.0 = 100% speed, 2.0 = 200% speed, etc
+    public Modifier<float> MovementSpeedMultiplier = new(1f);                   // 1.0 = 100% speed, 2.0 = 200% speed, etc
+    public Modifier<float> BhopMomentumCarryMultiplier = new(0.33f);            // how much horizontal velocity you keep on perfect bhops 
+    public Modifier<float> CooldownDurationMultiplier = new(1f);                // (0.0 < x < 2.0). You can have LONGER cooldowns
+    
+    
+    /*-----------------------------  EYE ABILITIES  ------------------------------- */
+    // Revolver
+    public Modifier<int, Additive> RevolverBulletsBonus = new(0);                             // how many extra bullets in the chamber the revolver gets
+    public Modifier<float, Multiplicative> RevolverLastBulletDamageMultiplier = new(1f);      // damage multiplier for the last bullet in the revolvers chamber
+    // Dash
+    public Modifier<bool> DashVerticallyEnabled = new(false);
+    
+    
+    
+    
+    
+    /*-----------------------------  HAND ABILITIES  ------------------------------ */
+    // Brass Knuckles
+    public Modifier<int, Additive> BrassKnucklesComboStagesBonus = new(0);                       // how many extra combo stages do we get (each stage gives us an extra 25% * BrassKnucklesComboDamageMultiplier damage)
+    public Modifier<float, Multiplicative> BrassKnucklesBaseDamageMultiplier = new(1f);          // simply just the base damage mutliplier for brass knuckles. this gets compounded multiplicatively with BrassKnucklesComboIncreaseDamageMultiplier
+    public Modifier<float, Multiplicative> BrassKnucklesComboIncreaseDamageMultiplier = new(1f); // scaling of damage increase per combo level. if base increase is 25% for example (1x -> 1.25x -> 1.5x), setting this value to two would make it 50% (1x -> 1.5x -> 2x)
+    // Whirlwind
+    public Modifier<float, Additive> WhirlwindRadiusBonus = new(0f);                             // additive radius for the base whirlwind damage dcircle
+    // Ground Pound
+    public Modifier<float, Additive> GroundPoundRadiusBonus = new(0f);                           // additive radius for the base ground pound damage circle
+    public Modifier<float, Multiplicative> GroundPoundDamageScalingMultiplier = new(1f);         // multiplier for the base height-damage scaling function. value of 2 scales twice as fast
+    
+    
+    /* ---------------------------------  END  -------------------------------------*/
+    
+    
+    
+    // Collection of all Modifiers!!
     static readonly List<IModifier> Modifiers = new();
     
     // we initialize with this instead of a constructor so we can ensure the modifiers get reset and have no duplicates
@@ -23,50 +62,11 @@ public class PlayerModifiers
     {
         foreach (IModifier modifier in Modifiers) modifier.ResetValue();
     }
-
-    // Base Player Modifiers
-    public Modifier<float, Multiplicative> DamageMultiplier = new(1f);
-    
-    public Modifier<float, Additive> MaxHealthBonus = new(0f);
-    public Modifier<float, Multiplicative> DamageTakenMultiplier = new(1f);   // 1.0 = 100% damage taken.
-    public Modifier<float> BhopMomentumCarryPercent = new(0.33f);           // how much horizontal velocity you keep on perfect bhops
-    public Modifier<float> AttackSpeedPercent = new(1f);                    // 1.0 = 100% speed, 2.0 = 200% speed, etc
-    public Modifier<float> MovementSpeedPercent = new(1f);                  // 1.0 = 100% speed, 2.0 = 200% speed, etc
-    public Modifier<float> CooldownDurationPercent = new(1f);               // (0.0 < x < 2.0). You can have LONGER cooldowns
-
-    
-    
-    // Eye Abilities
-
-    // Revolver
-    public Modifier<int, Additive> RevolverBulletsBonus = new(0);                             // how many extra bullets in the chamber the revolver gets
-    public Modifier<float, Multiplicative> RevolverLastBulletDamageMultiplier = new(1f);      // damage multiplier for the last bullet in the revolvers chamber
-    // Dash
-    public Modifier<bool> DashVerticallyEnabled = new(false);
-    
-    
-    
-    
-    
-    // Hand Abilities
-    
-    // Brass Knuckles
-    public Modifier<float> BrassKnucklesBaseDamageMultiplier = new(1f);         // simply just the base damage mutliplier for brass knuckles. this gets compounded multiplicatively with BrassKnucklesComboIncreaseDamageMultiplier
-    public Modifier<int, Additive> BrassKnucklesComboStagesBonus = new(0);      // how many extra combo stages do we get (each stage gives us an extra 25% * BrassKnucklesComboDamageMultiplier damage)
-    public Modifier<float, Multiplicative> BrassKnucklesComboIncreaseDamageMultiplier = new(1f);    // scaling of damage increase per combo level. if base increase is 25% for example (1x -> 1.25x -> 1.5x), setting this value to two would make it 50% (1x -> 1.5x -> 2x)
-    // Whirlwind
-    public Modifier<float> WhirlwindRadiusBonus = new(0f);                      // additive radius for the base whirlwind damage dcircle
-    // Ground Pound
-    public Modifier<float> GroundPoundRadiusBonus = new(0f);                    // additive radius for the base ground pound damage circle
-    public Modifier<float> GroundPoundDamageScalingMultiplier = new(1f);        // multiplier for the base height-damage scaling function. value of 2 scales twice as fast
-
-    
-    
-    
     
     public interface IModifier
     {
-        public void ResetValue(); // contract for reset value so we can store the modifiers in our list using IModifier, and call ResetValue() on them
+        // contract for reset value so we can store the modifiers in our list using IModifier, and call ResetValue() on them
+        public void ResetValue();
     }
     
     // modifier class (how we can define them)
