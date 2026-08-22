@@ -5,8 +5,14 @@
 //   ...MultiplierMultiplicative  -> (change name?)
 //   ...MultiplierAdditive        -> (change name?)
 //   ...Enabled                   -> bool toggle, use SetValue
-
 using System.Collections.Generic;
+
+enum ModificationType
+{
+    Additive,
+    Multiplicative
+}
+
 
 public class PlayerModifiers
 {
@@ -27,10 +33,9 @@ public class PlayerModifiers
 
     // Base Player Modifiers
     public Modifier<float> DamageMultiplier = new(1f);
-    
     public Modifier<float> MaxHealthBonus = new(0f);
-    public Modifier<float> DamageTakenMultiplierMultiplicative = new(1f);   // 1.0 = 100% damage taken.
-    public Modifier<float> BhopMomentumCarryPercent = new(0.33f);           // how much horizontal velocity you keep on perfect bhops
+    public MultiplicativeModifier<float> DamageTakenMultiplier = new(1f);   // 1.0 = 100% damage taken.
+    public AdditiveModifier<float> BhopMomentumCarryPercent = new(0.33f);   // how much horizontal velocity you keep on perfect bhops
     public Modifier<float> AttackSpeedPercent = new(1f);                    // 1.0 = 100% speed, 2.0 = 200% speed, etc
     public Modifier<float> MovementSpeedPercent = new(1f);                  // 1.0 = 100% speed, 2.0 = 200% speed, etc
     public Modifier<float> CooldownDurationPercent = new(1f);               // (0.0 < x < 2.0). You can have LONGER cooldowns
@@ -40,8 +45,8 @@ public class PlayerModifiers
     // Eye Abilities
 
     // Revolver
-    public Modifier<int> RevolverBulletsBonus = new(0);                             // how many extra bullets in the chamber the revolver gets
-    public Modifier<float> RevolverLastBulletDamageMultiplier = new(1f);            // damage multiplier for the last bullet in the revolvers chamber
+    public AdditiveModifier<int> RevolverBulletsBonus = new(0);                             // how many extra bullets in the chamber the revolver gets
+    public MultiplicativeModifier<float> RevolverLastBulletDamageMultiplier = new(1f);            // damage multiplier for the last bullet in the revolvers chamber
     // Dash
     public Modifier<bool> DashVerticallyEnabled = new(false);
     
@@ -93,11 +98,23 @@ public class PlayerModifiers
         /// reset the modifier value to it's base value, gets called on inventory recalculations before re-applying all modifiers again
         public void ResetValue() { _currentValue = _baseValue; }
     }
+
+    public class AdditiveModifier<T> : Modifier<T>
+    {
+        public AdditiveModifier(T value) : base(value) { } // just calls base constructor
+    }
+    
+    public class MultiplicativeModifier<T> : Modifier<T>
+    {
+        public MultiplicativeModifier(T value) : base(value) { } // just calls base constructor
+    }
 }
+
+
 
 public static class ModifierExtensions
 {
-    public static void AddValue(this PlayerModifiers.Modifier<int> modifier, int value) { modifier.SetValue(modifier.GetValue() + value); }
-    public static void AddValue(this PlayerModifiers.Modifier<float> modifier, float value) { modifier.SetValue(modifier.GetValue() + value); }
-    public static void MultiplyValue(this PlayerModifiers.Modifier<float> modifier, float factor) { modifier.SetValue(modifier.GetValue() * factor); }
+    public static void AddValue(this PlayerModifiers.AdditiveModifier<int> modifier, int value) { modifier.SetValue(modifier.GetValue() + value); }
+    public static void AddValue(this PlayerModifiers.AdditiveModifier<float> modifier, float value) { modifier.SetValue(modifier.GetValue() + value); }
+    public static void MultiplyValue(this PlayerModifiers.MultiplicativeModifier<float> modifier, float factor) { modifier.SetValue(modifier.GetValue() * factor); }
 }
