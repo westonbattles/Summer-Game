@@ -23,6 +23,8 @@ MonoBehaviour:
   StartAreaHeight: 5
   Rooms:
   - {fileID: 8791805939629922458, guid: 158e9a95abefe4ce688652cfb05e79db, type: 3}
+  - {fileID: 1641364926868125539, guid: f09990dd3866c4cca84328fc5a07e50a, type: 3}
+  - {fileID: 1641364926868125539, guid: 9ee82dcb389ee4b048c5f684c583bcb8, type: 3}
   - {fileID: 7457163766452305140, guid: ae233e279bd43426cb6b0473fd528e7f, type: 3}
   - {fileID: 8231126240587729376, guid: 6696deafdebb84fd883466725664b896, type: 3}
   BossRoomPrefabs:
