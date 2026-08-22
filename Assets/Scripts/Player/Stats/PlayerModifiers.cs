@@ -1,17 +1,10 @@
 // rough example for now - these are base stats, don't change these in file. we'll use Player.Instance.Modifiers to change them
 
 // Naming convention:
-//   ...Bonus                     -> 
-//   ...MultiplierMultiplicative  -> (change name?)
-//   ...MultiplierAdditive        -> (change name?)
+//   ...Bonus                     -> additive
+//   ...Multiplier                -> can be additive or multiplicative
 //   ...Enabled                   -> bool toggle, use SetValue
 using System.Collections.Generic;
-
-enum ModificationType
-{
-    Additive,
-    Multiplicative
-}
 
 
 public class PlayerModifiers
@@ -32,10 +25,11 @@ public class PlayerModifiers
     }
 
     // Base Player Modifiers
-    public Modifier<float> DamageMultiplier = new(1f);
-    public Modifier<float> MaxHealthBonus = new(0f);
-    public MultiplicativeModifier<float> DamageTakenMultiplier = new(1f);   // 1.0 = 100% damage taken.
-    public AdditiveModifier<float> BhopMomentumCarryPercent = new(0.33f);   // how much horizontal velocity you keep on perfect bhops
+    public Modifier<float, Multiplicative> DamageMultiplier = new(1f);
+    
+    public Modifier<float, Additive> MaxHealthBonus = new(0f);
+    public Modifier<float, Multiplicative> DamageTakenMultiplier = new(1f);   // 1.0 = 100% damage taken.
+    public Modifier<float> BhopMomentumCarryPercent = new(0.33f);           // how much horizontal velocity you keep on perfect bhops
     public Modifier<float> AttackSpeedPercent = new(1f);                    // 1.0 = 100% speed, 2.0 = 200% speed, etc
     public Modifier<float> MovementSpeedPercent = new(1f);                  // 1.0 = 100% speed, 2.0 = 200% speed, etc
     public Modifier<float> CooldownDurationPercent = new(1f);               // (0.0 < x < 2.0). You can have LONGER cooldowns
@@ -45,8 +39,8 @@ public class PlayerModifiers
     // Eye Abilities
 
     // Revolver
-    public AdditiveModifier<int> RevolverBulletsBonus = new(0);                             // how many extra bullets in the chamber the revolver gets
-    public MultiplicativeModifier<float> RevolverLastBulletDamageMultiplier = new(1f);            // damage multiplier for the last bullet in the revolvers chamber
+    public Modifier<int, Additive> RevolverBulletsBonus = new(0);                             // how many extra bullets in the chamber the revolver gets
+    public Modifier<float, Multiplicative> RevolverLastBulletDamageMultiplier = new(1f);      // damage multiplier for the last bullet in the revolvers chamber
     // Dash
     public Modifier<bool> DashVerticallyEnabled = new(false);
     
@@ -57,14 +51,14 @@ public class PlayerModifiers
     // Hand Abilities
     
     // Brass Knuckles
-    public Modifier<float> BrassKnucklesBaseDamageMultiplier = new(1f);             // simply just the base damage mutliplier for brass knuckles. this gets compounded multiplicatively with BrassKnucklesComboIncreaseDamageMultiplier
-    public Modifier<int> BrassKnucklesComboStagesBonus = new(0);                    // how many extra combo stages do we get (each stage gives us an extra 25% * BrassKnucklesComboDamageMultiplier damage)
-    public Modifier<float> BrassKnucklesComboIncreaseDamageMultiplier = new(1f);    // scaling of damage increase per combo level. if base increase is 25% for example (1x -> 1.25x -> 1.5x), setting this value to two would make it 50% (1x -> 1.5x -> 2x)
+    public Modifier<float> BrassKnucklesBaseDamageMultiplier = new(1f);         // simply just the base damage mutliplier for brass knuckles. this gets compounded multiplicatively with BrassKnucklesComboIncreaseDamageMultiplier
+    public Modifier<int, Additive> BrassKnucklesComboStagesBonus = new(0);      // how many extra combo stages do we get (each stage gives us an extra 25% * BrassKnucklesComboDamageMultiplier damage)
+    public Modifier<float, Multiplicative> BrassKnucklesComboIncreaseDamageMultiplier = new(1f);    // scaling of damage increase per combo level. if base increase is 25% for example (1x -> 1.25x -> 1.5x), setting this value to two would make it 50% (1x -> 1.5x -> 2x)
     // Whirlwind
-    public Modifier<float> WhirlwindRadiusBonus = new(0f);                          // additive radius for the base whirlwind damage dcircle
+    public Modifier<float> WhirlwindRadiusBonus = new(0f);                      // additive radius for the base whirlwind damage dcircle
     // Ground Pound
-    public Modifier<float> GroundPoundRadiusBonus = new(0f);                        // additive radius for the base ground pound damage circle
-    public Modifier<float> GroundPoundDamageScalingMultiplier = new(1f);            // multiplier for the base height-damage scaling function. value of 2 scales twice as fast
+    public Modifier<float> GroundPoundRadiusBonus = new(0f);                    // additive radius for the base ground pound damage circle
+    public Modifier<float> GroundPoundDamageScalingMultiplier = new(1f);        // multiplier for the base height-damage scaling function. value of 2 scales twice as fast
 
     
     
@@ -98,23 +92,22 @@ public class PlayerModifiers
         /// reset the modifier value to it's base value, gets called on inventory recalculations before re-applying all modifiers again
         public void ResetValue() { _currentValue = _baseValue; }
     }
-
-    public class AdditiveModifier<T> : Modifier<T>
-    {
-        public AdditiveModifier(T value) : base(value) { } // just calls base constructor
-    }
     
-    public class MultiplicativeModifier<T> : Modifier<T>
+    // https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/constraints-on-type-parameters
+    // just enforces TModificationType to be a subclass of IModificationType (defined below)
+    public class Modifier<T, TModificationType> : Modifier<T> where TModificationType : struct, IModificationType 
     {
-        public MultiplicativeModifier(T value) : base(value) { } // just calls base constructor
+        public Modifier(T value) : base(value) { } // just calls base modifier constructor
     }
 }
 
-
+public interface IModificationType { }
+public readonly struct Additive : IModificationType { };
+public readonly struct Multiplicative : IModificationType { };
 
 public static class ModifierExtensions
 {
-    public static void AddValue(this PlayerModifiers.AdditiveModifier<int> modifier, int value) { modifier.SetValue(modifier.GetValue() + value); }
-    public static void AddValue(this PlayerModifiers.AdditiveModifier<float> modifier, float value) { modifier.SetValue(modifier.GetValue() + value); }
-    public static void MultiplyValue(this PlayerModifiers.MultiplicativeModifier<float> modifier, float factor) { modifier.SetValue(modifier.GetValue() * factor); }
+    public static void AddValue(this PlayerModifiers.Modifier<int, Additive> modifier, int value) { modifier.SetValue(modifier.GetValue() + value); }
+    public static void AddValue(this PlayerModifiers.Modifier<float, Additive> modifier, float value) { modifier.SetValue(modifier.GetValue() + value); }
+    public static void MultiplyValue(this PlayerModifiers.Modifier<float, Multiplicative> modifier, float factor) { modifier.SetValue(modifier.GetValue() * factor); }
 }

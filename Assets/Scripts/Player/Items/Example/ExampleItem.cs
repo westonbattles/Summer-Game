@@ -13,9 +13,9 @@ public class ExampleItem : ItemBehaviour
 
     public override void ApplyModifiers(PlayerModifiers modifiers, int itemCount)
     {
-        // applyModifiers is called whenever the inventory recalculates its
-        // modifiers, so this line adds the configured damage bonus for every item in our inventory (itemCount is the amount in our inventory)
-        modifiers.DamageMultiplier.AddValue(damageMultiplierBonusPerItem * itemCount);
+        // applyModifiers is called whenever the inventory recalculates its modifiers
+        // (itemCount is the amount of the item in our inventory)
+        modifiers.DamageMultiplier.MultiplyValue(damageMultiplierBonusPerItem * itemCount);
         
         // this function allows us to do custom stat scaling based on itemCount (like how in ror2, some items have different changes when u get more than 1
     }

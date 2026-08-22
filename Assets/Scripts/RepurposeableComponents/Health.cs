@@ -112,7 +112,7 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
         // Check if this entity is the player
         if (Player.Instance != null && gameObject == Player.Instance.gameObject)
         {
-            return Player.Instance.Modifiers.DamageTakenMultiplierMultiplicative.GetValue();
+            return Player.Instance.Modifiers.DamageTakenMultiplier.GetValue();
         }
 
         // Optional: If enemies can also have modifiers (e.g., via a local Modifier component), fetch it here.
