@@ -401,7 +401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe096ff35810c486580be5e478f0c528, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MazeRoom
-  DisplayName: Room
+  DisplayName: 1x2 Template
   Type: 0
   OccupiedCells:
   - {x: 0, y: 0}
