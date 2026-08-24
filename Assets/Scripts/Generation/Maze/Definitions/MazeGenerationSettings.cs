@@ -22,7 +22,7 @@ public class MazeGenerationSettings : ScriptableObject
     public int StartAreaWidth = 5;
     public int StartAreaHeight = 5;
 
-    [Header("Room/Connector Catalogs")]
+    //[Header("Room/Connector Catalogs")]
     [Tooltip("Room components from the roots of room prefab assets.")]
     public MazeRoom[] Rooms;
     [Tooltip("Boss room prefabs. The prefab origin should be its entrance socket, with local forward pointing into the boss room.")]

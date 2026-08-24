@@ -15,5 +15,7 @@ MonoBehaviour:
   definitions:
   - {fileID: 11400000, guid: c4c5e6f5b4e074866a513a7966e3f799, type: 2}
   - {fileID: 11400000, guid: 468adb8aeb6f84ad4a10128f2460dfff, type: 2}
+  - {fileID: 11400000, guid: 170de209658fc2c469f958cba263a514, type: 2}
   - {fileID: 11400000, guid: 7a1eb4e8e88c2394497a76113334a925, type: 2}
+  - {fileID: 11400000, guid: b9347712c69bb734280e1cfcd81f604b, type: 2}
   - {fileID: 11400000, guid: 33814532ab9aa4a50a56414c14d4a170, type: 2}
