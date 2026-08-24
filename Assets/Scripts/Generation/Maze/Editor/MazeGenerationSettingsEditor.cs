@@ -29,8 +29,17 @@ public class MazeGenerationSettingsEditor : Editor
                 EditorGUILayout.Space();
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Room/Connector Catalogs",EditorStyles.boldLabel);
+                
+                // button styling
+                GUI.contentColor = Color.darkSeaGreen;
+                GUIStyle style = new GUIStyle(GUI.skin.button);
+                style.fontStyle = FontStyle.BoldAndItalic;
+                
                 // rooms array is the property
-                if (GUILayout.Button("Rebuild room prefab list from assets folder")) PopulateRooms(property); 
+                if (GUILayout.Button("Rebuild room prefab list from assets folder", style)) PopulateRooms(property); 
+                
+                GUI.contentColor = Color.white;
+                
             }
             
             using (new EditorGUI.DisabledScope(property.propertyPath == "m_Script"))
