@@ -76,6 +76,8 @@ public class PlayerModifiers
         readonly T _baseValue;
         T _currentValue;
 
+        public event System.Action<T> OnValueChanged;
+
         public T BaseValue => _baseValue;
 
         public Modifier(T value)
@@ -88,7 +90,16 @@ public class PlayerModifiers
         public T GetValue() => _currentValue;
         
         /// sets the current modifier value (we can still access and use BaseValue if we want, that doesn't get modified. only currentvalue does)
-        public void SetValue(T value) { _currentValue = value; }
+        public void SetValue(T value)
+        {
+            // https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.equalitycomparer-1?view=net-10.0
+            // Jake - Compares generic types safely without causing compile errors or allocating garbage memory. Prevents weird situations too.
+            if (!EqualityComparer<T>.Default.Equals(_currentValue, value))
+            {
+                _currentValue = value;
+                OnValueChanged?.Invoke(_currentValue);
+            }
+        }
 
         /// reset the modifier value to it's base value, gets called on inventory recalculations before re-applying all modifiers again
         public void ResetValue() { _currentValue = _baseValue; }

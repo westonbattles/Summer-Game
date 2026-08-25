@@ -7,9 +7,7 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
 {
     [SerializeField] private float baseMaxHP = 100f;
     public float BaseMaxHP => baseMaxHP;
-    public float MaxHP => (Player.Instance != null && gameObject == Player.Instance.gameObject)
-        ? baseMaxHP * (1f + Player.Instance.Modifiers.MaxHealthBonus.GetValue())
-        : baseMaxHP;
+    public float MaxHP => baseMaxHP * (1f + currentMaxHealthBonus);
 
     [field: SerializeField]
     [field: ProgressBar("Health", nameof(MaxHP), EColor.Red)]
@@ -22,10 +20,30 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
     public event Action<DamageInfo> OnDeath;
 
     private bool isDead;
+    private bool isPlayer;
+    private float currentMaxHealthBonus = 0f;
 
     private void Awake()
     {
+        isPlayer = Player.Instance != null && gameObject == Player.Instance.gameObject;
         CurrentHP = MaxHP;
+    }
+
+    private void OnEnable()
+    {
+        if (isPlayer && Player.Instance?.Modifiers != null)
+        {
+            Player.Instance.Modifiers.MaxHealthBonus.OnValueChanged += HandleMaxHealthBonusChanged;
+            currentMaxHealthBonus = Player.Instance.Modifiers.MaxHealthBonus.GetValue();
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (isPlayer && Player.Instance?.Modifiers != null)
+        {
+            Player.Instance.Modifiers.MaxHealthBonus.OnValueChanged -= HandleMaxHealthBonusChanged;
+        }
     }
 
     public void OnSpawn()
@@ -57,6 +75,18 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
 
         if (CurrentHP <= 0f)
             Die(info);
+    }
+
+    /// <summary>
+    /// Reacts whenever PlayerModifiers updates MaxHealthBonus (e.g., item equipped/unequipped).
+    /// </summary>
+    private void HandleMaxHealthBonusChanged(float newBonus)
+    {
+        currentMaxHealthBonus = newBonus;
+
+        // Clamp CurrentHP to the new MaxHP so player doesn't exceed cap
+        CurrentHP = Mathf.Min(CurrentHP, MaxHP);
+        OnHealthChanged?.Invoke(CurrentHP, MaxHP);
     }
 
     /// <summary>
