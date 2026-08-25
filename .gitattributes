@@ -169,3 +169,10 @@ Packages/packages-lock.json linguist-generated
 
 # Exceptions for .asset files such as lightning pre-baking
 LightingData.asset     binary
+
+# Main is currently stored as a binary Unity SerializedFile.
+Assets/Scenes/Main/Main.unity binary
+
+# Unity TerrainData is binary even when stored with an .asset extension.
+"Assets/#Game/Enviornment/Village Terrain/Terrain.asset" binary
+Packages/com.williamschack.repetitionless/Samples~/**/TerrainData/*.asset binary
