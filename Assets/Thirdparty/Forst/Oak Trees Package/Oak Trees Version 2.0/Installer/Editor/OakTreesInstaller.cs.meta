@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 1e3723e00d097d049ad212840ec77831
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 1056
+  packageName: Oak Trees Package
+  packageVersion: 2.2
+  assetPath: Assets/Forst/Oak Trees Package/Oak Trees Version 2.0/Installer/Editor/OakTreesInstaller.cs
+  uploadId: 799424
