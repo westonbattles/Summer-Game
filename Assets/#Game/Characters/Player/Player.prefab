@@ -818,7 +818,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemInventory
   startingItems:
-  - {fileID: 11400000, guid: b9347712c69bb734280e1cfcd81f604b, type: 2}
+  - {fileID: 11400000, guid: 170de209658fc2c469f958cba263a514, type: 2}
+  - {fileID: 11400000, guid: 170de209658fc2c469f958cba263a514, type: 2}
+  - {fileID: 11400000, guid: 170de209658fc2c469f958cba263a514, type: 2}
+  - {fileID: 11400000, guid: 170de209658fc2c469f958cba263a514, type: 2}
   showDebugButtons: 1
 --- !u!114 &3743264238371457764
 MonoBehaviour:
