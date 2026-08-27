@@ -51,6 +51,8 @@ public class Player : MonoBehaviour, ICharacterController
     [SerializeField] float baseFriction = 12f;
     //[SerializeField] float jumpHeight = 10f;
     [SerializeField] float jumpBufferTime = 0.05f;
+    [Tooltip("Outward speed required to override KCC step snapping while leaving a ledge. Independent of the motor's ledge snap setting.")]
+    [SerializeField] float ledgeWalkOffVelocityThreshold = 1f;
 
     //[SerializeField] float dashFriction = 6f;
     //[SerializeField] float dashLandMomentumDecayTime = 0.6f; // time to apply updated friction for
@@ -454,5 +456,15 @@ public class Player : MonoBehaviour, ICharacterController
     public void OnDiscreteCollisionDetected(Collider hitCollider) { }
     public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }
     public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }
-    public void ProcessHitStabilityReport(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, Vector3 atCharacterPosition, Quaternion atCharacterRotation, ref HitStabilityReport hitStabilityReport) { }
+    public void ProcessHitStabilityReport(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, Vector3 atCharacterPosition, Quaternion atCharacterRotation, ref HitStabilityReport hitStabilityReport)
+    {
+        // override ledge snapping when current movement input shows that the player intends to move toward the empty side
+        if (hitStabilityReport.LedgeDetected && hitStabilityReport.IsMovingTowardsEmptySideOfLedge)
+        {
+            Vector3 moveInput = Input != null ? GetPlanarMoveDirection() : Vector3.zero;
+            float outwardInput = Vector3.Dot(moveInput, hitStabilityReport.LedgeFacingDirection);
+            float outwardVelocity = _motor != null ? Vector3.Dot(_motor.BaseVelocity, hitStabilityReport.LedgeFacingDirection) : 0f;
+            if (outwardInput > 0.01f && outwardVelocity >= ledgeWalkOffVelocityThreshold) hitStabilityReport.IsStable = false;
+        }
+    }
 }

@@ -624,13 +624,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   DiscreteCollisionEvents: 0
-  StepHandling: 1
-  MaxStepHeight: 0.5
-  AllowSteppingWithoutStableGrounding: 0
-  MinRequiredStepDepth: 0
+  StepHandling: 2
+  MaxStepHeight: 0.36
+  AllowSteppingWithoutStableGrounding: 1
+  MinRequiredStepDepth: 0.07
   LedgeAndDenivelationHandling: 1
-  MaxStableDistanceFromLedge: 0
-  MaxVelocityForLedgeSnap: 0
+  MaxStableDistanceFromLedge: 0.36
+  MaxVelocityForLedgeSnap: 16
   MaxStableDenivelationAngle: 180
   InteractiveRigidbodyHandling: 1
   RigidbodyInteractionType: 0
@@ -670,8 +670,9 @@ MonoBehaviour:
     jumpHeight: 10
   gravity: 31
   gravityMultiplier: 1
-  baseFriction: 12
+  baseFriction: 20
   jumpBufferTime: 0.05
+  ledgeWalkOffVelocityThreshold: 3
   eyeLoadout: {fileID: 11400000, guid: 33c053e3f5b55455d8cfe4c609fb7768, type: 2}
   handLoadout: {fileID: 11400000, guid: a4915b5678ee542d995b24e9087c2968, type: 2}
   startingLoadout: {fileID: 11400000, guid: 33c053e3f5b55455d8cfe4c609fb7768, type: 2}
