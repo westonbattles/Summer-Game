@@ -29,6 +29,7 @@ public class Dash : AbilityBehaviour
 
         public bool IsDashing => Player.IsDashing;
         public float CooldownRemaining;         // how much time left on the shot cooldown
+        public GameObject ActiveVfx;
 
         public DashState(Player player)
         {
@@ -49,6 +50,16 @@ public class Dash : AbilityBehaviour
         if (dash == null) return; // make sure state variable is of type revolver state
 
         dash.CooldownRemaining = Mathf.Max(0f, dash.CooldownRemaining- deltaTime);
+
+        if (dash.ActiveVfx != null)
+        {
+            if (!dash.Player.IsDashing)
+            {
+                dash.ActiveVfx.SetActive(false);
+                UnityEngine.Object.Destroy(dash.ActiveVfx);
+                dash.ActiveVfx = null;
+            }
+        }
     }
 
     public override bool TryExecute(AbilityState state)
@@ -57,16 +68,20 @@ public class Dash : AbilityBehaviour
         if (dash == null) return false;                 // cant execute rip
         if (dash.CooldownRemaining > 0f) return false;  // can't dash cuz cooldown still active
 
-        if (DashVerticallyEnabled && (dash.Player.Input.Move.y > 0 || dash.Player.Input.Move == Vector2.zero)) dash.Player.DashVertically(DashSpeed);
-        else dash.Player.DashAlongInputAxis(DashSpeed); //<- base dash
+        if (DashVerticallyEnabled && (dash.Player.Input.Move.y > 0 || dash.Player.Input.Move == Vector2.zero)) 
+            dash.Player.DashVertically(DashSpeed);
+        else 
+            dash.Player.DashAlongInputAxis(DashSpeed); //<- base dash
+
+        if (dash.ActiveVfx != null)
+            UnityEngine.Object.Destroy(dash.ActiveVfx);
 
         if (dashVfxPrefab != null)
         {
-            GameObject vfxInstance = UnityEngine.Object.Instantiate(dashVfxPrefab, dash.Player.transform.position, dash.Player.transform.rotation);
-            vfxInstance.transform.SetParent(dash.Player.transform);
-            UnityEngine.Object.Destroy(vfxInstance, 1.0f);
+            dash.ActiveVfx = UnityEngine.Object.Instantiate(dashVfxPrefab, dash.Player.transform.position, dash.Player.transform.rotation);
+            dash.ActiveVfx.transform.SetParent(dash.Player.transform);
         }
-        
+
         dash.CooldownRemaining = DashCooldownTime; // update cooldown
         return true;
     }
