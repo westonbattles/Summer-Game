@@ -158,7 +158,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: bfb4a8518774bdc43a2e231ffeb5483d, type: 3}
-        m_Scale: {x: 1, y: 0.6}
+        m_Scale: {x: 3, y: 0.6}
         m_Offset: {x: 0, y: 1.04}
     - _MaskTex:
         m_Texture: {fileID: 2800000, guid: ec1557ffbc011b24ebabf303fc4b3007, type: 3}
@@ -229,7 +229,7 @@ Material:
     - _DistortionScrollXSpeed: 0
     - _DistortionScrollYSpeed: 0
     - _DstMode: 10
-    - _EditorDrawers: 1
+    - _EditorDrawers: 53
     - _FadeAmount: 0.506
     - _FadeBurnGlow: 5
     - _FadeBurnWidth: 0.002
@@ -310,7 +310,7 @@ Material:
     - _ShapeDistortXSpeed: 0.1
     - _ShapeDistortYSpeed: 0.25
     - _ShapeRotationOffset: 0
-    - _ShapeRotationSpeed: 0
+    - _ShapeRotationSpeed: -9.85
     - _ShapeXSpeed: 0
     - _ShapeYSpeed: -1.5
     - _SoftFactor: 0.86
@@ -323,8 +323,8 @@ Material:
     - _TwistUvPosX: 0.5
     - _TwistUvPosY: 0.5
     - _TwistUvRadius: 0.75
-    - _VertOffsetAmount: 0.5
-    - _VertOffsetPower: 0.68
+    - _VertOffsetAmount: 2
+    - _VertOffsetPower: 0.61
     - _VertOffsetTexXSpeed: 0.96
     - _VertOffsetTexYSpeed: 0.1
     - _WaveAmount: 25
