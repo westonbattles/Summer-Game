@@ -1,0 +1,36 @@
+using System;
+using UnityEngine;
+
+[Serializable]
+public class #SCRIPTNAME# : ItemBehaviour
+{
+    [SerializeField] private float exampleStat = 1f;
+
+    public override void ApplyModifiers(PlayerModifiers modifiers, int itemCount)
+    {
+        
+    }
+
+    public override ItemRuntime CreateRuntime(Player player)
+    {
+        return new #SCRIPTNAME#Runtime(player);
+    }
+
+    private class #SCRIPTNAME#Runtime : ItemRuntime
+    {
+        public #SCRIPTNAME#Runtime(Player player)
+        {
+            
+        }
+
+        public override void Tick(float deltaTime)
+        {
+            
+        }
+
+        public override void Dispose()
+        {
+            
+        }
+    }
+}
