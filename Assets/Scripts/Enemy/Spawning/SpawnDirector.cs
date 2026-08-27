@@ -106,6 +106,12 @@ public class SpawnDirector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // director only works when not in village
+        if (mazeGenerator.TryWorldToCell(Player.Instance.transform.position, out Vector2Int cell) && mazeGenerator.CurrentLayout.Grid.GetCell(cell).State == MazeCellState.ReservedForVillage)
+        {
+            return;
+        }
+        
         slowBehavior();
         fastBehavior();
     }
