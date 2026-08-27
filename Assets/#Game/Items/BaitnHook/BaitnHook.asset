@@ -36,7 +36,7 @@ MonoBehaviour:
         hookLinePrefab: {fileID: 5106217136618826723, guid: d2d3cd32699075343900898555938c1f, type: 3}
         hookLatchSound: {fileID: 11400000, guid: 6e535cd04b520d04da4327d7f8967081, type: 2}
         hookPullingSound: {fileID: 11400000, guid: 0dd6410494dcfaf4baf11f7b2323f236, type: 2}
-        baseGripChance: 0.05
+        baseGripChance: 0.04
         pullSpeed: 12
         pullDuration: 1.5
         stopDistance: 1.5
