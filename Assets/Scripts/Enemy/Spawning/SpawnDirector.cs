@@ -85,6 +85,8 @@ public class SpawnDirector : MonoBehaviour
 
     Func<Director, float> slowGrowthFn;
     Func<Director, float> fastGrowthFn;
+    
+    MazeGenerator mazeGenerator;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -98,6 +100,7 @@ public class SpawnDirector : MonoBehaviour
         fastGrowthFn = ResolveGrowthFunction(fastGrowthType);
 
         spawnedEnemies = new();
+        mazeGenerator = FindFirstObjectByType<MazeGenerator>();
     }
 
     // Update is called once per frame
@@ -243,6 +246,9 @@ public class SpawnDirector : MonoBehaviour
                 0f,
                 Mathf.Sin(angle) * distance);
 
+            // dont spawn enemies in village
+            if (mazeGenerator.TryWorldToCell(candidate, out Vector2Int cell) && mazeGenerator.CurrentLayout.Grid.GetCell(cell).State == MazeCellState.ReservedForVillage) continue;
+            
             // only spawn enemy if theres a navmesh position navMeshSampleRadius away from our candidate
             if (!NavMesh.SamplePosition(candidate, out NavMeshHit spawnHit, navMeshSampleRadius, filter)) continue;
 
