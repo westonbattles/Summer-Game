@@ -63,9 +63,9 @@ public class RevolverRecoilController : MonoBehaviour
     float recoil;
     float recoilVelocity;
     
-    void Awake()
+    void Start()
     {
-        _playerAim = GetComponentInParent<PlayerAim>();
+        _playerAim = Player.Instance.Aim;
         if (_playerAim == null || leftHandAimPivot == null || leftHandTarget == null)
         {
             Debug.LogError("Revolver recoil controller failed to load, remember to set LeftHandAimPivot and LeftHandTarget transforms on the WeaponRig gameobj in the Eye heirarchy"); // if this happens ill kms (jk)
