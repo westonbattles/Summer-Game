@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 57c54233c191041c6a65cd9440eca0ea
+guid: 79debef824edb4b0eb9329734e52b0d2
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -7,23 +7,28 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: roof_2
-    second: {fileID: 2100000, guid: 21c6078efc4504bb6ab54dc61c5929b5, type: 2}
+      name: material_1
+    second: {fileID: 2100000, guid: f3dede42025e64768b0ef0c2df26f0b3, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: stone_1
-    second: {fileID: 2100000, guid: 2160662ae641b48ad954284265f72420, type: 2}
+      name: material_2
+    second: {fileID: 2100000, guid: 04418e5c78b624f52ad205035e6b7d0e, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: wood_1
-    second: {fileID: 2100000, guid: 1dccb49e2abd34f9b92f3ceb82132832, type: 2}
+      name: material_3
+    second: {fileID: 2100000, guid: e9b6ae8cedd484167bd6e1e5bcd46bb3, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: wood_2
-    second: {fileID: 2100000, guid: 3c91b1fcb371f46e3a88221b138d09bf, type: 2}
+      name: material_4
+    second: {fileID: 2100000, guid: aae2241b5ca154a68ac9cf72939ff1dd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: material_5
+    second: {fileID: 2100000, guid: 738b155391abc49a9bd526be5ba8571d, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
