@@ -10,7 +10,7 @@ public sealed class StatusApplyVolume : MonoBehaviour
     {
         if (!other.TryGetComponent<IStatusEffectTarget>(out var target)) return;
 
-        var source = new StatusSource { Applier = gameObject, DamageMultiplier = 1f };
-        Debug.Log($"{name} -> {other.name}: {target.Apply(effect, source)}");
+        target.Apply(effect, other.gameObject);
+        Debug.Log($"{name} -> {other.name}: {target.Apply(effect, other.gameObject)}");
     }
 }
