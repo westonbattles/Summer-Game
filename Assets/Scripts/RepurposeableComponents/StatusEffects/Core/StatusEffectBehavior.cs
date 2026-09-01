@@ -6,7 +6,7 @@ public abstract class StatusEffectBehavior
 {
     public virtual void OnApply(in StatusContext ctx) { }
     public virtual void OnRemove(in StatusContext ctx) { }
-    public virtual void OnTick(in StatusContext ctx) { }
+    public virtual void Tick(in StatusContext ctx) { }
     public virtual void OnStackChanged(in StatusContext ctx, int oldStacks, int newStacks) { }
 }
 

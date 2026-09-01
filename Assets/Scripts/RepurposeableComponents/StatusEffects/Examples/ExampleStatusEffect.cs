@@ -47,7 +47,7 @@ public class ExampleStatusEffect : StatusEffectBehavior
     // Fires every 'tickInterval' seconds (from the definition). tickInterval >= 0 or it doesn't fire.
     // May fire more than once in a frame after a hitch...
     // Use for: DOT damage, HOT healing, anything periodic.
-    public override void OnTick(in StatusContext ctx)
+    public override void Tick(in StatusContext ctx)
     {
         var state = GetState(ctx);
 

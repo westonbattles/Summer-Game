@@ -5,12 +5,10 @@ using System.Collections.Generic;
 public class StatusEffectController : MonoBehaviour, IStatusEffectTarget
 {
     [SerializeField] private List<StatusEffectDefinition> immuneTo = new();
-
     private readonly List<StatusEffectInstance> _active = new();
 
     // Fires on apply, stack, refresh, and remove.
     public event Action<StatusEffectInstance> OnChanged;
-
     public IReadOnlyList<StatusEffectInstance> Active => _active;
 
     public ApplyResult Apply(StatusEffectDefinition def, GameObject applier)
@@ -22,6 +20,7 @@ public class StatusEffectController : MonoBehaviour, IStatusEffectTarget
         }
 
         int i = IndexOf(def);
+
         // not on the target yet
         if (i < 0)
         {
@@ -34,13 +33,15 @@ public class StatusEffectController : MonoBehaviour, IStatusEffectTarget
 
         // already on the target
         var existing = _active[i];
-        existing.TimeLeft = def.duration;
-
         if (existing.Stacks < def.maxStacks)
         {
             int old = existing.Stacks;
-            existing.Stacks++;
+            existing.AddStack();
             def.behavior?.OnStackChanged(new StatusContext(existing, this), old, existing.Stacks);
+        }
+        else if (def.maxStacks == 1)
+        {
+            existing.RefreshOldestStack();
         }
 
         OnChanged?.Invoke(existing);
@@ -67,11 +68,38 @@ public class StatusEffectController : MonoBehaviour, IStatusEffectTarget
     private void Update()
     {
         float dt = Time.deltaTime;
+        float now = Time.time;
+
         for (int i = _active.Count - 1; i >= 0; i--)
         {
             var instance = _active[i];
-            if (instance.Tick(new StatusContext(instance, this), dt))
+            var def = instance.Def;
+            var ctx = new StatusContext(instance, this);
+
+            instance.TickTimer -= dt;
+
+            int old = instance.Stacks;
+            // Remove expired stacks
+            while (instance.StackExpiry.Count > 0 && instance.StackExpiry.Peek() <= now)
+            {
+                instance.StackExpiry.Dequeue();
+            }
+
+            // no stacks
+            if (instance.Stacks == 0)
+            {
                 RemoveAt(i);
+                continue;
+            }
+
+            // notify when a stack has expired
+            if (instance.Stacks != old)
+            {
+                def.behavior?.OnStackChanged(ctx, old, instance.Stacks);
+                OnChanged?.Invoke(instance);
+            }
+
+            def.behavior?.Tick(ctx);
         }
     }
 

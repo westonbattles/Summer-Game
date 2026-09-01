@@ -1,38 +1,37 @@
 // on the entity
 using UnityEngine;
+using System.Collections.Generic;
 
 public class StatusEffectInstance
 {
     public readonly StatusEffectDefinition Def;
     public GameObject Applier;
-    public int Stacks = 1;
-    public float TimeLeft;
     public float TickTimer;
     public object State;    // per-instance
+
+    public readonly Queue<float> StackExpiry = new();
+    public int Stacks => StackExpiry.Count;
 
     public StatusEffectInstance(StatusEffectDefinition def, GameObject applier)
     {
         Def = def;
         Applier = applier;
-        TimeLeft = def.duration;
         TickTimer = def.tickInterval;
     }
 
-    // returns true when expired and is then removed by the controller
-    public bool Tick(in StatusContext ctx, float dt)
+    public void AddStack()
     {
-        if (Def.tickInterval > 0f)
-        {
-            TickTimer -= dt;
-            while (TickTimer <= 0f)
-            {
-                Def.behavior?.OnTick(ctx);
-                TickTimer += Def.tickInterval;
-            }
-        }
-
-        if (Def.duration <= 0f) return false;
-        TimeLeft -= dt;
-        return TimeLeft <= 0f;
+        StackExpiry.Enqueue(Def.duration > 0f ? Time.time + Def.duration : float.PositiveInfinity);
     }
+
+    public void RefreshOldestStack()
+    {
+        if (StackExpiry.Count > 0)
+            StackExpiry.Dequeue();
+        AddStack();
+    }
+
+    // Seconds until the oldest stack drops. Inf for perma effect
+    // use OldestStackTimeLeft for the icon countdown on the UI
+    public float OldestStackTimeLeft => StackExpiry.Count > 0 ? StackExpiry.Peek() - Time.time : 0f;
 }
