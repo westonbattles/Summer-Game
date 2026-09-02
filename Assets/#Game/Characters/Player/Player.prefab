@@ -1125,7 +1125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemInventory
   startingItems:
-  - {fileID: 11400000, guid: 637d64925042529449f76e73c5f1c55c, type: 2}
+  - {fileID: 11400000, guid: 7a1eb4e8e88c2394497a76113334a925, type: 2}
   showDebugButtons: 1
 --- !u!114 &3743264238371457764
 MonoBehaviour:
