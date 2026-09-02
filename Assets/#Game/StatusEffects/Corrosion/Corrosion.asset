@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5acd2922ba284444b1cc97f51edb8f4, type: 3}
+  m_Name: Corrosion
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectDefinition
+  displayName: 
+  description: 
+  icon: {fileID: 21300000, guid: f95dc7867480a0642af3f883bcaaf49d, type: 3}
+  hidden: 0
+  duration: 3
+  tickInterval: 0.5
+  maxStacks: 2
+  behavior:
+    rid: 1937894788906090579
+  references:
+    version: 2
+    RefIds:
+    - rid: 1937894788906090579
+      type: {class: Corrosion, ns: , asm: Assembly-CSharp}
+      data:
+        hitVFX: {fileID: 660604078598729712, guid: a0deec4ddb1966147a11772c5df7cda6, type: 3}
+        continousCorrosionVFX: {fileID: 4426621991517509651, guid: adcb95a05ba2b3040b161e3571a7ed69, type: 3}
+        hitSFX: {fileID: 11400000, guid: 813492bb5c839f243b9c562520760f8a, type: 2}
+        initialTickDamageHealthPercent: 0.05
+        reductionEveryTick: 0.5
