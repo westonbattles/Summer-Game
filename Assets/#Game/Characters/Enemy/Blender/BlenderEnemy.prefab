@@ -277,7 +277,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8813151732905033648, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       propertyPath: baseMaxHP
-      value: 25
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 8813151732905033648, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       propertyPath: showDebugButtons
@@ -326,6 +326,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4036047454879006019}
+    - targetCorrespondingSourceObject: {fileID: 9178373531757329406, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5082629223944048623}
     - targetCorrespondingSourceObject: {fileID: 6943601538615146641, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3855863462912369784}
@@ -462,6 +465,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Targetable
   centerOverride: {fileID: 0}
+--- !u!114 &5082629223944048623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 760290393894106730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5af6ad04aa23e19439d3d62ec0553c9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectController
+  immuneTo: []
 --- !u!1 &1563200709544899845 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6943601538615146641, guid: 3bddbf461c8982d418909c23998f7b25, type: 3}

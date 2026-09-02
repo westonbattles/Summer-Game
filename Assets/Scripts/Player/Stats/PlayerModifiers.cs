@@ -19,7 +19,7 @@ public class PlayerModifiers
     public Modifier<float> AttackSpeedMultiplier = new(1f);                     // 1.0 = 100% speed, 2.0 = 200% speed, etc
     public Modifier<float> MovementSpeedMultiplier = new(1f);                   // 1.0 = 100% speed, 2.0 = 200% speed, etc
     public Modifier<float> BhopMomentumCarryPercent = new(0.33f);               // how much horizontal velocity you keep on perfect bhops 
-    public Modifier<float> CooldownDurationMultiplier = new(1f);                // (0.0 < x < 2.0). You can have LONGER cooldowns
+    public Modifier<float, Additive> CooldownDurationMultiplier = new(1f);                // (0.0 < x < 2.0). You can have LONGER cooldowns
     
     
     /*-----------------------------  EYE ABILITIES  ------------------------------- */

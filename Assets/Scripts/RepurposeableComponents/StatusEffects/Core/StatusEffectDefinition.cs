@@ -1,4 +1,7 @@
 using UnityEngine;
+using System.Collections;
+using NaughtyAttributes;
+
 
 [CreateAssetMenu(menuName = "Status Effect")]
 public class StatusEffectDefinition : ScriptableObject
@@ -15,7 +18,9 @@ public class StatusEffectDefinition : ScriptableObject
     [Tooltip("Determines the max stacks for the item. If this is set to 1, then it will not change when reapplied.")] 
     public int maxStacks = 1;
 
-    [SerializeReference, SerializeField] public StatusEffectBehavior behavior;
+    [SerializeReference] 
+    public StatusEffectBehavior behavior;
+
 
     [ContextMenu("Set Behavior / Debug Log")]
     void SetDebug() => behavior = new DebugLogBehavior();

@@ -76,9 +76,7 @@ public class StatusEffectController : MonoBehaviour, IStatusEffectTarget
             var def = instance.Def;
             var ctx = new StatusContext(instance, this);
 
-            instance.TickTimer -= dt;
-
-            int old = instance.Stacks;
+            int oldStacks = instance.Stacks;
             // Remove expired stacks
             while (instance.StackExpiry.Count > 0 && instance.StackExpiry.Peek() <= now)
             {
@@ -93,13 +91,19 @@ public class StatusEffectController : MonoBehaviour, IStatusEffectTarget
             }
 
             // notify when a stack has expired
-            if (instance.Stacks != old)
+            if (instance.Stacks != oldStacks)
             {
-                def.behavior?.OnStackChanged(ctx, old, instance.Stacks);
+                def.behavior?.OnStackChanged(ctx, oldStacks, instance.Stacks);
                 OnChanged?.Invoke(instance);
             }
 
-            def.behavior?.Tick(ctx);
+            instance.TickTimer -= dt;
+            if (instance.TickTimer <= 0f)
+            {
+                float interval = def.tickInterval > 0 ? def.tickInterval : 1.0f;
+                instance.TickTimer = interval;
+                def.behavior?.Tick(ctx);
+            }
         }
     }
 

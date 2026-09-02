@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d920927034d2413e919b99a4d55a92f4, type: 3}
+  m_Name: WaistOfTime
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
+  id: waist_of_time
+  displayName: Waist Of Time
+  icon: {fileID: 21300000, guid: 609e0b79c4cd84648ab1233812046833, type: 3}
+  shortDescription: Adds 3% CDR (Cool-down-reduction) per stack.
+  longDescription: 
+  notes: This by-itself is a 3% buff, but becomes EXTREMELY powerful the more items
+    you have because your eDPS (effective dps) is higher as you'll be able to proc
+    more things, press more buttons, and its effectively increasing attack speed
+    as well.
+  rarity: 0
+  isDuoItem: 0
+  canDropRandomly: 1
+  dropWeight: 1
+  difficultyCost: 1
+  worldModelPrefab: {fileID: 919132149155446097, guid: 3abbf02add8bd5e47a34116af4b9ee2f, type: 3}
+  behaviour:
+    rid: 1937894781712859222
+  references:
+    version: 2
+    RefIds:
+    - rid: 1937894781712859222
+      type: {class: WaistOfTime, ns: , asm: Assembly-CSharp}
+      data:
+        CDRAmount: 1

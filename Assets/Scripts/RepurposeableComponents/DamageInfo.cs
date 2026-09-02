@@ -12,13 +12,15 @@ public struct DamageInfo
     public DamageType Type;
     public GameObject Source;   // who dealt the damage (e.g. kill credit, thorns, aggro)
     public bool IsCrit;
+    public readonly bool IsProc;
     // public DamageType Type;  // an enum for when we add affixes
 
-    public DamageInfo(float amount, DamageType type, GameObject source = null, bool isCrit = false)
+    public DamageInfo(float amount, DamageType type, GameObject source = null, bool isProc = false, bool isCrit = false)
     {
         Amount = amount;
         Type = type;
         Source = source;
+        IsProc = isProc;
         IsCrit = isCrit;
     }
 }

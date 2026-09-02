@@ -17,6 +17,7 @@ public class StatusEffectInstance
         Def = def;
         Applier = applier;
         TickTimer = def.tickInterval;
+        AddStack();
     }
 
     public void AddStack()
