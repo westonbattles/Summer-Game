@@ -23,6 +23,8 @@ public class PlayerCharacterSwitcher : MonoBehaviour
     
     public Animator CurrentAnimator { get; private set; }
 
+    public bool switchFlag = false;
+
     void Awake()
     {
         _player = GetComponent<Player>();
@@ -53,6 +55,9 @@ public class PlayerCharacterSwitcher : MonoBehaviour
     {
         PlayerCharacter next = CurrentCharacter == PlayerCharacter.Eye ? PlayerCharacter.Hand : PlayerCharacter.Eye;
         SetCharacter(next);
+
+        // set flag for Newbie Gains / other swap items
+        switchFlag = true;
     }
 
 

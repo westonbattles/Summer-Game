@@ -57,8 +57,17 @@ public class Combat : MonoBehaviour
         };
 
         // APPLY DAMAGE MULTIPLIER
-        if (ownerPlayer != null) hit.Info.Amount *= ownerPlayer.Modifiers.DamageMultiplier.GetValue();
-
+        if (ownerPlayer != null)
+        {
+            hit.Info.Amount *= ownerPlayer.Modifiers.DamageMultiplier.GetValue();
+            if (ownerPlayer.CharacterSwitcher.switchFlag) // Newbie Gains
+            {
+                hit.Info.Amount *= ownerPlayer.Modifiers.DamageAfterSwap.GetValue();
+                ownerPlayer.CharacterSwitcher.switchFlag = false;
+                Debug.Log("Newbie Gains damage proc");
+            }
+        }
+            
         // notifies items before damage in case an item is subscribed and needs to do something
         if (notifyItems) BeforeDamageDealt?.Invoke(ref hit);
         
