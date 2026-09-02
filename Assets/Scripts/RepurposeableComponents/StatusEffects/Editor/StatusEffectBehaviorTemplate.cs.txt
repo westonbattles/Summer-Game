@@ -1,10 +1,6 @@
 using System;
 using UnityEngine;
 
-/// "every so often"             OnTick
-/// "while here, boolean"        Contribute
-/// "while here, number"         OnApply pushes modifier, OnRemove pops it
-/// "once on land / leave"       OnApply / OnRemove
 /// Delete the hooks you don't use. Per-entity state goes in ctx.Instance.State, not in fields.
 [Serializable]
 public sealed class #SCRIPTNAME# : StatusEffectBehavior
@@ -16,7 +12,7 @@ public sealed class #SCRIPTNAME# : StatusEffectBehavior
         
     }
 
-    public override void OnTick(in StatusContext ctx)
+    public override void Tick(in StatusContext ctx)
     {
         
     }
@@ -27,11 +23,6 @@ public sealed class #SCRIPTNAME# : StatusEffectBehavior
     }
 
     public override void OnRemove(in StatusContext ctx)
-    {
-        
-    }
-
-    public override void Contribute(ref StatusSnapshot s, StatusEffectInstance inst)
     {
         
     }
