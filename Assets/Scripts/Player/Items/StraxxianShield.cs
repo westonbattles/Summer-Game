@@ -7,7 +7,7 @@ using NaughtyAttributes;
 public class StraxxianShield : ItemBehaviour
 {
     [InfoBox("This cannot be 0! It will cause a divide by zero error in the damage calculation.", EInfoBoxType.Warning)]
-    [SerializeField] private float ReductionPerStack = 0.02f;
+    [SerializeField] private float ReductionPerStack = 0.1f;
 
     public override void ApplyModifiers(PlayerModifiers modifiers, int itemCount)
     {
