@@ -4,6 +4,7 @@ using UnityEngine;
 [Serializable]
 public class RockStar : ItemBehaviour
 {
+    [SerializeField] private float chancePerStack = 0.15f;
     [SerializeField] private StatusEffectDefinition burningStatusEffect;
     [SerializeField] private ItemDefinition itemDefinition;
 
@@ -74,7 +75,8 @@ public class RockStar : ItemBehaviour
 
             if (hit.Info.IsProc) return;
 
-            if (hit.Info.Type != DamageType.Physical) return; // only apply burning on physical damage
+            float procChance = data.chancePerStack * currentItemCount;
+            if (UnityEngine.Random.value > procChance) return;
 
             if (hit.Target is Component targetComponent)
             {

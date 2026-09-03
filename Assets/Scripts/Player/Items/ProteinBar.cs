@@ -8,8 +8,9 @@ public class ProteinBar : ItemBehaviour
 
     public override void ApplyModifiers(PlayerModifiers modifiers, int itemCount)
     {
-        // Additive percentage scaling (e.g., 1 stack = +10%, 2 stacks = +20%)
-        modifiers.MaxHealthBonus.AddValue(maxHealthBonusPerStack * itemCount);
+        float multiplier = 1f + maxHealthBonusPerStack;
+        float totalBonus = Mathf.Pow(multiplier, itemCount) - 1f;
+        modifiers.MaxHealthBonus.AddValue(totalBonus);
     }
 
     public override ItemRuntime CreateRuntime(Player player)
