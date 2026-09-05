@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d920927034d2413e919b99a4d55a92f4, type: 3}
+  m_Name: VialOfBlackBile
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
+  id: vial_of_black_bile
+  displayName: Vial Of Black Bile
+  icon: {fileID: 0}
+  shortDescription: On hit, gain a 30% chance to apply a corrosive damage over time.
+    The damage decreases as the enemy's health decreases.
+  longDescription: 
+  notes: Should have diminishing returns as more damage is applied. The player would
+    eventually need to finish off the enemies themselves which synergizes with big
+    bursts of kiils.
+  rarity: 1
+  isDuoItem: 0
+  canDropRandomly: 1
+  dropWeight: 1
+  difficultyCost: 1
+  worldModelPrefab: {fileID: 919132149155446097, guid: 553b9b49a3cd94a47af3ab7c90662b04, type: 3}
+  behaviour:
+    rid: 1937894858697211981
+  references:
+    version: 2
+    RefIds:
+    - rid: 1937894858697211981
+      type: {class: VialOfBlackBile, ns: , asm: Assembly-CSharp}
+      data:
+        chancePerStack: 0.3
+        corrosion: {fileID: 11400000, guid: 2fa00d6a65a61a540ad924c179361096, type: 2}
+        itemDefinition: {fileID: 11400000}

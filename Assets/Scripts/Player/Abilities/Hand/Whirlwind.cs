@@ -37,7 +37,8 @@ public class Whirlwind : AbilityBehaviour
     public float Damage => baseDamage;
     public DamageType DamageType => baseDamageType;
     public float DamageRadius => overlapSphereRadius + Player.Instance.Modifiers.WhirlwindRadiusBonus.GetValue();
-    public float CooldownTime => baseCooldownTime;
+    public float CooldownTime => baseCooldownTime
+        - Player.Instance.Modifiers.CooldownDurationMultiplier.GetValue();
     
     // damage function
     float _sixOverLn2 = 6f / Mathf.Log(2);

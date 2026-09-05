@@ -39,15 +39,16 @@ public class PsychicPulse : AbilityBehaviour
     [Header("Gizmos")]
     
     LayerMask TargetLayers => Enemy.LayerMask;
-    
-    
+
+
     // MODIFIERS
     // to use a stat modifier, simply use it here! like so
     // public ModifiableStat => baseStat | could be turned into the following:
     // public ModifiableStat => baseStat + Player.Instance.Modifiers.StatModifierAddName
     // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
     // (or any other way u want to use the modifier)
-    public float CooldownTime => baseCooldownTime;
+    public float CooldownTime => baseCooldownTime 
+        - Player.Instance.Modifiers.CooldownDurationMultiplier.GetValue();
 
     class PsychicPulseState : AbilityState
     {

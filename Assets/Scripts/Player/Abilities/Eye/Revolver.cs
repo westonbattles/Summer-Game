@@ -26,7 +26,8 @@ public class Revolver : AbilityBehaviour
     // (or any other way u want to use the modifier)
     public int MagazineSize => magazineSize + Player.Instance.Modifiers.RevolverBulletsBonus.GetValue();
     public float LastBulletDamageMultiplier => Player.Instance.Modifiers.RevolverLastBulletDamageMultiplier.GetValue();
-    public float ReloadDuration => reloadDuration / Player.Instance.Modifiers.AttackSpeedMultiplier.GetValue();
+    public float ReloadDuration => reloadDuration
+        / Player.Instance.Modifiers.AttackSpeedMultiplier.GetValue();
     public float Damage => baseDamage;
     public float BulletSpeed => baseBulletSpeed;
     public float MaxRange => baseMaxRange;

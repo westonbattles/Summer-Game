@@ -8,11 +8,6 @@ public class RockStar : ItemBehaviour
     [SerializeField] private StatusEffectDefinition burningStatusEffect;
     [SerializeField] private ItemDefinition itemDefinition;
 
-    public override void ApplyModifiers(PlayerModifiers modifiers, int itemCount)
-    {
-        // none
-    }
-
     public override ItemRuntime CreateRuntime(Player player)
     {
         return new RockStarRuntime(player, this, 1);
