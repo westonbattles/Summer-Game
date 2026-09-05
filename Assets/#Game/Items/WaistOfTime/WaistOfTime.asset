@@ -35,4 +35,4 @@ MonoBehaviour:
     - rid: 1937894781712859222
       type: {class: WaistOfTime, ns: , asm: Assembly-CSharp}
       data:
-        CDRAmount: 1
+        CDRAmount: 15
