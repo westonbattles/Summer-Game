@@ -6,7 +6,7 @@ using TMPro;
 public class HealthHUD : MonoBehaviour
 {
     [SerializeField] private Image fillImage;
-    [SerializeField] private Health health;
+    [SerializeField] private PlayerHealth health;
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private float tweenDuration = 0.25f;
 

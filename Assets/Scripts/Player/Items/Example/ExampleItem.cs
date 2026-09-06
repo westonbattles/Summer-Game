@@ -42,7 +42,7 @@ public class ExampleItem : ItemBehaviour
         float healingPerStack;
         float healingInterval;
 
-        Health playerHealth;
+        PlayerHealth playerHealth;
         float healingTimer;
         
         public ExampleItemRuntime(Player player, float healingPerStack, float healingInterval)

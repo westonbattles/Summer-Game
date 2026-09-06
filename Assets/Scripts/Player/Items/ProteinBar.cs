@@ -20,13 +20,13 @@ public class ProteinBar : ItemBehaviour
 
     class ProteinBarRuntime : ItemRuntime
     {
-        private readonly Health _playerHealth;
+        private readonly PlayerHealth health;
 
         public ProteinBarRuntime(Player player)
         {
             if (player != null)
             {
-                _playerHealth = player.GetComponent<Health>();
+                health = player.GetComponent<PlayerHealth>();
             }
         }
 
