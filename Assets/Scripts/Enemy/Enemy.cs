@@ -13,7 +13,7 @@ public class Enemy : MonoBehaviour
 {
     public static LayerMask LayerMask => LayerMask.GetMask("Enemy");
     
-    [SerializeField] private float movementSpeed;
+    [SerializeField] public float movementSpeed;
     [field: SerializeField] public bool AffixEligible { get; private set; }
 
     [Tooltip("The value added to the kill tracker on kill. Elites may have more. Tune later.")]
