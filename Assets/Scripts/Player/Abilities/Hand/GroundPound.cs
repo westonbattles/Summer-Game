@@ -20,6 +20,8 @@ public class GroundPound : AbilityBehaviour
     [SerializeField] float baseDamageScalingFactor = 0.5f; // y = 1/2(x+1)
     [SerializeField] float baseDownwardSpeed = 13f;
     [SerializeField] DamageType baseDamageType = DamageType.Physical;
+    [SerializeField] float useTime = 0f;
+    [SerializeField] float useCooldown = 1f;
 
     [Header("Windup")]
     [SerializeField] float windupTime = 0.2f;
@@ -154,8 +156,9 @@ public class GroundPound : AbilityBehaviour
         
         // update max height 
         if (groundPound.State != GPState.Inactive) groundPound.MaxHeight = Mathf.Max(groundPound.MaxHeight, groundPound.Player.transform.position.y);
-        
+
         // update ability cooldown
+        useTime = Mathf.Max(0f, useTime - deltaTime);
         groundPound.CooldownRemaining = Mathf.Max(0f, groundPound.CooldownRemaining - deltaTime);
     }
 
@@ -165,14 +168,33 @@ public class GroundPound : AbilityBehaviour
         // make sure we actually can/should execute the pound
         GroundPoundState groundPound = state as GroundPoundState;
         if (groundPound == null) return false;
-        if (groundPound.CooldownRemaining > 0f) return false;
         if (groundPound.State != GPState.Inactive) return false; // alr pounding
+        if (useTime > 0.01f) return false;
+        if (groundPound.CooldownRemaining > 0.1f) // cooldown eval (for QS bullet)
+        {
+            Debug.Log($"{groundPound.CooldownRemaining} seconds left of cooldown");
+            Player Player = groundPound.Player;
+            if (Player.Modifiers.CooldownDamageReduction.GetValue() != 0f)
+            {
+                Debug.Log("Quicksilver bullet used");
+                // NOTE: This is on all abilities currently, refactoring for a broadcast done in the item runtime would be better but idc about that rn
+                float playerHealth = Player.GetComponent<PlayerHealth>().MaxHP;
+                DamageInfo selfDamage = new DamageInfo(playerHealth * groundPound.CooldownRemaining * .01f * Player.Modifiers.CooldownDamageReduction.GetValue(), DamageType.Physical);
+                Player.GetComponent<PlayerHealth>().TakeDamage(selfDamage);
+            }
+            else
+            {
+                Debug.Log("No Quicksilver Bullet");
+                return false;
+            }
+        }
   
         
         // succesful execution
         StartWindup(groundPound);
         
         groundPound.CooldownRemaining = CooldownTime; // start cooldown countdown
+        useTime = useCooldown;
         return true;
     }
 

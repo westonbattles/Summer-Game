@@ -22,6 +22,7 @@ public class ItemInfoTooltipHUD : MonoBehaviour
     {
         // Get or add a CanvasGroup to control whole-HUD opacity
         canvasGroup = GetComponent<CanvasGroup>();
+        canvasGroup.alpha = 0f;
     }
 
     private void OnEnable()

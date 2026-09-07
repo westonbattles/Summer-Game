@@ -145,8 +145,8 @@ Material:
     - _Sharpness: 42.14
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
-    - _SparkleSpeed1: -0.01
-    - _SparkleSpeed2: -0.01
+    - _SparkleSpeed1: 0.02
+    - _SparkleSpeed2: 0.02
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
@@ -156,7 +156,7 @@ Material:
     - _WaveHeight: 0.61
     - _WaveScale: 1
     - _WaveSpeed: 0.15
-    - _Wobble: 0.05
+    - _Wobble: 0.16
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1

@@ -27,8 +27,12 @@ MonoBehaviour:
         baseCooldownTime: 4
         baseDamageScalingFactor: 0.5
         baseDownwardSpeed: 13
+        baseDamageType: 0
+        useTime: 0
+        useCooldown: 0.5
         windupTime: 0.2
         windupSpeed: 10
+        overlapSphereMaxColliders: 128
         sphereCastPositionOffset: {x: 0, y: 0, z: 0}
         sphereCastRadius: 3.3
         showGizmo: 0

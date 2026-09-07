@@ -7,6 +7,8 @@ public class Dash : AbilityBehaviour
     [Header("Properties")] 
     [SerializeField] float dashSpeed = 17f;
     [SerializeField] float dashCooldownTime = 2.3f;
+    [SerializeField] float dashUseTime = 0f;
+    [SerializeField] float dashUseCooldown = 0.2f;
     [SerializeField] float dashLandMomentumDecayTime = 0.6f; // time to apply updated friction for
     [SerializeField] float verticalDashDampPercent = 0.7f; // good feeling horizontal dashes lead to too strong vertical dashes, this value squishes down the vertical component for vert dashes to account for that
     [SerializeField] GameObject dashVfxPrefab;
@@ -51,6 +53,7 @@ public class Dash : AbilityBehaviour
         if (dash == null) return; // make sure state variable is of type revolver state
 
         dash.CooldownRemaining = Mathf.Max(0f, dash.CooldownRemaining- deltaTime);
+        dashUseTime = Mathf.Max(0f, dashUseTime - deltaTime);
 
         if (dash.ActiveVfx != null)
         {
@@ -67,7 +70,25 @@ public class Dash : AbilityBehaviour
     {
         DashState dash = state as DashState;
         if (dash == null) return false;                 // cant execute rip
-        if (dash.CooldownRemaining > 0f) return false;  // can't dash cuz cooldown still active
+        if (dashUseTime > 0f) return false; 
+        if (dash.CooldownRemaining > 0.1f) // cooldown eval (for QS bullet)
+        {
+            Debug.Log($"{dash.CooldownRemaining} seconds left of cooldown");
+            Player Player = dash.Player;
+            if (Player.Modifiers.CooldownDamageReduction.GetValue() != 0f)
+            {
+                Debug.Log("Quicksilver bullet used");
+                // NOTE: This is on all abilities currently, refactoring for a broadcast done in the item runtime would be better but idc about that rn
+                float playerHealth = Player.GetComponent<PlayerHealth>().MaxHP;
+                DamageInfo selfDamage = new DamageInfo(playerHealth * dash.CooldownRemaining * .01f * Player.Modifiers.CooldownDamageReduction.GetValue(), DamageType.Physical);
+                Player.GetComponent<PlayerHealth>().TakeDamage(selfDamage);
+            }
+            else
+            {
+                Debug.Log("No Quicksilver Bullet");
+                return false;
+            }
+        }
 
         if (DashVerticallyEnabled && (dash.Player.Input.Move.y > 0 || dash.Player.Input.Move == Vector2.zero)) 
             dash.Player.DashVertically(DashSpeed);
@@ -84,6 +105,7 @@ public class Dash : AbilityBehaviour
         }
 
         dash.CooldownRemaining = DashCooldownTime; // update cooldown
+        dashUseTime = dashUseCooldown;
         return true;
     }
 

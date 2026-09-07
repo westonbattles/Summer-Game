@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d920927034d2413e919b99a4d55a92f4, type: 3}
+  m_Name: OrdinaryNotebook
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
+  id: ordinary_notebook
+  displayName: Ordinary Notebook
+  icon: {fileID: 0}
+  shortDescription: Receive 10% (+10% per stack) of overkill damage as healing
+  longDescription: 
+  notes: 
+  rarity: 0
+  isDuoItem: 0
+  canDropRandomly: 1
+  dropWeight: 1
+  difficultyCost: 1
+  worldModelPrefab: {fileID: 919132149155446097, guid: 553b9b49a3cd94a47af3ab7c90662b04, type: 3}
+  behaviour:
+    rid: 4369468179146342484
+  references:
+    version: 2
+    RefIds:
+    - rid: 4369468179146342484
+      type: {class: OrdinaryNotebook, ns: , asm: Assembly-CSharp}
+      data:
+        overkillHealPercent: 0.1
