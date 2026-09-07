@@ -9,6 +9,8 @@ public class Whirlwind : AbilityBehaviour
     [SerializeField, Min(0f)] float baseDamage = 10f;
     [SerializeField, Min(0f)] float baseCooldownTime = 4f;
     [SerializeField] DamageType baseDamageType = DamageType.Physical;
+    [SerializeField] float useTime = 0f;
+    [SerializeField] float useCooldown = 1f;
 
     [Header("Spin/Animation")]
     [SerializeField, Tooltip("delay for applying the tick of damage")] 
@@ -119,6 +121,7 @@ public class Whirlwind : AbilityBehaviour
 
         whirlwind.SpinTimerRemaining = Mathf.Max(0f, whirlwind.SpinTimerRemaining - deltaTime); // update spin damage offset timer
         whirlwind.CooldownRemaining = Mathf.Max(0f, whirlwind.CooldownRemaining - deltaTime);   // update ability cooldown
+        useTime = Mathf.Max(0f, useTime - deltaTime);
 
         if (whirlwind.HitPending && whirlwind.SpinTimerRemaining == 0f)
         {
@@ -132,13 +135,33 @@ public class Whirlwind : AbilityBehaviour
         // make sure we actually can/should execute the whirlwind
         WhirlwindState whirlwind = state as WhirlwindState;
         if (whirlwind == null) return false;
-        if (whirlwind.CooldownRemaining > 0f) return false;
-  
-        
+        if (useTime > 0.01f) return false;
+        Debug.Log($"{useTime} is the useTime delay");
+        if (whirlwind.CooldownRemaining > 0.1f) // cooldown eval (for QS bullet)
+        {
+            Debug.Log($"{whirlwind.CooldownRemaining} seconds left of cooldown");
+            Player Player = whirlwind.Player;
+            if (Player.Modifiers.CooldownDamageReduction.GetValue() != 0f)
+            {
+                Debug.Log("Quicksilver bullet used");
+                // NOTE: This is on all abilities currently, refactoring for a broadcast done in the item runtime would be better but idc about that rn
+                float playerHealth = Player.GetComponent<PlayerHealth>().MaxHP;
+                DamageInfo selfDamage = new DamageInfo(playerHealth * whirlwind.CooldownRemaining * .01f * Player.Modifiers.CooldownDamageReduction.GetValue(), DamageType.Physical);
+                Player.GetComponent<PlayerHealth>().TakeDamage(selfDamage);
+            }
+            else
+            {
+                Debug.Log("No Quicksilver Bullet");
+                return false;
+            }
+        }
+
+
         // succesful execution
         whirlwind.HitPending = true;                    // tell tick we need to apply a hit
         whirlwind.SpinTimerRemaining = spinDamageDelay; // start spin damage tick cooldown
         whirlwind.CooldownRemaining = CooldownTime;     // start cooldown countdown
+        useTime = useCooldown;
 
         if (whirlwindSlashVFX != null)
         {

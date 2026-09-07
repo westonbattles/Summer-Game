@@ -24,7 +24,7 @@ MonoBehaviour:
       type: {class: ThirdEyeBeam, ns: , asm: Assembly-CSharp}
       data:
         baseDamagePerSecond: 20
-        baseCooldownTime: 10
+        baseCooldownTime: 20
         beamDuration: 8
         beamRange: 40
         beamRadius: 0.35

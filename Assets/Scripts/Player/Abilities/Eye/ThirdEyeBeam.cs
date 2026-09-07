@@ -241,11 +241,28 @@ public class ThirdEyeBeam : AbilityBehaviour
     public override bool TryExecute(AbilityState state)
     {
         
-        // make sure we actually can/should execute the pound
+        // make sure we actually can/should execute the beam
         ThirdEyeBeamState beam = state as ThirdEyeBeamState;
         if (beam == null) return false;
-        if (beam.CooldownRemaining > 0f) return false;
         if (beam.State != BeamState.Inactive) return false; // already firing
+        if (beam.CooldownRemaining > 0.1f)
+        {
+            Debug.Log($"{beam.CooldownRemaining} seconds left of cooldown");
+            Player Player = beam.Player;
+            if (Player.Modifiers.CooldownDamageReduction.GetValue() != 0f)
+            {
+                Debug.Log("Quicksilver bullet used");
+                // NOTE: This is on all abilities currently, refactoring for a broadcast done in the item runtime would be better but idc about that rn
+                float playerHealth = Player.GetComponent<PlayerHealth>().MaxHP;
+                DamageInfo selfDamage = new DamageInfo(playerHealth * beam.CooldownRemaining*.01f * Player.Modifiers.CooldownDamageReduction.GetValue(), DamageType.Physical);
+                Player.GetComponent<PlayerHealth>().TakeDamage(selfDamage);
+            }
+            else
+            {
+                Debug.Log("No Quicksilver Bullet");
+                return false;
+            }
+        }
   
         
         // succesful execution

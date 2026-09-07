@@ -21,6 +21,7 @@ public class PlayerModifiers
     public Modifier<float> BhopMomentumCarryPercent = new(0.33f);               // how much horizontal velocity you keep on perfect bhops 
     public Modifier<float, Additive> CooldownDurationMultiplier = new(1f);                // (0.0 < x < 2.0). You can have LONGER cooldowns
     public Modifier<float, Multiplicative> DamageAfterSwap = new(1f);             // used primarily for Newbie Gains currently, gets applied when a flag is set
+    public Modifier<float, Additive> CooldownDamageReduction = new(0f);         // Quicksilver Bullet 
     
     
     /*-----------------------------  EYE ABILITIES  ------------------------------- */

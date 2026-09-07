@@ -1,7 +1,7 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 enum PipeState
@@ -21,6 +21,8 @@ public class ThinkingPipe : AbilityBehaviour
     //[SerializeField] float smokeHeight = 5f; // unused atm, may change the cast to utilize this for more of a flat smoke sheet kind of deal
     [SerializeField] float smokeMaxRadius = 10f; // thickness of the capsule cast (0 would be pure hitscan raycast at cursor)
     [SerializeField] DamageType baseDamageType = DamageType.Physical;
+    [SerializeField] float useTime = 0f;
+    [SerializeField] float useCooldown = 1f;
 
     [Header("Windup")]
     [SerializeField] float windupTime = 0.2f;
@@ -149,6 +151,7 @@ public class ThinkingPipe : AbilityBehaviour
                 break;
         }
 
+        useTime = Mathf.Max(0f, useTime - deltaTime);
         pipe.CooldownRemaining = Mathf.Max(0f, pipe.CooldownRemaining - deltaTime);
     }
 
@@ -156,12 +159,31 @@ public class ThinkingPipe : AbilityBehaviour
     {
         ThinkingPipeState pipe = state as ThinkingPipeState;
         if (pipe == null) return false;
-        if (pipe.CooldownRemaining > 0f) return false;
         if (pipe.State != PipeState.Inactive) return false;
+        if (useTime > 0.01f) return false;
+        if (pipe.CooldownRemaining > 0.1f) // cooldown eval (for QS bullet)
+        {
+            Debug.Log($"{pipe.CooldownRemaining} seconds left of cooldown");
+            Player Player = pipe.Player;
+            if (Player.Modifiers.CooldownDamageReduction.GetValue() != 0f)
+            {
+                Debug.Log("Quicksilver bullet used");
+                // NOTE: This is on all abilities currently, refactoring for a broadcast done in the item runtime would be better but idc about that rn
+                float playerHealth = Player.GetComponent<PlayerHealth>().MaxHP;
+                DamageInfo selfDamage = new DamageInfo(playerHealth * pipe.CooldownRemaining * .01f * Player.Modifiers.CooldownDamageReduction.GetValue(), DamageType.Physical);
+                Player.GetComponent<PlayerHealth>().TakeDamage(selfDamage);
+            }
+            else
+            {
+                Debug.Log("No Quicksilver Bullet");
+                return false;
+            }
+        }
 
         StartWindup(pipe);
 
         pipe.CooldownRemaining = CooldownTime;
+        useTime = useCooldown;
         return true;
     }
 

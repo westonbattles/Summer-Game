@@ -13,9 +13,17 @@ MonoBehaviour:
   m_Name: Item Catalog
   m_EditorClassIdentifier: Assembly-CSharp::ItemCatalog
   definitions:
+  - {fileID: 11400000, guid: d05579422fe27cc42a448d2cbc486d30, type: 2}
+  - {fileID: 11400000, guid: 637d64925042529449f76e73c5f1c55c, type: 2}
   - {fileID: 11400000, guid: c4c5e6f5b4e074866a513a7966e3f799, type: 2}
+  - {fileID: 11400000, guid: 6206461e36851474e89cb05f168ea797, type: 2}
   - {fileID: 11400000, guid: 468adb8aeb6f84ad4a10128f2460dfff, type: 2}
+  - {fileID: 11400000, guid: a6b83619f433b1d4a87720e7c758c4d7, type: 2}
+  - {fileID: 11400000, guid: f841aa1b4e4a7dc44bf750f43b8885a1, type: 2}
   - {fileID: 11400000, guid: 170de209658fc2c469f958cba263a514, type: 2}
+  - {fileID: 11400000, guid: 481bfbcd5a6f4a3478340c873154d284, type: 2}
   - {fileID: 11400000, guid: 7a1eb4e8e88c2394497a76113334a925, type: 2}
   - {fileID: 11400000, guid: b9347712c69bb734280e1cfcd81f604b, type: 2}
   - {fileID: 11400000, guid: 33814532ab9aa4a50a56414c14d4a170, type: 2}
+  - {fileID: 11400000, guid: 5b3c338794031384eae1f834cdc0163a, type: 2}
+  - {fileID: 11400000, guid: b5712e4e8d471684c8ef256b51c63c41, type: 2}

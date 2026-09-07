@@ -107,7 +107,6 @@ public class PsychicPulse : AbilityBehaviour
     public override bool TryExecute(AbilityState state)
     {
         if (state is not PsychicPulseState psychicPulse) return false;
-        if (psychicPulse.CooldownRemaining > 0f) return false;
 
         Targetable targetable = psychicPulse.CurrentTarget;
         if (targetable == null) return false;
@@ -125,6 +124,24 @@ public class PsychicPulse : AbilityBehaviour
         {
             Debug.LogWarning($"[PsychicPulse.cs] - {target.name} has no IKnockbackable component.", target);
             return false;
+        }
+        if (psychicPulse.CooldownRemaining > 0.1f) // cooldown eval (for QS bullet)
+        {
+            Debug.Log($"{psychicPulse.CooldownRemaining} seconds left of cooldown");
+            Player Player = psychicPulse.Player;
+            if (Player.Modifiers.CooldownDamageReduction.GetValue() != 0f)
+            {
+                Debug.Log("Quicksilver bullet used");
+                // NOTE: This is on all abilities currently, refactoring for a broadcast done in the item runtime would be better but idc about that rn
+                float playerHealth = Player.GetComponent<PlayerHealth>().MaxHP;
+                DamageInfo selfDamage = new DamageInfo(playerHealth * psychicPulse.CooldownRemaining * .01f * Player.Modifiers.CooldownDamageReduction.GetValue(), DamageType.Physical);
+                Player.GetComponent<PlayerHealth>().TakeDamage(selfDamage);
+            }
+            else
+            {
+                Debug.Log("No Quicksilver Bullet");
+                return false;
+            }
         }
 
         Vector3 pulseDirection = GetPulseDirection(psychicPulse, target);

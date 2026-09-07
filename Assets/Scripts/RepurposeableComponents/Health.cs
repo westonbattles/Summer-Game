@@ -27,6 +27,8 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
     public float CurrentHP { get; private set; }
     public bool IsAlive => CurrentHP > 0f;
 
+    public static event Action<GameObject, float> OnOverkillDamage;
+
     private void Awake()
     {
         CurrentHP = MaxHP;
@@ -55,11 +57,17 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
         if (isDead || info.Amount <= 0f)
             return;
 
-        CurrentHP = Mathf.Max(CurrentHP - info.Amount, 0f);
+        float rawResult = CurrentHP - info.Amount;
+        CurrentHP = Mathf.Max(rawResult, 0f);
         OnHealthChanged?.Invoke(CurrentHP, MaxHP);
 
         if (CurrentHP <= 0f)
-            Die(info);
+        {
+            // broadcast negative health value for Ordinary Notebook
+            float overkill = rawResult < 0f ? -rawResult : 0f;
+            Die(info, overkill);
+        }
+            
     }
 
     /// <summary>
@@ -102,12 +110,18 @@ public class Health : MonoBehaviour, IDamageable, IPoolable
     /// Handles death logic.
     /// </summary>
     /// <param name="killingBlow">Whoever did the killing blow.</param>
-    private void Die(DamageInfo killingBlow)
+    private void Die(DamageInfo killingBlow, float overkillAmount)
     {
         //Debug.Log($"{name} Died: killed by {killingBlow.Source?.name ?? "unknown"}", this);
         if (isDead)
             return;
         isDead = true;
+
+        if (overkillAmount > 0f)
+        {
+            OnOverkillDamage?.Invoke(killingBlow.Source, overkillAmount);
+        }
+
         OnDeath?.Invoke(killingBlow);
     }
 
