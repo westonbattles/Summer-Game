@@ -240,8 +240,8 @@ MonoBehaviour:
   damage: 8
   chargeTime: 1.5
   cooldown: 1.5
-  maxRange: 30
-  projectileSpeed: 30
+  maxRange: 15
+  projectileSpeed: 15
 --- !u!114 &-1164978512281947449
 MonoBehaviour:
   m_ObjectHideFlags: 0
