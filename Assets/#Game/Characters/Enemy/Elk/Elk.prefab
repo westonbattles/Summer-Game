@@ -237,11 +237,11 @@ MonoBehaviour:
   sightBlockingLayers:
     serializedVersion: 2
     m_Bits: 512
-  damage: 8
+  damage: 14
   chargeTime: 1.5
-  cooldown: 1.5
+  cooldown: 3
   maxRange: 30
-  projectileSpeed: 30
+  projectileSpeed: 28
 --- !u!114 &-1164978512281947449
 MonoBehaviour:
   m_ObjectHideFlags: 0
