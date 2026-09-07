@@ -9,12 +9,13 @@ public class WaistOfTime : ItemBehaviour
 
     public override void ApplyModifiers(PlayerModifiers modifiers, int itemCount)
     {
-        float totalReduction = CDRAmount * itemCount;
-        modifiers.CooldownDurationMultiplier.AddValue(-totalReduction);
-        
-        if (modifiers.CooldownDurationMultiplier.GetValue() < minCDR)
-        {
-            modifiers.CooldownDurationMultiplier.SetValue(minCDR);
-        }
+        // (1 - 0.15)^itemCount
+        // 1 item  = 0.85
+        // 2 items = 0.7225
+        // 7 items = 0.3205
+
+        float remainingDurationRatio = Mathf.Pow(1f - CDRAmount, itemCount);
+        float finalMultiplier = Mathf.Max(minCDR, remainingDurationRatio);
+        modifiers.CooldownDurationMultiplier.SetValue(finalMultiplier);
     }
 }

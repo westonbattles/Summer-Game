@@ -46,7 +46,7 @@ public class ThinkingPipe : AbilityBehaviour
     // (or any other way u want to use the modifier)
     public float Damage => baseDamagePerSecond;
     public float CooldownTime => baseCooldownTime
-        - Player.Instance.Modifiers.CooldownDurationMultiplier.GetValue();
+        * Player.Instance.Modifiers.CooldownDurationMultiplier.GetValue();
     public float MaxRadius => smokeMaxRadius;
     public DamageType DamageType => baseDamageType;
 

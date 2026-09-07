@@ -51,7 +51,7 @@ public class GroundPound : AbilityBehaviour
     public float DamageRadius => sphereCastRadius + Player.Instance.Modifiers.GroundPoundRadiusBonus.GetValue();
     public float DamageScalingFactor => baseDamageScalingFactor * Player.Instance.Modifiers.GroundPoundDamageScalingMultiplier.GetValue();
     public float CooldownTime => baseCooldownTime
-        - Player.Instance.Modifiers.CooldownDurationMultiplier.GetValue();
+        * Player.Instance.Modifiers.CooldownDurationMultiplier.GetValue();
     public float DownwardSpeed => baseDownwardSpeed;
     
     class GroundPoundState : AbilityState
