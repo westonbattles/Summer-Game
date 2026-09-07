@@ -20,8 +20,8 @@ MonoBehaviour:
 
 
     for each Celestial
-    Starboard, this number increases according to ln(x+1)/2 where x is number of
-    starboards'
+    Starboard, this number increases according to (0.6*x) / (x+2) where x is number
+    of starboards'
   notes: 
   rarity: 2
   isDuoItem: 0
