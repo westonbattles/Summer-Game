@@ -47,7 +47,7 @@ public class ThirdEyeBeam : AbilityBehaviour
     public float Damage => baseDamagePerSecond;
     public DamageType DamageType => baseDamageType;
     public float CooldownTime => baseCooldownTime
-        - Player.Instance.Modifiers.CooldownDurationMultiplier.GetValue();
+        * Player.Instance.Modifiers.CooldownDurationMultiplier.GetValue();
     public float Range => beamRange;
     
     class ThirdEyeBeamState : AbilityState

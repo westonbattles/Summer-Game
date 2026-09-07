@@ -20,7 +20,7 @@ public class Dash : AbilityBehaviour
     // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
     // (or any other way u want to use the modifier)
     public float DashSpeed => dashSpeed;
-    public float DashCooldownTime => dashCooldownTime - Player.Instance.Modifiers.CooldownDurationMultiplier.GetValue();
+    public float DashCooldownTime => dashCooldownTime * Player.Instance.Modifiers.CooldownDurationMultiplier.GetValue();
     public float DashLandMomentumDecayTime => dashLandMomentumDecayTime;
     public float VerticalDashDampPercent => dashVerticalDampPercent * Player.Instance.Modifiers.DashVerticalMultiplier.GetValue();
     
