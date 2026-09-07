@@ -19,7 +19,7 @@ TagManager:
   - WorldUI
   - IgnoreMinimap
   - IgnoreWorldUI
-  - 
+  - PostProcessing
   - 
   - 
   - 
