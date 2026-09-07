@@ -1206,6 +1206,7 @@ GameObject:
   - component: {fileID: 7717037125315646937}
   - component: {fileID: 7930254040602415767}
   - component: {fileID: 5992496194839511235}
+  - component: {fileID: 2496899709670316519}
   m_Layer: 14
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1308,7 +1309,7 @@ MonoBehaviour:
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 16385
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 1
@@ -1461,6 +1462,23 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   priority: 0
+--- !u!114 &2496899709670316519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6517233512885325830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 8962e1beb2dc0b24693f5b90e4ecde81, type: 2}
 --- !u!1 &8009480528277467815
 GameObject:
   m_ObjectHideFlags: 0
