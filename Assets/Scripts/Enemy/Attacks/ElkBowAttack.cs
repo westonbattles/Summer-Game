@@ -24,8 +24,8 @@ public class ElkBowAttack : MonoBehaviour, IEnemyAttackWithIndicator
     [SerializeField] float damage = 8f;
     [SerializeField] float chargeTime = 1.5f;
     [SerializeField] float cooldown = 1.5f;
-    [SerializeField] float maxRange = 12f;
-    [SerializeField] float projectileSpeed = 10f;
+    [SerializeField] float maxRange = 30;
+    [SerializeField] float projectileSpeed = 30;
 
     Combat ownerCombat;
     ElkNavigator navigator;

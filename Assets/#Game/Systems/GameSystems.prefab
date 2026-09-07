@@ -178,7 +178,7 @@ MonoBehaviour:
   navMeshSpawnSampleRadius: 2
   maxEntitySpawnCap: 40
   showDebugButtons: 1
-  debugEnemyPrefab: {fileID: 8271345309812604368, guid: f599b8334c9b4a6408683de7f616f862, type: 3}
+  debugEnemyPrefab: {fileID: 4388042072965377975, guid: 1b140edc5607a44e0bdee2dad55d298b, type: 3}
   debugSpawnDistance: 5
 --- !u!1 &4081607228381149523
 GameObject:
@@ -478,7 +478,7 @@ MonoBehaviour:
   minSpawnDistance: 12
   maxSpawnDistance: 30
   navMeshSampleRadius: 2
-  spawnAttemptInterval: 0.25
+  spawnAttemptInterval: 1
   maxSpawnAttempts: 12
   spawnCapsuleGroundOffset: 0.05
   spawnBlockingLayers:

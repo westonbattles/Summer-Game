@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dd48acf7c9948c889e94c4cad88da1c, type: 3}
   m_Name: BlenderSpawnCard
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnCard
-  prefab: {fileID: 8271345309812604368, guid: f599b8334c9b4a6408683de7f616f862, type: 3}
+  prefab: {fileID: 455193479406036599, guid: 29804ad4e43c84be8bee90dedd62e1d9, type: 3}
+  creditCost: 1

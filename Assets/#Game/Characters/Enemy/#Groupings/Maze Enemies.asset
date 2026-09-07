@@ -15,3 +15,5 @@ MonoBehaviour:
   _entries:
   - card: {fileID: 11400000, guid: 9d4b1fec399324125bf0034dc8edc80a, type: 2}
     weight: 1
+  - card: {fileID: 11400000, guid: dbc3168dd386247d6b8db94313f567f9, type: 2}
+    weight: 1
