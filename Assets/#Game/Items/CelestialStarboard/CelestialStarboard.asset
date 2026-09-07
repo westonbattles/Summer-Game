@@ -15,9 +15,13 @@ MonoBehaviour:
   id: celestial_starboard
   displayName: Celestial Starboard
   icon: {fileID: 0}
-  shortDescription: Dashing while holding forward (or no movement keys) executes
-    a Vertical Dash
-  longDescription: 
+  shortDescription: Vertical component of dashes increases
+  longDescription: 'Base vertical multipler of dashes is 0.7
+
+
+    for each Celestial
+    Starboard, this number increases according to ln(x+1)/2 where x is number of
+    starboards'
   notes: 
   rarity: 2
   isDuoItem: 0

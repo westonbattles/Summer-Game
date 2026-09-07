@@ -29,7 +29,7 @@ public class PlayerModifiers
     public Modifier<int, Additive> RevolverBulletsBonus = new(0);                             // how many extra bullets in the chamber the revolver gets
     public Modifier<float, Multiplicative> RevolverLastBulletDamageMultiplier = new(1f);      // damage multiplier for the last bullet in the revolvers chamber
     // Dash
-    public Modifier<bool> DashVerticallyEnabled = new(false);
+    public Modifier<float, Additive> DashVerticalMultiplier = new(1f);                  // how far up your dash allows you to go. this makes you go farther so dashspeed probably shouldn't ever be changed
     
     
     

@@ -5,12 +5,12 @@ using UnityEngine;
 public class Dash : AbilityBehaviour
 {
     [Header("Properties")] 
-    [SerializeField] float dashSpeed = 17f;
+    [SerializeField] float dashSpeed = 25;
     [SerializeField] float dashCooldownTime = 2.3f;
     [SerializeField] float dashUseTime = 0f;
     [SerializeField] float dashUseCooldown = 0.2f;
     [SerializeField] float dashLandMomentumDecayTime = 0.6f; // time to apply updated friction for
-    [SerializeField] float verticalDashDampPercent = 0.7f; // good feeling horizontal dashes lead to too strong vertical dashes, this value squishes down the vertical component for vert dashes to account for that
+    [SerializeField] float dashVerticalDampPercent = 0.7f; // good feeling horizontal dashes lead to too strong vertical dashes, this value squishes down the vertical component for vert dashes to account for that
     [SerializeField] GameObject dashVfxPrefab;
 
     // MODIFIERS
@@ -20,11 +20,9 @@ public class Dash : AbilityBehaviour
     // public ModifiableStat => baseStat * Player.Instance.Modifiers.StatModifierMultiplierName
     // (or any other way u want to use the modifier)
     public float DashSpeed => dashSpeed;
-    public float DashCooldownTime => dashCooldownTime 
-        - Player.Instance.Modifiers.CooldownDurationMultiplier.GetValue();
-    public bool DashVerticallyEnabled => Player.Instance.Modifiers.DashVerticallyEnabled.GetValue();
+    public float DashCooldownTime => dashCooldownTime - Player.Instance.Modifiers.CooldownDurationMultiplier.GetValue();
     public float DashLandMomentumDecayTime => dashLandMomentumDecayTime;
-    public float VerticalDashDampPercent => verticalDashDampPercent;
+    public float VerticalDashDampPercent => dashVerticalDampPercent * Player.Instance.Modifiers.DashVerticalMultiplier.GetValue();
     
     class DashState : AbilityState
     {
@@ -90,10 +88,8 @@ public class Dash : AbilityBehaviour
             }
         }
 
-        if (DashVerticallyEnabled && (dash.Player.Input.Move.y > 0 || dash.Player.Input.Move == Vector2.zero)) 
-            dash.Player.DashVertically(DashSpeed);
-        else 
-            dash.Player.DashAlongInputAxis(DashSpeed); //<- base dash
+        if (dash.Player.Input.Move.y > 0 || dash.Player.Input.Move == Vector2.zero) dash.Player.DashVertically(DashSpeed);
+        else dash.Player.DashAlongInputAxis(DashSpeed); //<- base dash
 
         if (dash.ActiveVfx != null)
             UnityEngine.Object.Destroy(dash.ActiveVfx);

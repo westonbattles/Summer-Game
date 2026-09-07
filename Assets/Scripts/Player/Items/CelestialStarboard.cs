@@ -1,12 +1,14 @@
 using System;
+using UnityEngine;
 
 [Serializable]
 public class CelestialStarboard : ItemBehaviour
 {
+
+    float DashVerticalIncreaseFunction(float x) => Mathf.Log(x+1)/2;
+    
     public override void ApplyModifiers(PlayerModifiers modifiers, int itemCount)
     {
-        modifiers.DashVerticallyEnabled.SetValue(true);
-        
-        // todo: count>1 -> increase dash speed
+        modifiers.DashVerticalMultiplier.AddValue(DashVerticalIncreaseFunction(itemCount));
     }
 }

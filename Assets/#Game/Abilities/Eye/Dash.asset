@@ -25,6 +25,8 @@ MonoBehaviour:
       data:
         dashSpeed: 25
         dashCooldownTime: 2.3
+        dashUseTime: 0
+        dashUseCooldown: 0.2
         dashLandMomentumDecayTime: 0.6
-        verticalDashDampPercent: 0.7
+        dashVerticalDampPercent: 0.7
         dashVfxPrefab: {fileID: 7356203045360921323, guid: b7e6a44a83a61a34ab6b467360e7d04e, type: 3}
