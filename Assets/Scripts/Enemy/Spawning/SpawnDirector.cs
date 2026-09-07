@@ -124,15 +124,25 @@ public class SpawnDirector : MonoBehaviour
         {
             EnemySpawnCard best = null;
             int bestCost = -1;
+            float tiedWeight = 0f; // so we can randomly pick from cards with an equal cost
 
             foreach (var entry in grouping.Entries)
             {
                 int cost = entry.Card.creditCost;
-                if (cost <= director.credits && cost > bestCost)
+                if (cost > director.credits || cost < bestCost) continue;
+
+                float weight = Mathf.Max(0f, entry.Weight);
+
+                if (cost > bestCost)
                 {
                     best = entry.Card;
                     bestCost = cost;
+                    tiedWeight = weight;
+                    continue;
                 }
+
+                tiedWeight += weight;
+                if (tiedWeight > 0f && UnityEngine.Random.value < weight / tiedWeight) best = entry.Card;
             }
 
             if (best == null) break; // nothing left to buy

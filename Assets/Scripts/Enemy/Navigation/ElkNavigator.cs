@@ -7,8 +7,6 @@ public class ElkNavigator : MonoBehaviour
 {
     [Header("Distance Settings")]
     [SerializeField] float retreatDistance = 5f;
-    [SerializeField] float approachDistance = 9f;
-    [SerializeField] float aggroRange = 14f;
 
     [Header("Aim Settings")]
     [SerializeField] float facingTolerance = 3f;
@@ -34,9 +32,7 @@ public class ElkNavigator : MonoBehaviour
 
         agent.updateRotation = !hasAimDirection;
 
-        if (distance > aggroRange) StopMoving();
-        else if (distance < retreatDistance) RetreatFromTarget(toTarget, distance);
-        else if (distance > approachDistance) MoveToTarget();
+        if (distance < retreatDistance) RetreatFromTarget(toTarget, distance);
         else StopMoving();
 
         if (hasAimDirection) FaceAimDirection();
@@ -72,12 +68,6 @@ public class ElkNavigator : MonoBehaviour
 
         float requiredDot = Mathf.Cos(facingTolerance * Mathf.Deg2Rad);
         return Vector3.Dot(transform.forward, direction.normalized) >= requiredDot;
-    }
-
-    void MoveToTarget()
-    {
-        agent.isStopped = false;
-        agent.SetDestination(target.position);
     }
 
     void RetreatFromTarget(Vector3 toTarget, float distance)
