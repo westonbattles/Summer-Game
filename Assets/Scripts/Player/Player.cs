@@ -1,8 +1,6 @@
 using System;
-using System.Numerics;
 using KinematicCharacterController;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
@@ -30,7 +28,7 @@ class MovementSettings
 [RequireComponent(typeof(PlayerLook))]
 [RequireComponent(typeof(ItemInventory),typeof(PlayerInteractor))]
 [RequireComponent(typeof(Combat))]
-public class Player : MonoBehaviour, ICharacterController
+public class Player : MonoBehaviour, ICharacterController, ICharacterVelocityProjection
 {
     public static LayerMask LayerMask => LayerMask.GetMask("Player");
     
@@ -44,19 +42,14 @@ public class Player : MonoBehaviour, ICharacterController
     [Header("Movement")]
     [SerializeField] float gravity = 31f;
     [SerializeField] float gravityMultiplier = 1f;
-    //[SerializeField] float groundAccel = 140f;
-    //[SerializeField] float maxSpeed = 8f;
-    //[SerializeField] float airAccel = 50f;
-    //[SerializeField] float airSpeed = 1f;
-    [SerializeField] float baseFriction = 12f;
-    //[SerializeField] float jumpHeight = 10f;
+    [SerializeField] float baseFriction = 20f;
+    [SerializeField] float stopSpeed = 4f; //min speed dropoff when grounded
     [SerializeField] float jumpBufferTime = 0.05f;
     [Tooltip("Outward speed required to override KCC step snapping while leaving a ledge. Independent of the motor's ledge snap setting.")]
-    [SerializeField] float ledgeWalkOffVelocityThreshold = 1f;
+    [SerializeField] float ledgeWalkOffVelocityThreshold = 3f;
 
-    //[SerializeField] float dashFriction = 6f;
-    //[SerializeField] float dashLandMomentumDecayTime = 0.6f; // time to apply updated friction for
-    //[SerializeField] float verticalDashDampPercent = 0.6f; // good feeling horizontal dashes lead to too strong vertical dashes, this value squishes down the vertical component for vert dashes to account for that
+    [Header("Dash Ramp Movement")]
+    [SerializeField] RampSlideSettings rampSlide = new();
     
     [Header("Loadouts")]
     [SerializeField] AbilityLoadout eyeLoadout;
@@ -86,14 +79,8 @@ public class Player : MonoBehaviour, ICharacterController
     KinematicCharacterMotor _motor;
     float _jumpBufferCounter;
     
-    float _friction;
-    
-    // dash variables
-    Vector3 _dashVelocity;
-    bool _shouldDash;
-    bool _isDashing;
-    float _dashLandMomentumDecayTimer;
-    public bool IsDashing => _isDashing;
+    PlayerMovement _movement;
+    public bool IsDashing => _movement != null && _movement.IsDashing;
     
 
     void OnDrawGizmos()
@@ -126,7 +113,7 @@ public class Player : MonoBehaviour, ICharacterController
         Animator = new PlayerAnimator(CharacterSwitcher);
         
         _motor = GetComponent<KinematicCharacterMotor>();
-        _friction = baseFriction;
+        _movement = new PlayerMovement(_motor, rampSlide);
         
         Input.Configure(autoBhop);
         if (autoBhop) jumpBufferTime = 0.01f;
@@ -144,9 +131,6 @@ public class Player : MonoBehaviour, ICharacterController
         // update jump buffer
         if (Input.JumpPressed) _jumpBufferCounter = jumpBufferTime;
         else _jumpBufferCounter -= Time.deltaTime;
-        
-        // update dash momentum timer
-        _dashLandMomentumDecayTimer = Mathf.Max(0f, _dashLandMomentumDecayTimer - Time.deltaTime);
         
         HandleInput();
         
@@ -212,23 +196,10 @@ public class Player : MonoBehaviour, ICharacterController
 
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
     {
-        // perform dash
-        if (_shouldDash)
+        if (_movement.UpdateVelocity(ref currentVelocity, GetPlanarMoveDirection(), _jumpBufferCounter > 0f, GetMovementParameters(), deltaTime))
         {
-            currentVelocity = _dashVelocity;
-            _shouldDash = false;
-            return;
-        }
-        
-        Vector3 inputDirection = GetPlanarMoveDirection();
-
-        if (_motor.GroundingStatus.IsStableOnGround)
-        {
-            ApplyGroundVelocity(ref currentVelocity, inputDirection, deltaTime);
-        }
-        else
-        {
-            ApplyAirVelocity(ref currentVelocity, inputDirection, deltaTime);
+            _jumpBufferCounter = 0f;
+            Animator.PlayJumpAnimation();
         }
     }
 
@@ -248,85 +219,20 @@ public class Player : MonoBehaviour, ICharacterController
             : transform.rotation;
     }
 
-    void ApplyGroundVelocity(ref Vector3 currentVelocity, Vector3 inputDirection, float deltaTime)
+    MovementParameters GetMovementParameters()
     {
-        if (_motor.GroundingStatus.GroundNormal != Vector3.zero)
+        return new MovementParameters
         {
-            currentVelocity = _motor.GetDirectionTangentToSurface(currentVelocity, _motor.GroundingStatus.GroundNormal) * currentVelocity.magnitude;
-        }
-
-        Vector3 reorientedInput = _motor.GetDirectionTangentToSurface(inputDirection, _motor.GroundingStatus.GroundNormal);
-        Vector2 target = new Vector2(reorientedInput.x, reorientedInput.z);
-        Vector2 horizontalVelocity = new Vector2(currentVelocity.x, currentVelocity.z);
-
-        if (_jumpBufferCounter > 0f)
-        {
-            ApplyJump(ref currentVelocity, ref horizontalVelocity, target, deltaTime);
-            Animator.PlayJumpAnimation();
-        }
-        else
-        {
-            horizontalVelocity = MoveGround(target, horizontalVelocity, deltaTime);
-            if (_dashLandMomentumDecayTimer <= 0f) horizontalVelocity = Vector2.ClampMagnitude(horizontalVelocity, GetCurrentMaxSpeed());
-        }
-
-        currentVelocity = new Vector3(horizontalVelocity.x, currentVelocity.y, horizontalVelocity.y);
-    }
-
-    void ApplyJump(ref Vector3 currentVelocity, ref Vector2 horizontalVelocity, Vector2 target, float deltaTime)
-    {
-        _motor.ForceUnground(0.2f);
-        _jumpBufferCounter = 0f;
-        currentVelocity = currentVelocity - Vector3.Project(currentVelocity, _motor.CharacterUp);
-        currentVelocity += _motor.CharacterUp * GetCurrentJumpHeight();
-
-        // essentially just lerps between max speed and current speed (when max speed < current speed) using BhopMomentumCarryMultiplier.
-        // when BhopMomentumCarryPercent is 0 -> carry is just max speed
-        // when BhopMomentumCarryPercent is 1 -> carry is just current speed (no speed loss)
-        float speed = horizontalVelocity.magnitude;
-        float carry = speed;
-        if (carry > GetCurrentMaxSpeed()) carry = (speed - GetCurrentMaxSpeed()) * Modifiers.BhopMomentumCarryPercent.GetValue() + GetCurrentMaxSpeed(); // same as Mathf.Lerp(maxSpeed, speed, Modifiers.BhopMomentumCarryPercent); without the 0-1 clamping
-        
-        if (speed > Mathf.Epsilon) horizontalVelocity = (horizontalVelocity / speed) * carry;
-        horizontalVelocity = MoveAir(target, horizontalVelocity, deltaTime);
-    }
-
-    void ApplyAirVelocity(ref Vector3 currentVelocity, Vector3 inputDirection, float deltaTime)
-    {
-        Vector2 horizontalVelocity = new Vector2(currentVelocity.x, currentVelocity.z);
-        Vector2 target = new Vector2(inputDirection.x, inputDirection.z);
-        horizontalVelocity = MoveAir(target, horizontalVelocity, deltaTime);
-
-        currentVelocity.y -= gravity * gravityMultiplier * deltaTime;
-        currentVelocity = new Vector3(horizontalVelocity.x, currentVelocity.y, horizontalVelocity.y);
-    }
-
-    Vector2 MoveGround(Vector2 target, Vector2 horizontalVelocity, float deltaTime)
-    {
-        float speed = horizontalVelocity.magnitude;
-        if (speed > 0f)
-        {
-            float drop = speed * _friction * deltaTime;
-            horizontalVelocity *= Mathf.Max(speed - drop, 0f) / speed;
-        }
-
-        return Accelerate(target, horizontalVelocity, GetCurrentGroundAccel(), deltaTime);
-    }
-
-    Vector2 MoveAir(Vector2 target, Vector2 horizontalVelocity, float deltaTime)
-    {
-        return Accelerate(target, horizontalVelocity, GetCurrentAirAccel(), deltaTime);
-    }
-
-    Vector2 Accelerate(Vector2 target, Vector2 horizontalVelocity, float acceleration, float deltaTime)
-    {
-        float projectedVelocity = Vector2.Dot(target, horizontalVelocity);
-        if (!_motor.GroundingStatus.IsStableOnGround && projectedVelocity >= GetCurrentAirSpeed())
-        {
-            return horizontalVelocity;
-        }
-
-        return horizontalVelocity + acceleration * deltaTime * target; // floats before vector
+            GroundAcceleration = GetCurrentGroundAccel(),
+            GroundSpeed = GetCurrentMaxSpeed(),
+            AirAcceleration = GetCurrentAirAccel(),
+            AirSpeed = GetCurrentAirSpeed(),
+            JumpSpeed = GetCurrentJumpHeight(),
+            Gravity = gravity * gravityMultiplier,
+            Friction = baseFriction,
+            StopSpeed = stopSpeed,
+            BhopCarry = Modifiers.BhopMomentumCarryPercent.GetValue()
+        };
     }
 
     
@@ -411,40 +317,28 @@ public class Player : MonoBehaviour, ICharacterController
         Dash(squishedForwardVector, speed);
     }
     
-    /// Performs dash in a given direction with given speed
+    /// requests a minimum speed along the dash direction to preserve perpendicular momentum
     public void Dash(Vector3 directionNormalized, float speed)
     {
-        _dashVelocity = directionNormalized * speed;
-        _shouldDash = true;
-        _isDashing = true;
-
-        Dash dash = EyeLoadout.GetAbility(AbilitySlot.Movement).Behaviour as Dash;
-        _dashLandMomentumDecayTimer = dash?.DashLandMomentumDecayTime ?? 0f;
-        //PlayRandomSound(launchSounds, launchPitchMin, launchPitchMax);
-        
-        _motor.ForceUnground(.25f); // lets you dash along objects without insta stopping you   
+        Dash dash = EyeLoadout.GetAbility(AbilitySlot.Movement)?.Behaviour as Dash;
+        _movement.QueueDash(directionNormalized * speed, dash?.SurfaceDashDuration ?? 0.25f, dash?.SurfaceDashFriction ?? 1f);
     }
 
     public void GroundPoundDash(Vector3 directionNormalized, float speed, bool forceUnground)
     {
-        _dashVelocity = directionNormalized * speed;
-        _shouldDash = true;
-        _isDashing = true;
-        //PlayRandomSound(launchSounds, launchPitchMin, launchPitchMax);
-        
-        if (forceUnground) _motor.ForceUnground(.25f); // lets you dash along objects without insta stopping you 
+        _movement.QueueGroundPound(directionNormalized * speed, forceUnground);
     }
 
-    public void BeforeCharacterUpdate(float deltaTime) { }
+    public void BeforeCharacterUpdate(float deltaTime) => _movement.BeforeCharacterUpdate();
 
     public void PostGroundingUpdate(float deltaTime)
     {
-        if (!_motor.LastGroundingStatus.IsStableOnGround && _motor.GroundingStatus.IsStableOnGround)
-        {
-            _isDashing = false;
-        }
+        _movement.PostGroundingUpdate(_jumpBufferCounter > 0f);
     }
-    public void AfterCharacterUpdate(float deltaTime) { }
+    public void AfterCharacterUpdate(float deltaTime) => _movement.AfterCharacterUpdate(deltaTime, GetCurrentMaxSpeed());
+
+    // custom projection for ramp boosts/sliding
+    public bool ProjectVelocity(ref Vector3 velocity, Vector3 obstructionNormal, bool stableOnHit) => _movement.ProjectVelocity(ref velocity, obstructionNormal);
 
     public bool IsColliderValidForCollisions(Collider coll)
     {
@@ -458,6 +352,8 @@ public class Player : MonoBehaviour, ICharacterController
     public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }
     public void ProcessHitStabilityReport(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, Vector3 atCharacterPosition, Quaternion atCharacterRotation, ref HitStabilityReport hitStabilityReport)
     {
+        _movement.ProcessHitStability(hitNormal, ref hitStabilityReport);
+
         // override ledge snapping when current movement input shows that the player intends to move toward the empty side
         if (hitStabilityReport.LedgeDetected && hitStabilityReport.IsMovingTowardsEmptySideOfLedge)
         {

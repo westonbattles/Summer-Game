@@ -916,8 +916,12 @@ namespace KinematicCharacterController
                     if (!LastGroundingStatus.IsStableOnGround && GroundingStatus.IsStableOnGround)
                     {
                         // Handle stable landing
-                        BaseVelocity = Vector3.ProjectOnPlane(BaseVelocity, CharacterUp);
-                        BaseVelocity = GetDirectionTangentToSurface(BaseVelocity, GroundingStatus.GroundNormal) * BaseVelocity.magnitude;
+                        if (!(CharacterController is ICharacterVelocityProjection projection &&
+                            projection.ProjectVelocity(ref BaseVelocity, GroundingStatus.GroundNormal, true)))
+                        {
+                            BaseVelocity = Vector3.ProjectOnPlane(BaseVelocity, CharacterUp);
+                            BaseVelocity = GetDirectionTangentToSurface(BaseVelocity, GroundingStatus.GroundNormal) * BaseVelocity.magnitude;
+                        }
                     }
                 }
             }
@@ -1792,6 +1796,10 @@ namespace KinematicCharacterController
         /// </summary>
         public virtual void HandleVelocityProjection(ref Vector3 velocity, Vector3 obstructionNormal, bool stableOnHit)
         {
+            if (CharacterController is ICharacterVelocityProjection projection &&
+                projection.ProjectVelocity(ref velocity, obstructionNormal, stableOnHit))
+                return;
+
             if (GroundingStatus.IsStableOnGround && !MustUnground())
             {
                 // On stable slopes, simply reorient the movement without any loss

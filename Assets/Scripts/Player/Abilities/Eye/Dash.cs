@@ -9,7 +9,9 @@ public class Dash : AbilityBehaviour
     [SerializeField] float dashCooldownTime = 2.3f;
     [SerializeField] float dashUseTime = 0f;
     [SerializeField] float dashUseCooldown = 0.2f;
-    [SerializeField] float dashLandMomentumDecayTime = 0.6f; // time to apply updated friction for
+    [Tooltip("Brief glide for dashes that START along the ground. Does not apply to later landings.")]
+    [SerializeField, Min(0f)] float surfaceDashDuration = 0.25f;
+    [SerializeField, Min(0f)] float surfaceDashFriction = 1f;
     [SerializeField] float dashVerticalDampPercent = 0.7f; // good feeling horizontal dashes lead to too strong vertical dashes, this value squishes down the vertical component for vert dashes to account for that
     [SerializeField] GameObject dashVfxPrefab;
 
@@ -21,7 +23,8 @@ public class Dash : AbilityBehaviour
     // (or any other way u want to use the modifier)
     public float DashSpeed => dashSpeed;
     public float DashCooldownTime => dashCooldownTime * Player.Instance.Modifiers.CooldownDurationMultiplier.GetValue();
-    public float DashLandMomentumDecayTime => dashLandMomentumDecayTime;
+    public float SurfaceDashDuration => surfaceDashDuration;
+    public float SurfaceDashFriction => surfaceDashFriction;
     public float VerticalDashDampPercent => dashVerticalDampPercent * Player.Instance.Modifiers.DashVerticalMultiplier.GetValue();
     
     class DashState : AbilityState

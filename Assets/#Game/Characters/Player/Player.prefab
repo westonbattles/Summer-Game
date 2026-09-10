@@ -964,13 +964,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   autoBhop: 0
   handMovementSettings:
-    groundAccel: 140
+    groundAccel: 200
     maxSpeed: 6
     airAccel: 30
     airSpeed: 1
     jumpHeight: 8.5
   eyeMovementSettings:
-    groundAccel: 140
+    groundAccel: 200
     maxSpeed: 8
     airAccel: 50
     airSpeed: 1
@@ -978,8 +978,16 @@ MonoBehaviour:
   gravity: 31
   gravityMultiplier: 1
   baseFriction: 20
+  stopSpeed: 4
   jumpBufferTime: 0.05
   ledgeWalkOffVelocityThreshold: 3
+  rampSlide:
+    minimumApproachSpeed: 12
+    minimumRampAngle: 10
+    maximumApproachAngle: 35
+    airborneUpSpeed: 5
+    minimumLaunchSpeed: 32
+    maximumSpeedGain: 8
   eyeLoadout: {fileID: 11400000, guid: 33c053e3f5b55455d8cfe4c609fb7768, type: 2}
   handLoadout: {fileID: 11400000, guid: a4915b5678ee542d995b24e9087c2968, type: 2}
   startingLoadout: {fileID: 11400000, guid: 33c053e3f5b55455d8cfe4c609fb7768, type: 2}

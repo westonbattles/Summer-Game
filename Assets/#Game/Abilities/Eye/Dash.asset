@@ -23,10 +23,11 @@ MonoBehaviour:
     - rid: 6477902080174719171
       type: {class: Dash, ns: , asm: Assembly-CSharp}
       data:
-        dashSpeed: 25
+        dashSpeed: 20
         dashCooldownTime: 2.3
         dashUseTime: 0
         dashUseCooldown: 0.2
-        dashLandMomentumDecayTime: 0.6
-        dashVerticalDampPercent: 0.7
+        surfaceDashDuration: 0.25
+        surfaceDashFriction: 1
+        dashVerticalDampPercent: 0.8
         dashVfxPrefab: {fileID: 7356203045360921323, guid: b7e6a44a83a61a34ab6b467360e7d04e, type: 3}
