@@ -262,7 +262,8 @@ public class PsychicPulse : AbilityBehaviour
             ChainsRemaining = maxRamChains,
             TargetLayers = TargetLayers,
             Source = source,
-            PulseTarget = target
+            PulseTarget = target,
+            Ability = this
         });
     }
 

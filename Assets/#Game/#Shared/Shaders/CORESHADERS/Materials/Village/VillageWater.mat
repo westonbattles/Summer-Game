@@ -117,7 +117,7 @@ Material:
     - _ClearCoatSmoothness: 0
     - _CrestGlow: 0
     - _CrestSoftness: 17.9
-    - _CrestThreshold: -0.66
+    - _CrestThreshold: -2.4
     - _Cull: 2
     - _Cutoff: 0.5
     - _DeepAlpha: 1

@@ -598,6 +598,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MossyBrickOpening (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2641957761459263091, guid: ee7f3bc5ba06c46a7a5fbc839a71cacf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4465133705778650979, guid: ee7f3bc5ba06c46a7a5fbc839a71cacf, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -769,6 +773,10 @@ PrefabInstance:
     - target: {fileID: 1057624230194439231, guid: 4146b71d6617f4a91867eb998e7a7ee9, type: 3}
       propertyPath: m_Name
       value: MossyBrick28.8x27 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1057624230194439231, guid: 4146b71d6617f4a91867eb998e7a7ee9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -981,6 +989,10 @@ PrefabInstance:
     - target: {fileID: 2528949243691755048, guid: e07990a4c85c24195b4b19afa6a8cba3, type: 3}
       propertyPath: m_Name
       value: MossyBrick_8x27
+      objectReference: {fileID: 0}
+    - target: {fileID: 2528949243691755048, guid: e07990a4c85c24195b4b19afa6a8cba3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2905790827614518418, guid: e07990a4c85c24195b4b19afa6a8cba3, type: 3}
       propertyPath: m_LocalPosition.x

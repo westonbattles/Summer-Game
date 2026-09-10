@@ -26,6 +26,7 @@ public class PsychicPulseRamEffect : MonoBehaviour
         public GameObject Source;
         public Enemy PulseTarget;
         public Enemy IgnoreEnemy;
+        public AbilityBehaviour Ability;
         public HashSet<Enemy> ChipDamagedEnemies;
         public HashSet<Enemy> TargetDamageCreditedEnemies;
     }
@@ -57,6 +58,7 @@ public class PsychicPulseRamEffect : MonoBehaviour
     private int chainsRemaining;
     private LayerMask targetLayers;
     private GameObject source;
+    private AbilityBehaviour ability;
     private Enemy pulseTarget;
     private HashSet<Enemy> chipDamagedEnemies;
     private HashSet<Enemy> targetDamageCreditedEnemies;
@@ -104,6 +106,7 @@ public class PsychicPulseRamEffect : MonoBehaviour
         chainsRemaining = Mathf.Max(0, info.ChainsRemaining);
         targetLayers = info.TargetLayers;
         source = info.Source;
+        ability = info.Ability;
         sourceCombat = source != null ? source.GetComponent<Combat>() : null;
         pulseTarget = info.PulseTarget != null ? info.PulseTarget : owner;
         chipDamagedEnemies = info.ChipDamagedEnemies ?? new HashSet<Enemy>();
@@ -238,6 +241,7 @@ public class PsychicPulseRamEffect : MonoBehaviour
                         ChainsRemaining = chainsRemaining - 1,
                         TargetLayers = targetLayers,
                         Source = source,
+                        Ability = ability,
                         PulseTarget = pulseTarget,
                         IgnoreEnemy = owner,
                         ChipDamagedEnemies = chipDamagedEnemies,
@@ -276,7 +280,7 @@ public class PsychicPulseRamEffect : MonoBehaviour
         if (damage <= 0f || target == null) return;
         
         IDamageable damageable = target.GetComponentInParent<IDamageable>();
-        if (damageable != null && sourceCombat != null) sourceCombat.TryDamage(damageable, new DamageInfo(damage, DamageType.Physical, source));
+        if (damageable != null && sourceCombat != null) sourceCombat.TryDamage(damageable, new DamageInfo(damage, DamageType.Physical, source, ability: ability));
     }
 
     private void RegisterPushedEnemy(Enemy pushedEnemy)
