@@ -1,7 +1,5 @@
 using UnityEngine;
-using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
 public class NavMeshKnockback : MonoBehaviour, IKnockbackable, IPoolable
 {
     [Tooltip("Higher values mean less knockback.")]
@@ -9,42 +7,36 @@ public class NavMeshKnockback : MonoBehaviour, IKnockbackable, IPoolable
     [SerializeField] private float knockbackImmunityDuration = 0.25f;
     [SerializeField] private float defaultKnockbackDuration = 0.25f;
     [SerializeField] private bool decayVelocityOverDuration = true;
+
     private float immunityUntil;
     private float knockbackRemaining;
     private float knockbackDuration;
     private Vector3 knockbackVelocity;
-
     private bool hasMovementLock;
-    private bool hasStoredUpdateRotation;
-    private bool previousUpdateRotation;
-    private ChaseNavigator chaseNavigator;
-    private NavMeshAgent agent;
+
+    private GroundMover chaseNavigator;
 
     private void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
-        chaseNavigator = GetComponent<ChaseNavigator>();
+        chaseNavigator = GetComponent<GroundMover>();
     }
 
-    public void Update()
+    private void Update()
     {
         if (knockbackRemaining <= 0f) return;
 
         float fraction = decayVelocityOverDuration ? Mathf.Clamp01(knockbackRemaining / knockbackDuration) : 1f;
-        agent.isStopped = false;
-        agent.velocity = knockbackVelocity * fraction; // decay velocity
+        transform.position += knockbackVelocity * fraction * Time.deltaTime;
 
         knockbackRemaining -= Time.deltaTime;
-
         if (knockbackRemaining <= 0f) EndKnockback();
     }
-    
+
     public bool ApplyKnockback(KnockbackInfo info)
     {
         if (Time.time < immunityUntil) return false;
         if (!info.HasDirection) return false;
-        if (agent == null || !agent.isOnNavMesh) return false;
-        
+
         immunityUntil = Time.time + knockbackImmunityDuration;
 
         float resistance = Mathf.Max(0.001f, knockbackResistance);
@@ -60,22 +52,9 @@ public class NavMeshKnockback : MonoBehaviour, IKnockbackable, IPoolable
 
     private void BeginKnockback()
     {
-        if (!hasStoredUpdateRotation)
-        {
-            previousUpdateRotation = agent.updateRotation;
-            hasStoredUpdateRotation = true;
-        }
-
-        agent.updateRotation = false;
-
-        if (!hasMovementLock)
-        {
-            chaseNavigator?.AddMovementLock();
-            hasMovementLock = true;
-        }
-        
-        agent.ResetPath();
-        agent.isStopped = false;
+        if (hasMovementLock) return;
+        chaseNavigator?.AddMovementLock();
+        hasMovementLock = true;
     }
 
     private void EndKnockback()
@@ -83,43 +62,18 @@ public class NavMeshKnockback : MonoBehaviour, IKnockbackable, IPoolable
         knockbackRemaining = 0f;
         knockbackVelocity = Vector3.zero;
 
-        if (agent != null && agent.isOnNavMesh) agent.velocity = Vector3.zero;
-        if (agent != null && hasStoredUpdateRotation)
-        {
-            agent.updateRotation = previousUpdateRotation;
-            hasStoredUpdateRotation = false;
-        }
-
-        if (hasMovementLock)
-        {
-            chaseNavigator?.RemoveMovementLock();
-            hasMovementLock = false;
-        }
+        if (!hasMovementLock) return;
+        chaseNavigator?.RemoveMovementLock();
+        hasMovementLock = false;
     }
 
-    private void OnDisable()
-    {
-        ResetKnockbackState();
-    }
-
-    public void OnSpawn()
-    {
-        ResetKnockbackState();
-    }
-
-    public void OnDespawn()
-    {
-        ResetKnockbackState();
-    }
+    private void OnDisable() => ResetKnockbackState();
+    public void OnSpawn() => ResetKnockbackState();
+    public void OnDespawn() => ResetKnockbackState();
 
     private void ResetKnockbackState()
     {
         immunityUntil = 0f;
         EndKnockback();
-
-        if (agent == null || !agent.isOnNavMesh) return;
-
-        agent.ResetPath();
-        agent.velocity = Vector3.zero;
     }
 }

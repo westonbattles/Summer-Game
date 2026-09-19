@@ -153,13 +153,16 @@ PrefabInstance:
       addedObject: {fileID: 6396026402350211675}
     - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 6484f1f686a4849c9ada8fbb835914db, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1805451101384409643}
-    - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 6484f1f686a4849c9ada8fbb835914db, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 5141845099211188778}
     - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 6484f1f686a4849c9ada8fbb835914db, type: 3}
       insertIndex: -1
       addedObject: {fileID: -1164978512281947449}
+    - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 6484f1f686a4849c9ada8fbb835914db, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 80210506301097112}
+    - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 6484f1f686a4849c9ada8fbb835914db, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7131428187777165116}
   m_SourcePrefab: {fileID: 100100000, guid: 6484f1f686a4849c9ada8fbb835914db, type: 3}
 --- !u!4 &1745118042869457020 stripped
 Transform:
@@ -193,7 +196,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 1.7
+  m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -205,20 +208,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &1805451101384409643
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2890199819106105019}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5b79a03f65645d5b3f25100156461a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ElkNavigator
-  retreatDistance: 0
-  facingTolerance: 3
 --- !u!114 &5141845099211188778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -258,6 +247,36 @@ MonoBehaviour:
   knockbackImmunityDuration: 0.25
   defaultKnockbackDuration: 0.25
   decayVelocityOverDuration: 1
+--- !u!114 &80210506301097112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2890199819106105019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d302d695b44ab14382ebdb956774f1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NavMeshPathProvider
+  agent: {fileID: 6396026402350211675}
+  repathInterval: 0.25
+--- !u!114 &7131428187777165116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2890199819106105019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a7e6b119655edb4bb65408ac81ae9ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElkMover
+  moveSpeed: 3.5
+  turnSpeed: 360
+  retreatDistance: 5
+  facingTolerance: 3
 --- !u!4 &7584799068981348233 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7372762355106844848, guid: 6484f1f686a4849c9ada8fbb835914db, type: 3}

@@ -1453,9 +1453,6 @@ PrefabInstance:
       addedObject: {fileID: 3398292763102216664}
     - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 6484f1f686a4849c9ada8fbb835914db, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5222909412543411660}
-    - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 6484f1f686a4849c9ada8fbb835914db, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 3438444690933614066}
     - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 6484f1f686a4849c9ada8fbb835914db, type: 3}
       insertIndex: -1
@@ -1466,6 +1463,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 6484f1f686a4849c9ada8fbb835914db, type: 3}
       insertIndex: -1
       addedObject: {fileID: -2725027093046698352}
+    - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 6484f1f686a4849c9ada8fbb835914db, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8911623354022913161}
+    - targetCorrespondingSourceObject: {fileID: 2814683460217299330, guid: 6484f1f686a4849c9ada8fbb835914db, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 127955732696262048}
     - targetCorrespondingSourceObject: {fileID: 3257289801518718384, guid: 6484f1f686a4849c9ada8fbb835914db, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7836361343736494020}
@@ -1603,22 +1606,6 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &5222909412543411660
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8668410607359982810}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 267d3637f5331ff4f93f3e7e32604208, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChaseNavigator
-  player: {fileID: 0}
-  backupDistance: 0
-  stopDistance: 2
-  resumeDistance: 3.5
 --- !u!114 &3438444690933614066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1695,3 +1682,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba12b5eac00fe57478a4f04fef8c0276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackController
+--- !u!114 &8911623354022913161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8668410607359982810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d302d695b44ab14382ebdb956774f1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NavMeshPathProvider
+  agent: {fileID: 3398292763102216664}
+  repathInterval: 0.25
+--- !u!114 &127955732696262048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8668410607359982810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66d81c5d9e598aa4daf0f14118733210, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChaseMover
+  moveSpeed: 3.5
+  turnSpeed: 360
+  player: {fileID: 0}
+  backupDistance: 0
+  stopDistance: 5
+  resumeDistance: 7

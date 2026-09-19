@@ -13,7 +13,7 @@ enum AttackState
 
 [RequireComponent(typeof(Combat))]
 [RequireComponent(typeof(EnemyAttackController))]
-[RequireComponent(typeof(ElkNavigator))]
+[RequireComponent(typeof(ElkMover))]
 public class ElkBowAttack : MonoBehaviour, IEnemyAttackWithIndicator
 {
     [SerializeField] DamageType damageType = DamageType.Projectile;
@@ -28,7 +28,7 @@ public class ElkBowAttack : MonoBehaviour, IEnemyAttackWithIndicator
     [SerializeField] float projectileSpeed = 30;
 
     Combat ownerCombat;
-    ElkNavigator navigator;
+    ElkMover mover;
     Transform target;
     Player targetPlayer;
     AttackState attackState;
@@ -46,7 +46,7 @@ public class ElkBowAttack : MonoBehaviour, IEnemyAttackWithIndicator
     void Awake()
     {
         ownerCombat = GetComponent<Combat>();
-        navigator = GetComponent<ElkNavigator>();
+        mover = GetComponent<ElkMover>();
         attackState = AttackState.Idle;
         LowerBow();
     }
@@ -55,7 +55,7 @@ public class ElkBowAttack : MonoBehaviour, IEnemyAttackWithIndicator
     {
         target = newTarget;
         targetPlayer = newTarget != null ? newTarget.GetComponentInParent<Player>() : null;
-        navigator.SetTarget(newTarget);
+        mover.SetTarget(newTarget);
         if (target != null) return;
 
         shotVelocity = Vector3.zero;
@@ -92,7 +92,7 @@ public class ElkBowAttack : MonoBehaviour, IEnemyAttackWithIndicator
     void EnterState(AttackState state)
     {
         if (state == AttackState.Idle) LowerBow();
-        else if (state == AttackState.IdleAggro) navigator.ClearAimDirection();
+        else if (state == AttackState.IdleAggro) mover.ClearAimDirection();
         else if (state == AttackState.Charging) chargeRemaining = chargeTime;
         else if (state == AttackState.Releasing) ReleaseArrowAnimationEvent(); // replace with the shoot animation trigger later
     }
@@ -171,8 +171,8 @@ public class ElkBowAttack : MonoBehaviour, IEnemyAttackWithIndicator
         Vector3 aimDirection = Vector3.ProjectOnPlane(launchVelocity, Vector3.up);
         if (aimDirection.sqrMagnitude <= 0.0001f) return false;
 
-        navigator.SetAimDirection(aimDirection);
-        return navigator.IsFacingDirection(aimDirection);
+        mover.SetAimDirection(aimDirection);
+        return mover.IsFacingDirection(aimDirection);
     }
 
     bool TryCalculateShot(out Vector3 launchVelocity)
@@ -242,7 +242,7 @@ public class ElkBowAttack : MonoBehaviour, IEnemyAttackWithIndicator
 
     void LowerBow()
     {
-        navigator.ClearAimDirection();
+        mover.ClearAimDirection();
         // lower bow animation
     }
 
