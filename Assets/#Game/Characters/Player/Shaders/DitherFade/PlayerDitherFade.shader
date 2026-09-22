@@ -15,6 +15,9 @@ Shader "Summer Game/Player/Dither Fade"
         _Occlusion("Occlusion", Range(0, 1)) = 1
         [HDR] _EmissionColor("Emission Color", Color) = (0, 0, 0, 0)
 
+        [Enum(UnityEngine.Rendering.CullMode)]
+        _Cull("Cull Mode", Float) = 2
+        
         [HideInInspector] _QueueOffset("Queue Offset", Float) = 0
     }
 
@@ -36,7 +39,7 @@ Shader "Summer Game/Player/Dither Fade"
             Name "ForwardLit"
             Tags { "LightMode" = "UniversalForward" }
 
-            Cull Back
+            Cull [_Cull]
             ZWrite On
             ZTest LEqual
 
@@ -175,7 +178,7 @@ Shader "Summer Game/Player/Dither Fade"
             Tags { "LightMode" = "DepthNormals" }
 
             ZWrite On
-            Cull Back
+            Cull [_Cull]
 
             HLSLPROGRAM
             #pragma target 3.0
@@ -277,7 +280,7 @@ Shader "Summer Game/Player/Dither Fade"
             ZWrite On
             ZTest LEqual
             ColorMask 0
-            Cull Back
+            Cull [_Cull]
 
             HLSLPROGRAM
             #pragma target 3.0
@@ -377,7 +380,7 @@ Shader "Summer Game/Player/Dither Fade"
 
             ZWrite On
             ColorMask R
-            Cull Back
+            Cull [_Cull]
 
             HLSLPROGRAM
             #pragma target 3.0
