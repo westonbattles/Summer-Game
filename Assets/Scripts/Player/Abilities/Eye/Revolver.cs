@@ -61,7 +61,7 @@ public class Revolver : AbilityBehaviour
             Debug.LogError("Revolver couldn't find PlayerAim");
             return null;
         }
-        RevolverRecoilController recoilController = playerAim.GetComponentInChildren<RevolverRecoilController>(includeInactive: true);
+        RevolverRecoilController recoilController = playerAim.GetComponentInChildren<RevolverRecoilController>(includeInactive: false);
         RevolverState state = new RevolverState(playerAim, recoilController, MagazineSize);
         return state;
     }
