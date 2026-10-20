@@ -12,10 +12,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4082516c6fc86f742bc9d5fd2cf760a1, type: 3}
   m_Name: XPOrb
   m_EditorClassIdentifier: Assembly-CSharp::SoundEvent
-  clips:
-  - {fileID: 8300000, guid: 9218d8e1a2d6f604ca6b188ee2a1c050, type: 3}
+  clips: []
+  preventBackToBackRepeat: 1
   volume: 1
   pitchRange: {x: 0.77, y: 1.05}
   loop: 0
-  spatialBlend: 1
   mixerGroup: {fileID: -3677844527363988734, guid: fcad413ba708c6541a1df63f55f47a79, type: 2}
+  spatialBlend: 1
+  dopplerLevel: 0
+  burstCount: 1
+  staggerDelay: 0.06
+  maxBurstCount: 6
+  minInterval: 0.05
+  minDistance: 1
+  maxDistance: 50
+  rolloffMode: 1
+  customRolloff:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

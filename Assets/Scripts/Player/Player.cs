@@ -146,9 +146,10 @@ public class Player : MonoBehaviour, ICharacterController, ICharacterVelocityPro
 
     void HandleInput()
     {
-        // DEBUG
-        if (Input.SwapPressed)
+        // DEBUG SPAWN ITEM
+        if (Input.DebugSpawnItemPressed)
         {
+            SecretsManager.Instance.AwardSecret();
             ItemDefinition randomItem = ItemSpawner.Instance.ItemCatalog.GetRandomItem(ItemRarityWeightDistribution.Default);
             ItemSpawner.Instance.Spawn(randomItem, transform.position+Vector3.up, Vector3.up * 13);
         }

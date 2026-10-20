@@ -17,6 +17,8 @@ public class PlayerInputReader : MonoBehaviour
     public bool MovementAbilityPressed { get; private set; }
     public bool SpecialAbilityPressed { get; private set; }
     public bool InteractPressed { get; private set; }
+    //DEBUG
+    public bool DebugSpawnItemPressed { get; private set; }
 
     InputAction _moveAction;
     InputAction _lookAction;
@@ -27,6 +29,7 @@ public class PlayerInputReader : MonoBehaviour
     InputAction _movementAbilityAction;
     InputAction _specialAbilityAction;
     InputAction _interactAction;
+    InputAction _debugSpawnItemAction;
     
     public InputAction MoveAction => _moveAction;
     public InputAction JumpAction => _jumpAction;
@@ -37,6 +40,7 @@ public class PlayerInputReader : MonoBehaviour
     public InputAction MovementAbilityAction => _movementAbilityAction;
     public InputAction SpecialAbilityAction => _specialAbilityAction;
     public InputAction InteractAction => _interactAction;
+    public InputAction DebugSpawnItemAction => _debugSpawnItemAction;
 
     void Awake()
     {
@@ -49,6 +53,7 @@ public class PlayerInputReader : MonoBehaviour
         _movementAbilityAction = FindInputAction("MovementAbility");
         _specialAbilityAction = FindInputAction("SpecialAbility");
         _interactAction = FindInputAction("Interact");
+        _debugSpawnItemAction = FindInputAction("(DEBUG) Spawn Item");
         SetCursorLocked(true);
     }
 
@@ -68,6 +73,7 @@ public class PlayerInputReader : MonoBehaviour
         MovementAbilityPressed = _movementAbilityAction != null && _movementAbilityAction.IsPressed(); // ispressed = hold to fire
         SpecialAbilityPressed = _specialAbilityAction != null && _specialAbilityAction.IsPressed(); // ispressed = hold to fire
         InteractPressed = _interactAction != null && _interactAction.WasPressedThisFrame();
+        DebugSpawnItemPressed = _debugSpawnItemAction != null && _debugSpawnItemAction.WasPressedThisFrame();
     }
 
     public void Configure(bool useAutoBhop)

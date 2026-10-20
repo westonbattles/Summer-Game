@@ -50,6 +50,50 @@ MonoBehaviour:
   - {fileID: 7076799518104773974, guid: db81bc0bb12c04ee6af8cee3090b87ca, type: 3}
   showDebugButtons: 1
   debugVfxPrefab: {fileID: -1270940419018600715, guid: b202acbc71e0a8242a574cbd85ce4cc6, type: 3}
+--- !u!1 &2080985919240686314
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 60178121688133156}
+  - component: {fileID: 6602565390640398009}
+  m_Layer: 0
+  m_Name: SecretsManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &60178121688133156
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2080985919240686314}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4513342026305316520}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6602565390640398009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2080985919240686314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666194588c3a45fb851a2f9185b626c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SecretsManager
 --- !u!1 &2808294378423583614
 GameObject:
   m_ObjectHideFlags: 0
@@ -322,6 +366,7 @@ Transform:
   - {fileID: 6772202803879410068}
   - {fileID: 1928683261831155040}
   - {fileID: 8581011835486627224}
+  - {fileID: 60178121688133156}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5682544102942595893

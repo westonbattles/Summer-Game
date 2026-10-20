@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4082516c6fc86f742bc9d5fd2cf760a1, type: 3}
   m_Name: DemoSound
   m_EditorClassIdentifier: Assembly-CSharp::SoundEvent
-  clips:
-  - {fileID: 8300000, guid: 9218d8e1a2d6f604ca6b188ee2a1c050, type: 3}
+  clips: []
   preventBackToBackRepeat: 0
   volume: 0.403
   pitchRange: {x: 0.95, y: 1.05}
