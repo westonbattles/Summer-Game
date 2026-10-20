@@ -115,8 +115,8 @@ public class ThirdEyeBeam : AbilityBehaviour
         lr.startWidth = beamRadius > 0f ? beamRadius * 2f : 0.1f;
         lr.endWidth = lr.startWidth;
         lr.material = new Material(Shader.Find("Sprites/Default"));
-        lr.startColor = Color.cyan;
-        lr.endColor = new Color(0f, 1f, 1f, 0.3f); // fade out toward the tip
+        lr.startColor = new Color(0.827f, 0.361f, 1.0f);
+        lr.endColor = new Color(0.5764706f, 0.4392157f, 0.8588236f, .3f); // fade out toward the tip
         lr.enabled = false;
 
         beam.LineRendererInstance = lr;
