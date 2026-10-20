@@ -95,7 +95,7 @@ public class PsychicPulse : AbilityBehaviour
         }
 
         if (psychicPulse.CurrentTarget != null && psychicPulse.ActiveHighlightVFX != null)
-            psychicPulse.ActiveHighlightVFX.transform.position = psychicPulse.CurrentTarget.TargetPosition;
+            psychicPulse.ActiveHighlightVFX.transform.position = psychicPulse.CurrentTarget.transform.position;
 
         psychicPulse.HighlightCheckRemaining -= deltaTime;
         if (psychicPulse.HighlightCheckRemaining > 0f) return;
@@ -270,9 +270,14 @@ public class PsychicPulse : AbilityBehaviour
     /// sets and highlights target
     void SetTarget(PsychicPulseState psychicPulse, Targetable target)
     {
+        if (target == null || !target.isActiveAndEnabled)
+        {
+            ClearTarget(psychicPulse);
+            return;
+        }
+        
         if (psychicPulse.CurrentTarget == target) return;
         ClearTarget(psychicPulse);
-        if (target == null) return;
 
         psychicPulse.CurrentTarget = target;
         target.SetHighlighted(true);
@@ -285,10 +290,11 @@ public class PsychicPulse : AbilityBehaviour
     // stops vfx on current target and sets current target to null
     void ClearTarget(PsychicPulseState psychicPulse)
     {
-        if (psychicPulse.CurrentTarget == null) return;
-
-        psychicPulse.CurrentTarget.SetHighlighted(false);
-        psychicPulse.CurrentTarget = null;
+        if (psychicPulse.CurrentTarget != null)
+        {
+            psychicPulse.CurrentTarget.SetHighlighted(false);
+            psychicPulse.CurrentTarget = null;
+        };
 
         if (psychicPulse.ActiveHighlightVFX != null)
         {
