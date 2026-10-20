@@ -21,7 +21,9 @@ public class ElkBowAttack : MonoBehaviour, IEnemyAttackWithIndicator
     //[SerializeField] GameObject/Indicator indicatorPrefab;
     [SerializeField] Transform firePoint;
     [SerializeField] LayerMask sightBlockingLayers;
-    [SerializeField] float damage = 8f;
+    [SerializeField] float damageCloseRange = 3f;
+    [SerializeField] float damageLongRange = 17f;
+    [SerializeField, Tooltip("Time in air it takes from arrow to swap from close range damage to long range damage")] float rangeTime = 0.4f;
     [SerializeField] float chargeTime = 1.5f;
     [SerializeField] float cooldown = 1.5f;
     [SerializeField] float maxRange = 30;
@@ -232,7 +234,9 @@ public class ElkBowAttack : MonoBehaviour, IEnemyAttackWithIndicator
             firePoint.position,
             launchVelocity.normalized,
             launchVelocity.magnitude,
-            new DamageInfo(damage, damageType, gameObject));
+            new DamageInfo(damageCloseRange, damageType, gameObject), 
+            rangeTime,
+            damageLongRange);
     }
 
     void RaiseBow()

@@ -226,7 +226,9 @@ MonoBehaviour:
   sightBlockingLayers:
     serializedVersion: 2
     m_Bits: 512
-  damage: 14
+  damageCloseRange: 3
+  damageLongRange: 17
+  rangeTime: 0.4
   chargeTime: 1.5
   cooldown: 3
   maxRange: 30

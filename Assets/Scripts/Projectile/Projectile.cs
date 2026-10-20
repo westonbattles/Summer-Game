@@ -37,6 +37,10 @@ public class Projectile : MonoBehaviour, IPoolable
     private float lifeTimer;
     private bool isSpent;                   // has it already hit something and dealt damage? I dunno *shrug*
 
+    float launchedAt;
+    float damageChangeDelay;
+    float laterDamage;
+    
     private void Awake()
     {
         Rigidbody body = GetComponent<Rigidbody>();
@@ -102,15 +106,20 @@ public class Projectile : MonoBehaviour, IPoolable
             return;
         }
     }
-    
+
 
     /// <summary>Sets this shot's flight parameters. Pool lifecycle is already handled.</summary>
-    public void Launch(Combat ownerCombat, Vector3 origin, Vector3 direction, float speed, DamageInfo info)
+    public void Launch(Combat ownerCombat, Vector3 origin, Vector3 direction, float speed, DamageInfo info,
+        float damageChangeDelay = -1f, float laterDamage = 0f)
     {
         _ownerCombat = ownerCombat;
         transform.position = origin;
         this.speed = speed;
         damageInfo = info;
+
+        launchedAt = Time.time;
+        this.damageChangeDelay = damageChangeDelay;
+        this.laterDamage = laterDamage;
 
         if (direction != Vector3.zero)
         {
@@ -201,7 +210,12 @@ public class Projectile : MonoBehaviour, IPoolable
 
         if (_ownerCombat != null)
         {
-            _ownerCombat.TryDamage(target, damageInfo);
+            DamageInfo hitInfo = damageInfo; 
+            float flightTime = Time.time - launchedAt; 
+ 
+            if (damageChangeDelay >= 0f && flightTime >= damageChangeDelay) hitInfo.Amount = laterDamage;
+            
+            _ownerCombat.TryDamage(target, hitInfo);
         }
         else
         {
