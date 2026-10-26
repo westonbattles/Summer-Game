@@ -514,24 +514,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpawnDirector
   spawnCap: 32
   slowIncome: 1
-  slowMinPurchase: 25
-  slowFailChance: 0.1
   fastIncome: 1
-  fastMinPurchase: 3
-  fastFailChance: 0.6
   spawnGrouping: {fileID: 11400000, guid: 660bde6014d65490c8fa827a3b0ad9d1, type: 2}
+  slowSeriesBreak: {x: 22.5, y: 30}
+  fastSeriesBreak: {x: 4.5, y: 9}
+  withinSeriesInterval: {x: 0.1, y: 1}
+  maxSpawnsPerSeries: 6
   minSpawnDistance: 12
   maxSpawnDistance: 30
   navMeshSampleRadius: 2
-  spawnAttemptInterval: 1
   maxSpawnAttempts: 12
   spawnCapsuleGroundOffset: 0.05
   spawnBlockingLayers:
     serializedVersion: 2
     m_Bits: 15863
-  slowGrowthType: 0
-  fastGrowthType: 0
-  linearRatePerSecond: 0
+  slowGrowthType: 1
+  fastGrowthType: 1
+  linearRatePerSecond: 0.0005
   exponentialGrowthRate: 0
   logisticMaxIncome: 0
   logisticSteepness: 0

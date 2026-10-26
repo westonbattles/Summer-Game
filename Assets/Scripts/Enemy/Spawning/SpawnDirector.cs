@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 using NaughtyAttributes;
@@ -20,19 +17,21 @@ struct Director
     public float baseIncome;
     public float income;
     public float credits;
-    public float minPurchase;
     public float elapsedTime;
     public float nextSpawnAttemptTime;
+    public EnemySpawnCard selectedCard;
+    public int spawnsInSeries;
 
-    public Director(bool active, float baseIncome, float credits, float minPurchase)
+    public Director(bool active, float baseIncome, float credits)
     {
         this.active = active;
         this.baseIncome = baseIncome;
         this.income = baseIncome;
         this.credits = credits;
-        this.minPurchase = minPurchase;
         this.elapsedTime = 0f;
         nextSpawnAttemptTime = 0f;
+        selectedCard = null;
+        spawnsInSeries = 0;
     }
 }
 
@@ -41,29 +40,30 @@ public class SpawnDirector : MonoBehaviour
     [Header("Properties")]
     [SerializeField] int spawnCap = 32;
     [SerializeField] float slowIncome = 1f;
-    [SerializeField] float slowMinPurchase = 100f;
-    [SerializeField, Range(0f, 1f)] float slowFailChance = 0.1f;
-    [SerializeField] float fastIncome = 10f;
-    [SerializeField] float fastMinPurchase = 10f;
-    [SerializeField, Range(0f, 1f)] float fastFailChance = .6f;
+    [SerializeField] float fastIncome = 1f;
     [SerializeField] private EnemySpawnGrouping spawnGrouping;
+
+    [Header("Spawn Timing")]
+    [SerializeField] Vector2 slowSeriesBreak = new Vector2(22.5f, 30f);
+    [SerializeField] Vector2 fastSeriesBreak = new Vector2(4.5f, 9f);
+    [SerializeField] Vector2 withinSeriesInterval = new Vector2(0.1f, 1f);
+    [SerializeField, Min(1)] int maxSpawnsPerSeries = 6;
 
     [Header("Spawn Placement")]
     [SerializeField, Min(0f)] float minSpawnDistance = 12f;
     [SerializeField, Min(0f)] float maxSpawnDistance = 30f;
     [SerializeField, Min(0f)] float navMeshSampleRadius = 2f; // how far a random candidate may be projected onto the navmesh
-    [SerializeField, Min(0f)] float spawnAttemptInterval = .25f;
     [SerializeField, Min(1)] int maxSpawnAttempts = 12;
     [SerializeField, Min(0f)] float spawnCapsuleGroundOffset = .05f;
     [SerializeField] LayerMask spawnBlockingLayers;
 
     [Header("Growth")]
     [SerializeField] private GrowthType slowGrowthType = GrowthType.Linear;
-    [SerializeField] private GrowthType fastGrowthType = GrowthType.Logistic;
+    [SerializeField] private GrowthType fastGrowthType = GrowthType.Linear;
 
     [Header("Growth Tuning")]
     [ShowIf(nameof(UsesLinear))]
-    [SerializeField] float linearRatePerSecond = 0.1f;  
+    [SerializeField] float linearRatePerSecond = 0.0005f;
     [ShowIf(nameof(UsesExponential))]
     [SerializeField] float exponentialGrowthRate = 1.02f;
     [ShowIf(nameof(UsesLogistic))]
@@ -93,8 +93,8 @@ public class SpawnDirector : MonoBehaviour
     {
         if (spawnBlockingLayers.value == 0) spawnBlockingLayers = ~LayerMask.GetMask("Ground");
 
-        slowDirector = new Director(true, slowIncome, 0, slowMinPurchase);
-        fastDirector = new Director(true, fastIncome, 0, fastMinPurchase);
+        slowDirector = new Director(true, slowIncome, 0f);
+        fastDirector = new Director(true, fastIncome, 0f);
 
         slowGrowthFn = ResolveGrowthFunction(slowGrowthType);
         fastGrowthFn = ResolveGrowthFunction(fastGrowthType);
@@ -106,6 +106,8 @@ public class SpawnDirector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (mazeGenerator == null || mazeGenerator.CurrentLayout == null || Player.Instance == null) return;
+
         // director only works when not in village
         if (mazeGenerator.TryWorldToCell(Player.Instance.transform.position, out Vector2Int cell) && mazeGenerator.CurrentLayout.Grid.GetCell(cell).State == MazeCellState.ReservedForVillage)
         {
@@ -116,127 +118,127 @@ public class SpawnDirector : MonoBehaviour
         fastBehavior();
     }
 
-    List<EnemySpawnCard> SelectSlowPurchase(ref Director director, EnemySpawnGrouping grouping, int maxSpawns)
-    {
-        List<EnemySpawnCard> purchased = new();
-
-        while (purchased.Count < maxSpawns)
-        {
-            EnemySpawnCard best = null;
-            int bestCost = -1;
-            float tiedWeight = 0f; // so we can randomly pick from cards with an equal cost
-
-            foreach (var entry in grouping.Entries)
-            {
-                int cost = entry.Card.creditCost;
-                if (cost > director.credits || cost < bestCost) continue;
-
-                float weight = Mathf.Max(0f, entry.Weight);
-
-                if (cost > bestCost)
-                {
-                    best = entry.Card;
-                    bestCost = cost;
-                    tiedWeight = weight;
-                    continue;
-                }
-
-                tiedWeight += weight;
-                if (tiedWeight > 0f && UnityEngine.Random.value < weight / tiedWeight) best = entry.Card;
-            }
-
-            if (best == null) break; // nothing left to buy
-
-            director.credits -= bestCost;
-            purchased.Add(best);
-        }
-
-        return purchased;
-    }
-
-    List<EnemySpawnCard> SelectFastPurchase(ref Director director, EnemySpawnGrouping grouping, int maxSpawns)
-    {
-        // Ideally we would have these behave differently. Right now it's a stub that calls the same selector
-        return SelectSlowPurchase(ref director, grouping, maxSpawns);
-    }
-
     void slowBehavior()
     {
-        if (!slowDirector.active) return;
-        Grow(ref slowDirector, slowGrowthFn);
-        if (Time.time < slowDirector.nextSpawnAttemptTime) return;
-        slowDirector.nextSpawnAttemptTime = Time.time + spawnAttemptInterval;
-
-        if (slowDirector.credits >= slowDirector.minPurchase && UnityEngine.Random.value >= slowFailChance) // enough credits and spawn chance rolls
-        {
-            if (spawnedEnemies.Count < spawnCap)
-            {
-                int remainingSpawns = spawnCap - spawnedEnemies.Count;
-                // Select purchase. For now the function selects the most expensive available options and as many as it can afford
-                // purchase is an array of all the things to spawn. The spawning code should iterate through each one to find the location
-                // and perform the spawn. If a spawn isn't possible the credits should be refunded
-                List<EnemySpawnCard> purchase = SelectSlowPurchase(ref slowDirector, spawnGrouping, remainingSpawns);
-
-                foreach(var spawn in purchase)
-                {
-                    TrySpawn(ref slowDirector, spawn);
-                }
-            }
-        }
+        TickDirector(ref slowDirector, slowGrowthFn, slowSeriesBreak);
     }
 
     void fastBehavior()
     {
-        if (!fastDirector.active) return;
-        Grow(ref fastDirector, fastGrowthFn);
-        if (Time.time < fastDirector.nextSpawnAttemptTime) return;
-        fastDirector.nextSpawnAttemptTime = Time.time + spawnAttemptInterval;
-
-        if (fastDirector.credits >= fastDirector.minPurchase && UnityEngine.Random.value >= fastFailChance) // enough credits and spawn chance rolls
-        {
-            if (spawnedEnemies.Count < spawnCap)
-            {
-                int remainingSpawns = spawnCap - spawnedEnemies.Count;
-                // Select purchase. For now the function selects the most expensive available options and as many as it can afford
-                // purchase is an array of all the things to spawn. The spawning code should iterate through each one to find the location
-                // and perform the spawn. If a spawn isn't possible the credits should be refunded
-                List<EnemySpawnCard> purchase = SelectFastPurchase(ref fastDirector, spawnGrouping, remainingSpawns);
-
-                foreach (var spawn in purchase)
-                {
-                    TrySpawn(ref fastDirector, spawn);
-                }
-            }
-        }
+        TickDirector(ref fastDirector, fastGrowthFn, fastSeriesBreak);
     }
 
-    void TrySpawn(ref Director director, EnemySpawnCard spawnCard)
+    void TickDirector(ref Director director, Func<Director, float> growthFn, Vector2 seriesBreak)
     {
-        if (!TryGetSpawnPosition(spawnCard, out Vector3 spawnPosition) || EnemySpawner.Instance == null)
+        if (!director.active) return;
+
+        // Keep earning during breaks. This clock pauses with income while in the village.
+        Grow(ref director, growthFn);
+        if (director.elapsedTime < director.nextSpawnAttemptTime) return;
+
+        AttemptSpawn(ref director, seriesBreak);
+    }
+
+    bool AttemptSpawn(ref Director director, Vector2 seriesBreak)
+    {
+        if (spawnedEnemies.Count >= spawnCap || director.spawnsInSeries >= maxSpawnsPerSeries)
         {
-            director.credits += spawnCard.creditCost;
-            return;
+            EndSeries(ref director, seriesBreak);
+            return false;
         }
+
+        if (director.selectedCard == null) director.selectedCard = SelectSeriesCard();
+
+        EnemySpawnCard card = director.selectedCard;
+        if (card == null || card.Prefab == null || card.creditCost <= 0 ||
+            director.credits < card.creditCost || IsTooCheap(card, director.credits))
+        {
+            EndSeries(ref director, seriesBreak);
+            return false;
+        }
+
+        if (!TrySpawn(card))
+        {
+            EndSeries(ref director, seriesBreak);
+            return false;
+        }
+
+        director.credits -= card.creditCost;
+        director.spawnsInSeries++;
+        director.nextSpawnAttemptTime = director.elapsedTime +
+            UnityEngine.Random.Range(withinSeriesInterval.x, withinSeriesInterval.y);
+        return true;
+    }
+
+    void EndSeries(ref Director director, Vector2 seriesBreak)
+    {
+        // Keep savings, but reroll the enemy type after a longer randomized break.
+        director.selectedCard = null;
+        director.spawnsInSeries = 0;
+        director.nextSpawnAttemptTime = director.elapsedTime +
+            UnityEngine.Random.Range(seriesBreak.x, seriesBreak.y);
+    }
+
+    EnemySpawnCard SelectSeriesCard()
+    {
+        if (spawnGrouping == null) return null;
+
+        EnemySpawnCard selected = null;
+        float totalWeight = 0f;
+
+        foreach (var entry in spawnGrouping.Entries)
+        {
+            if (entry == null || entry.Weight <= 0f) continue;
+
+            EnemySpawnCard card = entry.Card;
+            if (card == null || card.Prefab == null || card.creditCost <= 0) continue;
+
+            // Include unaffordable cards: failing to afford a choice creates a saving period.
+            totalWeight += entry.Weight;
+            if (selected == null || UnityEngine.Random.value < entry.Weight / totalWeight) selected = card;
+        }
+
+        return selected;
+    }
+
+    bool IsTooCheap(EnemySpawnCard card, float credits)
+    {
+        if (spawnGrouping == null || credits <= (float)card.creditCost * maxSpawnsPerSeries) return false;
+
+        // Prefer larger purchases when savings are high, while always allowing the most expensive card.
+        // Elite variants can extend this check with their effective costs later.
+        foreach (var entry in spawnGrouping.Entries)
+        {
+            if (entry == null || entry.Weight <= 0f) continue;
+
+            EnemySpawnCard other = entry.Card;
+            if (other != null && other.Prefab != null && other.creditCost > card.creditCost) return true;
+        }
+
+        return false;
+    }
+
+    bool TrySpawn(EnemySpawnCard spawnCard)
+    {
+        if (EnemySpawner.Instance == null || !TryGetSpawnPosition(spawnCard, out Vector3 spawnPosition)) return false;
 
         Enemy enemy = EnemySpawner.Instance.Spawn(spawnCard, spawnPosition);
-
-        if (enemy == null)
-        {
-            director.credits += spawnCard.creditCost;
-            return;
-        }
+        if (enemy == null) return false;
 
         if (spawnedEnemies.Add(enemy))
         {
             enemy.OnDied += RemoveSpawnedEnemy;
         }
+
+        return true;
     }
 
     bool TryGetSpawnPosition(EnemySpawnCard spawnCard, out Vector3 spawnPosition)
     {
         spawnPosition = Vector3.zero;
 
-        if (Player.Instance == null || spawnCard == null || spawnCard.Prefab == null) return false;
+        if (mazeGenerator == null || mazeGenerator.CurrentLayout == null ||
+            Player.Instance == null || spawnCard == null || spawnCard.Prefab == null) return false;
         if (!spawnCard.Prefab.TryGetComponent(out NavMeshAgent agent)) return false;
 
         NavMeshQueryFilter filter = new NavMeshQueryFilter
@@ -358,12 +360,6 @@ public class SpawnDirector : MonoBehaviour
         return d.baseIncome + (logisticMaxIncome - d.baseIncome) * sigmoid;
     }
 
-    void Refund(ref Director director, EnemySpawnCard card)
-    {
-        director.credits += card.creditCost;
-    }
-
-
 #if UNITY_EDITOR
     #region DEBUGGING
     [Header("Debug Settings")]
@@ -378,6 +374,8 @@ public class SpawnDirector : MonoBehaviour
     [ShowNativeProperty] int SpawnedCount => spawnedEnemies?.Count ?? 0;
     [ShowNativeProperty] float SlowElapsed => slowDirector.elapsedTime;
     [ShowNativeProperty] float FastElapsed => fastDirector.elapsedTime;
+    [ShowNativeProperty] int SlowSeriesSpawns => slowDirector.spawnsInSeries;
+    [ShowNativeProperty] int FastSeriesSpawns => fastDirector.spawnsInSeries;
 
     [ShowIf(nameof(showDebugButtons))]
     [Button("Give Slow Director 500 Credits", EButtonEnableMode.Playmode)]
@@ -394,27 +392,27 @@ public class SpawnDirector : MonoBehaviour
     }
 
     [ShowIf(nameof(showDebugButtons))]
-    [Button("Force Slow Director Purchase", EButtonEnableMode.Playmode)]
-    private void TestForceSlowPurchase()
+    [Button("Attempt Slow Director Spawn", EButtonEnableMode.Playmode)]
+    private void TestForceSlowSpawn()
     {
-        var purchase = SelectSlowPurchase(ref slowDirector, spawnGrouping, spawnCap - spawnedEnemies.Count);
-        UnityEngine.Debug.Log($"[SpawnDirector - Debug]: Purchased {purchase.Count} cards, credits left {slowDirector.credits}.");
+        bool spawned = AttemptSpawn(ref slowDirector, slowSeriesBreak);
+        UnityEngine.Debug.Log($"[SpawnDirector - Debug]: Slow spawn succeeded: {spawned}, credits left {slowDirector.credits}.");
     }
 
     [ShowIf(nameof(showDebugButtons))]
-    [Button("Force Fast Director Purchase", EButtonEnableMode.Playmode)]
-    private void TestForceFastPurchase()
+    [Button("Attempt Fast Director Spawn", EButtonEnableMode.Playmode)]
+    private void TestForceFastSpawn()
     {
-        var purchase = SelectFastPurchase(ref fastDirector, spawnGrouping, spawnCap - spawnedEnemies.Count);
-        UnityEngine.Debug.Log($"[SpawnDirector - Debug]: Purchased {purchase.Count} cards, credits left {fastDirector.credits}.");
+        bool spawned = AttemptSpawn(ref fastDirector, fastSeriesBreak);
+        UnityEngine.Debug.Log($"[SpawnDirector - Debug]: Fast spawn succeeded: {spawned}, credits left {fastDirector.credits}.");
     }
 
     [ShowIf(nameof(showDebugButtons))]
     [Button("Reset Directors", EButtonEnableMode.Playmode)]
     private void TestResetDirectors()
     {
-        slowDirector = new Director(true, slowIncome, 0, slowMinPurchase);
-        fastDirector = new Director(true, fastIncome, 0, fastMinPurchase);
+        slowDirector = new Director(true, slowIncome, 0f);
+        fastDirector = new Director(true, fastIncome, 0f);
         UnityEngine.Debug.Log("[SpawnDirector - Debug]: Directors reset.");
     }
 

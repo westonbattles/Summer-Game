@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: BlenderSpawnCard
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnCard
   prefab: {fileID: 455193479406036599, guid: 29804ad4e43c84be8bee90dedd62e1d9, type: 3}
-  creditCost: 1
+  creditCost: 8

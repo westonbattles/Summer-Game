@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: ElkSpawnCard
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnCard
   prefab: {fileID: 6197305926564637718, guid: 8cf1376512f204d059edbabae82c419c, type: 3}
-  creditCost: 5
+  creditCost: 40
