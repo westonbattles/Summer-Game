@@ -202,7 +202,7 @@ NavMeshAgent:
   m_AngularSpeed: 120
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
+  m_AutoBraking: 0
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 0
@@ -262,7 +262,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NavMeshPathProvider
   agent: {fileID: 6396026402350211675}
-  repathInterval: 0.25
+  repathInterval: 0.05
+  repathJitter: 0
 --- !u!114 &7131428187777165116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,8 +277,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ElkMover
   moveSpeed: 3.5
-  turnSpeed: 360
-  retreatDistance: 5
+  turnSpeed: 60
+  retreatDistance: 18
+  maxRetreatAngle: 30
+  movementSmoothTime: 0.12
   facingTolerance: 3
 --- !u!4 &7584799068981348233 stripped
 Transform:

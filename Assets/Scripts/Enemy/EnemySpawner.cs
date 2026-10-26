@@ -231,7 +231,7 @@ public class EnemySpawner : MonoBehaviour
 
     [ShowIf(nameof(showDebugButtons))]
     [Button("Spawn Debug Enemy", EButtonEnableMode.Playmode)]
-    private void TestSpawn()
+    public void TestSpawn()
     {
         if (debugEnemyPrefab == null)
         {

@@ -1,6 +1,7 @@
 using System;
 using KinematicCharacterController;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
@@ -146,8 +147,11 @@ public class Player : MonoBehaviour, ICharacterController, ICharacterVelocityPro
 
     void HandleInput()
     {
+        
+        if (Keyboard.current.periodKey.wasPressedThisFrame) EnemySpawner.Instance.TestSpawn();
+        
         // DEBUG SPAWN ITEM
-        if (Input.DebugSpawnItemPressed)
+        if (Input.DebugSpawnItemPressed) 
         {
             SecretsManager.Instance.AwardSecret();
             ItemDefinition randomItem = ItemSpawner.Instance.ItemCatalog.GetRandomItem(ItemRarityWeightDistribution.Default);
