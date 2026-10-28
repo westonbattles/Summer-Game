@@ -150,8 +150,7 @@ public class SpawnDirector : MonoBehaviour
         if (director.selectedCard == null) director.selectedCard = SelectSeriesCard();
 
         EnemySpawnCard card = director.selectedCard;
-        if (card == null || card.Prefab == null || card.creditCost <= 0 ||
-            director.credits < card.creditCost || IsTooCheap(card, director.credits))
+        if (card == null || card.Prefab == null || card.creditCost <= 0 || director.credits < card.creditCost || IsTooCheap(card, director.credits))
         {
             EndSeries(ref director, seriesBreak);
             return false;
@@ -165,8 +164,7 @@ public class SpawnDirector : MonoBehaviour
 
         director.credits -= card.creditCost;
         director.spawnsInSeries++;
-        director.nextSpawnAttemptTime = director.elapsedTime +
-            UnityEngine.Random.Range(withinSeriesInterval.x, withinSeriesInterval.y);
+        director.nextSpawnAttemptTime = director.elapsedTime + UnityEngine.Random.Range(withinSeriesInterval.x, withinSeriesInterval.y);
         return true;
     }
 
@@ -175,8 +173,7 @@ public class SpawnDirector : MonoBehaviour
         // Keep savings, but reroll the enemy type after a longer randomized break.
         director.selectedCard = null;
         director.spawnsInSeries = 0;
-        director.nextSpawnAttemptTime = director.elapsedTime +
-            UnityEngine.Random.Range(seriesBreak.x, seriesBreak.y);
+        director.nextSpawnAttemptTime = director.elapsedTime + UnityEngine.Random.Range(seriesBreak.x, seriesBreak.y);
     }
 
     EnemySpawnCard SelectSeriesCard()
