@@ -43,10 +43,10 @@ public class SecretsManager : MonoBehaviour
         rect.anchoredPosition = new Vector2(0, -70); // a bit down from top middle of screen
 
         // fade and destroy
-        StartCoroutine(FadeOut(text, duration));
+        StartCoroutine(FadeText(text, duration));
     }
 
-    IEnumerator FadeOut(TextMeshProUGUI text, float duration)
+    IEnumerator FadeText(TextMeshProUGUI text, float duration)
     {
         yield return new WaitForSeconds(duration);
 
