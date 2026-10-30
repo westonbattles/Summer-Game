@@ -244,6 +244,7 @@ Transform:
   - {fileID: 8042486785219449689}
   - {fileID: 7282834541481594028}
   - {fileID: 2267963252177345842}
+  - {fileID: 4209816861538858734}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8231126240587729376
@@ -263,6 +264,7 @@ MonoBehaviour:
   OccupiedCells:
   - {x: 0, y: 0}
   SpawnWeight: 1
+  enemyRoomSpawns: []
 --- !u!1 &6909770368034224969
 GameObject:
   m_ObjectHideFlags: 0
@@ -1419,6 +1421,76 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 7721536215407112456, guid: 4ba7ad983a1f44dd4bc77cb08cf349c5, type: 3}
   m_PrefabInstance: {fileID: 6994883530891397703}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7072761080247438094
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7543961166701619350}
+    m_Modifications:
+    - target: {fileID: -9058541470108518012, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+      propertyPath: enemyPool.Array.data[0].Weight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -9058541470108518012, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+      propertyPath: enemyPool.Array.data[0].SpawnCard
+      value: 
+      objectReference: {fileID: 11400000, guid: dbc3168dd386247d6b8db94313f567f9, type: 2}
+    - target: {fileID: 6362241137769610720, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -13.143038
+      objectReference: {fileID: 0}
+    - target: {fileID: 6362241137769610720, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.1767843
+      objectReference: {fileID: 0}
+    - target: {fileID: 6362241137769610720, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -13.088486
+      objectReference: {fileID: 0}
+    - target: {fileID: 6362241137769610720, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6362241137769610720, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6362241137769610720, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6362241137769610720, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6362241137769610720, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6362241137769610720, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6362241137769610720, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8020510137209784522, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+      propertyPath: m_Name
+      value: EnemyRoomSpawn
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+--- !u!4 &4209816861538858734 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6362241137769610720, guid: cfd2112934310406c907f5616a3f339f, type: 3}
+  m_PrefabInstance: {fileID: 7072761080247438094}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7369627277458166532
 PrefabInstance:

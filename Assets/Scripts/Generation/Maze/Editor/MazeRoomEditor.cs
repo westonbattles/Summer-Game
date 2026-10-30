@@ -19,6 +19,15 @@ public class MazeRoomEditor : Editor
 
         MazeRoom room = (MazeRoom)target;
         if (GUILayout.Button("Create Opening Slot...")) MazeOpeningCreationWindow.ShowFor(room);
+        
+        EditorGUILayout.LabelField("");
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        EditorGUILayout.LabelField("Auto-updates room EnemyRoomSpawns array by", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("finding all room spawn prefabs in the entire room",EditorStyles.boldLabel);
+        if (GUILayout.Button("Update Enemy Room Spawns"))
+        {
+            room.enemyRoomSpawns = room.GetComponentsInChildren<EnemyRoomSpawn>(true);
+        }g
     }
 
     internal static MazeRoomOpening CreateOpeningSlot(MazeRoom room, Vector2Int localCell, GridDirection direction)

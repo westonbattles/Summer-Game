@@ -20,6 +20,9 @@ public class MazeRoom : MonoBehaviour
     public Vector2Int[] OccupiedCells = { Vector2Int.zero };
 
     [Min(0f)] public float SpawnWeight = 1f;
+    
+    // Spawn prefabs for all the room enemies
+    public EnemyRoomSpawn[] enemyRoomSpawns;
 
     public MazeRoomOpening[] GetOpenings()
     {
