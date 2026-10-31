@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
 
@@ -23,12 +24,48 @@ public class MazeGenerator : MonoBehaviour
 
     [SerializeField, HideInInspector] Transform generatedRoot;
 
+    readonly HashSet<int> spawnedRooms = new();
+    int currentRoomId = -1;
+
     public MazeLayout CurrentLayout { get; private set; }
     public int LastGeneratedSeed { get; private set; }
 
     void Start()
     {
         if (generateOnStart) Generate();
+    }
+
+    void Update()
+    {
+        if (CurrentLayout == null || Player.Instance == null || EnemySpawner.Instance == null) return;
+
+        if (!TryGetRoomAtWorldPosition(Player.Instance.transform.position, out MazeRoomPlacement room))
+        {
+            currentRoomId = -1;
+            return;
+        }
+
+        if (room.Id == currentRoomId) return;
+        currentRoomId = room.Id;
+
+        SpawnRoomOnce(room.Id);
+
+        if (CurrentLayout.Adjacency.TryGetValue(room.Id, out List<int> neighbors))
+        {
+            foreach (int neighborId in neighbors) SpawnRoomOnce(neighborId);
+        }
+    }
+
+    void SpawnRoomOnce(int roomId)
+    {
+        if (!CurrentLayout.Rooms.TryGetValue(roomId, out MazeRoomPlacement room) || room.Instance == null || !spawnedRooms.Add(roomId)) return;
+
+        if (room.Instance.enemyRoomSpawns == null) return;
+
+        foreach (EnemyRoomSpawn spawner in room.Instance.enemyRoomSpawns)
+        {
+            if (spawner != null && spawner.isActiveAndEnabled) spawner.SpawnEnemies();
+        }
     }
 
     [ContextMenu("Generate Maze")]
@@ -90,6 +127,8 @@ public class MazeGenerator : MonoBehaviour
 
         if (navMeshSurface != null) navMeshSurface.RemoveData();
         CurrentLayout = null;
+        spawnedRooms.Clear();
+        currentRoomId = -1;
     }
 
     public bool TryWorldToCell(Vector3 worldPosition, out Vector2Int cell)

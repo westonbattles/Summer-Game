@@ -22,6 +22,7 @@ public static class MazeBuilder
         if (room.RoomPrefab == null) return;
 
         MazeRoom instanceRoom = Object.Instantiate(room.RoomPrefab, root);
+        room.Instance = instanceRoom;
         GameObject instance = instanceRoom.gameObject;
         string roomName = string.IsNullOrWhiteSpace(room.RoomPrefab.DisplayName) ? room.RoomPrefab.name : room.RoomPrefab.DisplayName;
         instance.name = $"{roomName} #{room.Id} ({room.GridOrigin.x},{room.GridOrigin.y})";
