@@ -12,15 +12,30 @@ struct Grouping
 [DisallowMultipleComponent]
 public class EnemyRoomSpawn : MonoBehaviour
 {
+
+    [SerializeField, Tooltip("How many enemies to spawn from the grouping of enemies ")] int spawnCount = 1;
+    [SerializeField] List<Grouping> enemyPool;
+    
     [Tooltip("If the group spawn should randomly choose each enemy (allowing duplicates), or if it should sequentially pick from the groupings (meaning groups will be the same every time)")]
     public bool PickEnemiesRandomly = true;
 
-    [SerializeField] List<Grouping> enemyPool;
-    [SerializeField, Tooltip("How many enemies to spawn from the grouping of enemies ")] int count = 1;
+    void OnValidate()
+    {
+        if (enemyPool == null) return;
+
+        for (int i = 0; i < enemyPool.Count; i++)
+        {
+            Grouping grouping = enemyPool[i];
+            if (grouping.SpawnCard != null || grouping.Weight != 0f) continue;
+
+            grouping.Weight = 1f;
+            enemyPool[i] = grouping;
+        }
+    }
 
     public void SpawnEnemies()
     {
-        if (EnemySpawner.Instance == null || enemyPool == null || count <= 0) return;
+        if (EnemySpawner.Instance == null || enemyPool == null || spawnCount <= 0) return;
 
         List<EnemySpawnCard> validCards = new();
         float largestRadius = 0.5f;
@@ -42,13 +57,13 @@ public class EnemyRoomSpawn : MonoBehaviour
         int indexInRing = 0;
         int countInRing = 1;
 
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < spawnCount; i++)
         {
             if (indexInRing >= countInRing)
             {
                 ring++;
                 indexInRing = 0;
-                countInRing = Mathf.Min(ring * 6, count - i);
+                countInRing = Mathf.Min(ring * 6, spawnCount - i);
             }
 
             float angle = rotation + indexInRing * Mathf.PI * 2f / countInRing;

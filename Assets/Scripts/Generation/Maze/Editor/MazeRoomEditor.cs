@@ -1,5 +1,6 @@
 using System.Linq;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 [CustomEditor(typeof(MazeRoom))]
@@ -10,6 +11,30 @@ public class MazeRoomEditor : Editor
     const float CellGap = 3f;
     const float CellPitch = CellSize + CellGap;
 
+    [InitializeOnLoadMethod]
+    static void RegisterSpawnListUpdate()
+    {
+        PrefabStage.prefabSaving -= UpdateSpawnList;
+        PrefabStage.prefabSaving += UpdateSpawnList;
+    }
+
+    static void UpdateSpawnList(GameObject prefabRoot)
+    {
+        if (!prefabRoot.TryGetComponent(out MazeRoom room)) return;
+
+        EnemyRoomSpawn[] spawns = room.GetComponentsInChildren<EnemyRoomSpawn>(true);
+        if (room.enemyRoomSpawns != null && room.enemyRoomSpawns.SequenceEqual(spawns)) return;
+
+        SerializedObject serializedRoom = new SerializedObject(room);
+        SerializedProperty list = serializedRoom.FindProperty(nameof(MazeRoom.enemyRoomSpawns));
+        list.arraySize = spawns.Length;
+
+        for (int i = 0; i < spawns.Length; i++)
+            list.GetArrayElementAtIndex(i).objectReferenceValue = spawns[i];
+
+        serializedRoom.ApplyModifiedPropertiesWithoutUndo();
+    }
+
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
@@ -19,15 +44,6 @@ public class MazeRoomEditor : Editor
 
         MazeRoom room = (MazeRoom)target;
         if (GUILayout.Button("Create Opening Slot...")) MazeOpeningCreationWindow.ShowFor(room);
-        
-        EditorGUILayout.LabelField("");
-        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-        EditorGUILayout.LabelField("Auto-updates room EnemyRoomSpawns array by", EditorStyles.boldLabel);
-        EditorGUILayout.LabelField("finding all room spawn prefabs in the entire room",EditorStyles.boldLabel);
-        if (GUILayout.Button("Update Enemy Room Spawns"))
-        {
-            room.enemyRoomSpawns = room.GetComponentsInChildren<EnemyRoomSpawn>(true);
-        }g
     }
 
     internal static MazeRoomOpening CreateOpeningSlot(MazeRoom room, Vector2Int localCell, GridDirection direction)
