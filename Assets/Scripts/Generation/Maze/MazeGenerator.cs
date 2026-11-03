@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
 
@@ -24,9 +23,6 @@ public class MazeGenerator : MonoBehaviour
 
     [SerializeField, HideInInspector] Transform generatedRoot;
 
-    readonly HashSet<int> spawnedRooms = new();
-    int currentRoomId = -1;
-
     public MazeLayout CurrentLayout { get; private set; }
     public int LastGeneratedSeed { get; private set; }
 
@@ -37,34 +33,29 @@ public class MazeGenerator : MonoBehaviour
 
     void Update()
     {
-        if (CurrentLayout == null || Player.Instance == null || EnemySpawner.Instance == null) return;
-
-        if (!TryGetRoomAtWorldPosition(Player.Instance.transform.position, out MazeRoomPlacement room))
+        if (Player.Instance == null || EnemySpawner.Instance == null)
         {
-            currentRoomId = -1;
             return;
         }
 
-        if (room.Id == currentRoomId) return;
-        currentRoomId = room.Id;
-
-        SpawnRoomOnce(room.Id);
-
-        if (CurrentLayout.Adjacency.TryGetValue(room.Id, out List<int> neighbors))
+        if (!TryGetRoomAtWorldPosition(Player.Instance.transform.position, out MazeRoomPlacement room))
         {
-            foreach (int neighborId in neighbors) SpawnRoomOnce(neighborId);
+            return;
         }
-    }
 
-    void SpawnRoomOnce(int roomId)
-    {
-        if (!CurrentLayout.Rooms.TryGetValue(roomId, out MazeRoomPlacement room) || room.Instance == null || !spawnedRooms.Add(roomId)) return;
+        if (room.Instance == null || room.HasSpawnedEnemies || room.Instance.enemyRoomSpawns == null)
+        {
+            return;
+        }
 
-        if (room.Instance.enemyRoomSpawns == null) return;
+        room.HasSpawnedEnemies = true;
 
         foreach (EnemyRoomSpawn spawner in room.Instance.enemyRoomSpawns)
         {
-            if (spawner != null && spawner.isActiveAndEnabled) spawner.SpawnEnemies();
+            if (spawner != null && spawner.isActiveAndEnabled)
+            {
+                spawner.SpawnEnemies();
+            }
         }
     }
 
@@ -127,8 +118,6 @@ public class MazeGenerator : MonoBehaviour
 
         if (navMeshSurface != null) navMeshSurface.RemoveData();
         CurrentLayout = null;
-        spawnedRooms.Clear();
-        currentRoomId = -1;
     }
 
     public bool TryWorldToCell(Vector3 worldPosition, out Vector2Int cell)

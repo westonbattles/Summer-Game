@@ -17,6 +17,7 @@ public class MazeRoomPlacement
     public int Id;
     public MazeRoom RoomPrefab;
     public MazeRoom Instance;
+    public bool HasSpawnedEnemies;
 
     public Vector2Int GridOrigin;
     public Vector2Int PrefabOriginCell;
