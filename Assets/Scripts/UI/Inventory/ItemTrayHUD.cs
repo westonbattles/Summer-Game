@@ -15,6 +15,11 @@ public class ItemTrayHUD : MonoBehaviour
 
     private void OnEnable()
     {
+        if (slotPrefab != null && slotPrefab.gameObject.scene.IsValid())
+        {
+            slotPrefab.gameObject.SetActive(false);
+        }
+
         if (inventory == null)
         {
             Debug.LogWarning($"{name}: no ItemInventory assigned.", this);
@@ -38,6 +43,7 @@ public class ItemTrayHUD : MonoBehaviour
             // case 1: first pickup of item. Layout group appends to end so pickup order falls out of event order automatically.
             slot = Instantiate(slotPrefab, slotContainer);
             slot.Bind(itemDefinition, GetRarityColor(itemDefinition.Rarity));
+            slot.gameObject.SetActive(true);
             slots.Add(itemDefinition, slot);
         }
 

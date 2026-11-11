@@ -60,6 +60,20 @@ public class ItemInventory : MonoBehaviour
         return itemRuntime.Count;
     }
 
+    // gets total item count
+    public int GetTotalItemCount()
+    {
+        int count = 0;
+        
+        // loop through each item in our items dictionary
+        foreach (ItemRuntime item in items.Values)
+        {
+            count += item.Count;
+        }
+
+        return count;
+    }
+
     public bool HasItem(ItemDefinition itemDefinition)
     {
         return GetCurrentCount(itemDefinition) > 0;
