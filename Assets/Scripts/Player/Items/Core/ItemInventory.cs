@@ -21,6 +21,8 @@ public class ItemInventory : MonoBehaviour
 
     /// <summary>Fired whenever an item's count changes. (definition, newCount)</summary>
     public event Action<ItemDefinition, int> OnItemCountChanged;
+    
+    public int TotalItemCount { get; private set; }
 
 
     void Awake()
@@ -60,8 +62,8 @@ public class ItemInventory : MonoBehaviour
         return itemRuntime.Count;
     }
 
-    // gets total item count
-    public int GetTotalItemCount()
+    // updates total item count
+    void UpdateTotalItemCount()
     {
         int count = 0;
         
@@ -71,7 +73,7 @@ public class ItemInventory : MonoBehaviour
             count += item.Count;
         }
 
-        return count;
+        TotalItemCount = count;
     }
 
     public bool HasItem(ItemDefinition itemDefinition)
@@ -95,7 +97,8 @@ public class ItemInventory : MonoBehaviour
         item.SetCount(Mathf.Min(item.Count + amount, MaxStackSize));
         
         RecalculateModifiers();
-
+        UpdateTotalItemCount();
+        
         OnItemCountChanged?.Invoke(itemDefinition, item.Count);
     }
 

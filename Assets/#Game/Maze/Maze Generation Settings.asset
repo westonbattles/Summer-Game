@@ -30,7 +30,7 @@ MonoBehaviour:
   - {fileID: 7457163766452305140, guid: ae233e279bd43426cb6b0473fd528e7f, type: 3}
   - {fileID: 8231126240587729376, guid: 6696deafdebb84fd883466725664b896, type: 3}
   BossRoomPrefabs:
-  - {fileID: 6443445786636514196, guid: 89ab56db9bde847899cc7bade087f955, type: 3}
+  - {fileID: 4196702979408889823, guid: de79c3a6beb30480bb3d4e10b81fa610, type: 3}
   Connectors:
   - {fileID: 7432908738590826676, guid: fb41668c9d8474c9e891972994786614, type: 3}
   MaximumGenerationAttempts: 100
